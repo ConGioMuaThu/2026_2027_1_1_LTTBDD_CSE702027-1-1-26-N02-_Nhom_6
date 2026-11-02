@@ -34,3 +34,18 @@ class AppTheme {
         fontWeight: FontWeight.w700,
       ),
     ),
+    textTheme: const TextTheme(
+      headlineLarge: TextStyle(color: text, fontWeight: FontWeight.w800),
+      headlineMedium: TextStyle(color: text, fontWeight: FontWeight.w700),
+      titleLarge: TextStyle(color: text, fontWeight: FontWeight.w700),
+      bodyLarge: TextStyle(color: text),
+      bodyMedium: TextStyle(color: text),
+    ),
+    cardTheme: CardThemeData(
+      color: card,
+      elevation: 0,
+      margin: EdgeInsets.zero,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+    ),
+  );
+}
