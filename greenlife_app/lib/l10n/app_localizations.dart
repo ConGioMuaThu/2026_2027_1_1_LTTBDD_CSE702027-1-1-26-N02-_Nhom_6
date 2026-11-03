@@ -60,6 +60,68 @@ class AppLocalizations {
       'completed': 'Hoàn thành',
       'searchTasks': 'Tìm nhiệm vụ theo cây hoặc loại',
       'noTasksFound': 'Không tìm thấy nhiệm vụ nào.',
+      'growthJournal': 'Nhật ký phát triển',
+      'searchNotes': 'Tìm ghi chú hoặc cây',
+      'noNotesFound': 'Không có ghi chú phù hợp.',
+      'newNote': 'Thêm ghi chú mới',
+      'title': 'Tiêu đề',
+      'descriptionGrowth': 'Mô tả phát triển',
+      'tipsTitle': 'Mẹo sống xanh',
+      'searchTips': 'Tìm mẹo chăm sóc',
+      'noTipsFound': 'Không có mẹo nào phù hợp.',
+      'plantSummary': 'Cây hiện có',
+      'taskSummary': 'Nhiệm vụ',
+      'health': 'Sức khỏe',
+      'newTips': 'Mẹo mới',
+      'todayTasks': 'Công việc hôm nay',
+      'noTodayTasks': 'Không có nhiệm vụ nào cần thực hiện.',
+      'favoritePlants': 'Cây yêu thích',
+      'noFavoritePlants': 'Không có cây yêu thích nào phù hợp.',
+      'highlightTips': 'Mẹo chăm sóc nổi bật',
+      'plantLibraryTitle': 'Thư viện cây xanh',
+      'searchPlants': 'Tìm cây theo tên hoặc mô tả',
+      'noPlantsFound': 'Không tìm thấy cây nào phù hợp.',
+      'myGardenTitle': 'Vườn cây của tôi',
+      'addPlantTitle': 'Thêm cây mới',
+      'indoorPlantDefault': 'Trong nhà',
+      'waterNeedDefault': '2-3 lần/tuần',
+      'newPlantDescription': 'Cây mới được thêm vào vườn chăm sóc cá nhân.',
+      'easyCareLevel': 'Dễ',
+      'indirectSunlight': 'Ánh sáng gián tiếp',
+      'careScheduleTitle': 'Lịch chăm sóc',
+      'thisWeekLabel': 'Tuần này',
+      'tasksCount': 'nhiệm vụ',
+      'completedLabel': 'Hoàn thành',
+      'searchTasksHint': 'Tìm nhiệm vụ theo cây hoặc loại',
+      'noTasksFoundDetail': 'Không tìm thấy nhiệm vụ nào.',
+      'teamInfoTitle': 'Thông tin nhóm',
+      'teamSubtitle': 'Trợ lý chăm sóc cây xanh thông minh',
+      'searchMembersHint': 'Tìm thành viên',
+      'noMembersFoundDetail': 'Không tìm thấy thành viên nào.',
+      'tipsTitlePage': 'Mẹo sống xanh',
+      'searchTipsHint': 'Tìm mẹo chăm sóc',
+      'noTipsMatch': 'Không có mẹo nào phù hợp.',
+      'growthJournalTitle': 'Nhật ký phát triển',
+      'searchNotesHint': 'Tìm ghi chú hoặc cây',
+      'noNotesMatch': 'Không có ghi chú phù hợp.',
+      'newNoteTitle': 'Thêm ghi chú mới',
+      'notePlantDefault': 'Trầu bà',
+      'myPlantDefault': 'Cây của tôi',
+      'category': 'Phân loại',
+      'careLevel': 'Mức độ chăm sóc',
+      'water': 'Nước',
+      'sunlight': 'Ánh sáng',
+      'status': 'Trạng thái',
+      'taskType': 'Loại',
+      'dueDate': 'Hạn chót',
+      'plant': 'Cây',
+      'completedStatus': 'Đã hoàn thành',
+      'pendingStatus': 'Chưa hoàn thành',
+      'toggleDone': 'Đánh dấu hoàn thành',
+      'togglePending': 'Đánh dấu chưa xong',
+      'role': 'Vai trò',
+      'assignment': 'Phân công',
+      'notFound': 'Không tìm thấy',
     },
     'en': {
       'greeting': 'Hello,',
@@ -102,6 +164,68 @@ class AppLocalizations {
       'completed': 'Completed',
       'searchTasks': 'Search tasks by plant or type',
       'noTasksFound': 'No tasks found.',
+      'growthJournal': 'Growth journal',
+      'searchNotes': 'Search notes or plants',
+      'noNotesFound': 'No matching notes found.',
+      'newNote': 'Add new note',
+      'title': 'Title',
+      'descriptionGrowth': 'Growth description',
+      'tipsTitle': 'Green living tips',
+      'searchTips': 'Search care tips',
+      'noTipsFound': 'No matching tips found.',
+      'plantSummary': 'Plants',
+      'taskSummary': 'Tasks',
+      'health': 'Health',
+      'newTips': 'New tips',
+      'todayTasks': 'Today’s tasks',
+      'noTodayTasks': 'No tasks are due today.',
+      'favoritePlants': 'Favorite plants',
+      'noFavoritePlants': 'No favorite plants match your search.',
+      'highlightTips': 'Featured care tips',
+      'plantLibraryTitle': 'Plant library',
+      'searchPlants': 'Search plants by name or description',
+      'noPlantsFound': 'No matching plants found.',
+      'myGardenTitle': 'My garden',
+      'addPlantTitle': 'Add new plant',
+      'indoorPlantDefault': 'Indoor',
+      'waterNeedDefault': '2-3 times/week',
+      'newPlantDescription': 'A new plant added to your personal care garden.',
+      'easyCareLevel': 'Easy',
+      'indirectSunlight': 'Indirect sunlight',
+      'careScheduleTitle': 'Care schedule',
+      'thisWeekLabel': 'This week',
+      'tasksCount': 'tasks',
+      'completedLabel': 'Completed',
+      'searchTasksHint': 'Search tasks by plant or type',
+      'noTasksFoundDetail': 'No tasks found.',
+      'teamInfoTitle': 'Team information',
+      'teamSubtitle': 'Smart plant care assistant',
+      'searchMembersHint': 'Search members',
+      'noMembersFoundDetail': 'No members found.',
+      'tipsTitlePage': 'Green living tips',
+      'searchTipsHint': 'Search care tips',
+      'noTipsMatch': 'No matching tips found.',
+      'growthJournalTitle': 'Growth journal',
+      'searchNotesHint': 'Search notes or plants',
+      'noNotesMatch': 'No matching notes found.',
+      'newNoteTitle': 'Add new note',
+      'notePlantDefault': 'My plant',
+      'myPlantDefault': 'My plant',
+      'category': 'Category',
+      'careLevel': 'Care level',
+      'water': 'Water',
+      'sunlight': 'Sunlight',
+      'status': 'Status',
+      'taskType': 'Type',
+      'dueDate': 'Due date',
+      'plant': 'Plant',
+      'completedStatus': 'Completed',
+      'pendingStatus': 'Not completed',
+      'toggleDone': 'Mark as complete',
+      'togglePending': 'Mark as incomplete',
+      'role': 'Role',
+      'assignment': 'Assignment',
+      'notFound': 'Not found',
     },
   };
 
@@ -145,6 +269,67 @@ class AppLocalizations {
   String get completed => _val('completed');
   String get searchTasks => _val('searchTasks');
   String get noTasksFound => _val('noTasksFound');
+  String get growthJournal => _val('growthJournal');
+  String get searchNotes => _val('searchNotes');
+  String get noNotesFound => _val('noNotesFound');
+  String get newNote => _val('newNote');
+  String get title => _val('title');
+  String get descriptionGrowth => _val('descriptionGrowth');
+  String get tipsTitle => _val('tipsTitle');
+  String get searchTips => _val('searchTips');
+  String get noTipsFound => _val('noTipsFound');
+  String get plantSummary => _val('plantSummary');
+  String get taskSummary => _val('taskSummary');
+  String get health => _val('health');
+  String get newTips => _val('newTips');
+  String get todayTasks => _val('todayTasks');
+  String get noTodayTasks => _val('noTodayTasks');
+  String get favoritePlants => _val('favoritePlants');
+  String get noFavoritePlants => _val('noFavoritePlants');
+  String get highlightTips => _val('highlightTips');
+  String get plantLibraryTitle => _val('plantLibraryTitle');
+  String get searchPlants => _val('searchPlants');
+  String get noPlantsFound => _val('noPlantsFound');
+  String get myGardenTitle => _val('myGardenTitle');
+  String get addPlantTitle => _val('addPlantTitle');
+  String get indoorPlantDefault => _val('indoorPlantDefault');
+  String get waterNeedDefault => _val('waterNeedDefault');
+  String get newPlantDescription => _val('newPlantDescription');
+  String get easyCareLevel => _val('easyCareLevel');
+  String get indirectSunlight => _val('indirectSunlight');
+  String get careScheduleTitle => _val('careScheduleTitle');
+  String get thisWeekLabel => _val('thisWeekLabel');
+  String get tasksCount => _val('tasksCount');
+  String get completedLabel => _val('completedLabel');
+  String get searchTasksHint => _val('searchTasksHint');
+  String get noTasksFoundDetail => _val('noTasksFoundDetail');
+  String get teamInfoTitle => _val('teamInfoTitle');
+  String get teamSubtitle => _val('teamSubtitle');
+  String get searchMembersHint => _val('searchMembersHint');
+  String get noMembersFoundDetail => _val('noMembersFoundDetail');
+  String get tipsTitlePage => _val('tipsTitlePage');
+  String get searchTipsHint => _val('searchTipsHint');
+  String get noTipsMatch => _val('noTipsMatch');
+  String get growthJournalTitle => _val('growthJournalTitle');
+  String get searchNotesHint => _val('searchNotesHint');
+  String get noNotesMatch => _val('noNotesMatch');
+  String get newNoteTitle => _val('newNoteTitle');
+  String get notePlantDefault => _val('notePlantDefault');
+  String get myPlantDefault => _val('myPlantDefault');
+  String get category => _val('category');
+  String get careLevel => _val('careLevel');
+  String get water => _val('water');
+  String get sunlight => _val('sunlight');
+  String get status => _val('status');
+  String get taskType => _val('taskType');
+  String get dueDate => _val('dueDate');
+  String get plant => _val('plant');
+  String get completedStatus => _val('completedStatus');
+  String get pendingStatus => _val('pendingStatus');
+  String get toggleDone => _val('toggleDone');
+  String get togglePending => _val('togglePending');
+  String get role => _val('role');
+  String get assignment => _val('assignment');
 
   String _val(String key) => _values[locale.languageCode]?[key] ?? _values['vi']![key]!;
 }
