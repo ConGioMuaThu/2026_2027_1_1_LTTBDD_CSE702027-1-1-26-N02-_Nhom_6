@@ -37,6 +37,29 @@ class AppLocalizations {
       'journal': 'Nhật ký',
       'tips': 'Mẹo',
       'about': 'Giới thiệu',
+      'teamInfo': 'Thông tin nhóm',
+      'teamDescription': 'Trợ lý chăm sóc cây xanh thông minh',
+      'searchMembers': 'Tìm thành viên',
+      'noMembersFound': 'Không tìm thấy thành viên nào.',
+      'treeLibrary': 'Thư viện cây xanh',
+      'searchTrees': 'Tìm cây theo tên hoặc mô tả',
+      'noTreesFound': 'Không tìm thấy cây nào phù hợp.',
+      'myGarden': 'Vườn cây của tôi',
+      'addPlant': 'Thêm cây mới',
+      'cancel': 'Hủy',
+      'save': 'Lưu',
+      'add': 'Thêm',
+      'plantName': 'Tên cây',
+      'plantType': 'Loại cây',
+      'waterNeed': 'Nhu cầu nước',
+      'searchGarden': 'Tìm cây trong vườn',
+      'noGardenMatch': 'Không có cây nào phù hợp.',
+      'careSchedule': 'Lịch chăm sóc',
+      'thisWeek': 'Tuần này',
+      'tasks': 'nhiệm vụ',
+      'completed': 'Hoàn thành',
+      'searchTasks': 'Tìm nhiệm vụ theo cây hoặc loại',
+      'noTasksFound': 'Không tìm thấy nhiệm vụ nào.',
     },
     'en': {
       'greeting': 'Hello,',
@@ -56,6 +79,29 @@ class AppLocalizations {
       'journal': 'Journal',
       'tips': 'Tips',
       'about': 'About',
+      'teamInfo': 'Team information',
+      'teamDescription': 'Smart plant care assistant',
+      'searchMembers': 'Search members',
+      'noMembersFound': 'No members found.',
+      'treeLibrary': 'Plant library',
+      'searchTrees': 'Search plants by name or description',
+      'noTreesFound': 'No matching plants found.',
+      'myGarden': 'My garden',
+      'addPlant': 'Add new plant',
+      'cancel': 'Cancel',
+      'save': 'Save',
+      'add': 'Add',
+      'plantName': 'Plant name',
+      'plantType': 'Plant type',
+      'waterNeed': 'Water need',
+      'searchGarden': 'Search plants in the garden',
+      'noGardenMatch': 'No plants match your search.',
+      'careSchedule': 'Care schedule',
+      'thisWeek': 'This week',
+      'tasks': 'tasks',
+      'completed': 'Completed',
+      'searchTasks': 'Search tasks by plant or type',
+      'noTasksFound': 'No tasks found.',
     },
   };
 
@@ -76,6 +122,29 @@ class AppLocalizations {
   String get journal => _val('journal');
   String get tips => _val('tips');
   String get about => _val('about');
+  String get teamInfo => _val('teamInfo');
+  String get teamDescription => _val('teamDescription');
+  String get searchMembers => _val('searchMembers');
+  String get noMembersFound => _val('noMembersFound');
+  String get treeLibrary => _val('treeLibrary');
+  String get searchTrees => _val('searchTrees');
+  String get noTreesFound => _val('noTreesFound');
+  String get myGarden => _val('myGarden');
+  String get addPlant => _val('addPlant');
+  String get cancel => _val('cancel');
+  String get save => _val('save');
+  String get add => _val('add');
+  String get plantName => _val('plantName');
+  String get plantType => _val('plantType');
+  String get waterNeed => _val('waterNeed');
+  String get searchGarden => _val('searchGarden');
+  String get noGardenMatch => _val('noGardenMatch');
+  String get careSchedule => _val('careSchedule');
+  String get thisWeek => _val('thisWeek');
+  String get tasksLabel => _val('tasks');
+  String get completed => _val('completed');
+  String get searchTasks => _val('searchTasks');
+  String get noTasksFound => _val('noTasksFound');
 
   String _val(String key) => _values[locale.languageCode]?[key] ?? _values['vi']![key]!;
 }
