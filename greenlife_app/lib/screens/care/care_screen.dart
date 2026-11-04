@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:greenlife_app/l10n/app_localizations.dart';
 import 'package:greenlife_app/models/care_task.dart';
+import 'package:greenlife_app/widgets/detail_sheet.dart';
 
 class CareScreen extends StatefulWidget {
   final List<CareTask> tasks;
@@ -17,11 +18,33 @@ class CareScreen extends StatefulWidget {
 }
 
 class _CareScreenState extends State<CareScreen> {
+  final TextEditingController _searchController = TextEditingController();
+  String? _selectedTaskId;
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  List<CareTask> get _filteredTasks {
+    final query = _searchController.text.trim().toLowerCase();
+    if (query.isEmpty) {
+      return widget.tasks;
+    }
+    return widget.tasks.where((task) {
+      return task.title.toLowerCase().contains(query) ||
+          task.plantName.toLowerCase().contains(query) ||
+          task.type.toLowerCase().contains(query);
+    }).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     final strings = AppLocalizations.of(context);
     final totalTasks = widget.tasks.length;
     final completedTasks = widget.tasks.where((task) => task.isCompleted).length;
+    final filteredTasks = _filteredTasks;
 
     return SafeArea(
       child: Padding(
@@ -93,6 +116,8 @@ class _CareScreenState extends State<CareScreen> {
             ),
             const SizedBox(height: 14),
             TextField(
+              controller: _searchController,
+              onChanged: (_) => setState(() {}),
               decoration: InputDecoration(
                 hintText: strings.searchTasksHint,
                 prefixIcon: const Icon(Icons.search),
@@ -107,67 +132,97 @@ class _CareScreenState extends State<CareScreen> {
             ),
             const SizedBox(height: 16),
             Expanded(
-              child: ListView.separated(
-                itemCount: widget.tasks.length,
-                separatorBuilder: (_, _) => const SizedBox(height: 12),
-                itemBuilder: (context, index) {
-                  final task = widget.tasks[index];
-                  final color = task.isCompleted
-                      ? const Color(0xFF74B97D)
-                      : const Color(0xFFEAB349);
+              child: filteredTasks.isEmpty
+                  ? Center(
+                      child: Text(strings.noTasksFoundDetail),
+                    )
+                  : ListView.separated(
+                      itemCount: filteredTasks.length,
+                      separatorBuilder: (_, _) => const SizedBox(height: 12),
+                      itemBuilder: (context, index) {
+                        final task = filteredTasks[index];
+                        final color = task.isCompleted
+                            ? const Color(0xFF74B97D)
+                            : const Color(0xFFEAB349);
+                        final isSelected = _selectedTaskId == task.id;
 
-                  return Container(
-                    padding: const EdgeInsets.all(14),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(18),
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 42,
-                          height: 42,
-                          decoration: BoxDecoration(
-                            color: color.withAlpha(28),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Icon(
-                            task.isCompleted ? Icons.check : Icons.notifications_active,
-                            color: color,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                task.title,
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w700,
+                        return Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () {
+                              setState(() => _selectedTaskId = task.id);
+                              showTaskDetailSheet(
+                                context,
+                                task,
+                                onToggle: () {
+                                  widget.onToggleTask(task.id);
+                                  Navigator.pop(context);
+                                  setState(() {});
+                                },
+                              );
+                            },
+                            borderRadius: BorderRadius.circular(18),
+                            child: Container(
+                              padding: const EdgeInsets.all(14),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(18),
+                                border: Border.all(
+                                  color: isSelected ? const Color(0xFF2F6A4F) : Colors.transparent,
+                                  width: 2,
                                 ),
                               ),
-                              const SizedBox(height: 4),
-                              Text(
-                                '${task.plantName} • ${task.type}',
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  color: Color(0xFF5F6F62),
-                                ),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 42,
+                                    height: 42,
+                                    decoration: BoxDecoration(
+                                      color: color.withAlpha(28),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Icon(
+                                      task.isCompleted ? Icons.check : Icons.notifications_active,
+                                      color: color,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          task.title,
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          '${task.plantName} • ${task.type}',
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                            color: Color(0xFF5F6F62),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Checkbox(
+                                    value: task.isCompleted,
+                                    onChanged: (_) {
+                                      widget.onToggleTask(task.id);
+                                      setState(() {});
+                                    },
+                                  ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
-                        ),
-                        Checkbox(
-                          value: task.isCompleted,
-                          onChanged: null,
-                        ),
-                      ],
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
             ),
           ],
         ),
