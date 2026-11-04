@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:greenlife_app/data/sample_data.dart';
 import 'package:greenlife_app/l10n/app_localizations.dart';
+import 'package:greenlife_app/models/care_task.dart';
 
 const Color _primary = Color(0xFF2F6A4F);
 const Color _background = Color(0xFFF5F8F2);
@@ -83,9 +84,13 @@ class AddTaskScreen extends StatefulWidget {
 }
 
 class _AddTaskScreenState extends State<AddTaskScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _titleController = TextEditingController();
+
   late List<String> _plantOptions;
   late DateTime _date;
   late TimeOfDay _time;
+  late String _autoTitle;
 
   String _type = kTaskTypes.first.id;
   String? _plantName;
@@ -113,6 +118,94 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     final start = DateTime.now().add(const Duration(hours: 1));
     _date = DateTime(start.year, start.month, start.day);
     _time = TimeOfDay(hour: start.hour, minute: 0);
+
+    _autoTitle = taskTypeInfoOf(_type).label(_isEnglish);
+    _titleController.text = _autoTitle;
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    super.dispose();
+  }
+
+  void _onTypeSelected(TaskTypeInfo info) {
+    setState(() {
+      final current = _titleController.text.trim();
+      if (current.isEmpty || current == _autoTitle) {
+        _autoTitle = info.label(_isEnglish);
+        _titleController.text = _autoTitle;
+      }
+      _type = info.id;
+    });
+  }
+
+  Future<void> _pickDate() async {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _date.isBefore(today) ? today : _date,
+      firstDate: today,
+      lastDate: today.add(const Duration(days: 365)),
+    );
+
+    if (picked != null && mounted) {
+      setState(() => _date = picked);
+    }
+  }
+
+  Future<void> _pickTime() async {
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: _time,
+      builder: (ctx, child) => MediaQuery(
+        data: MediaQuery.of(ctx).copyWith(alwaysUse24HourFormat: true),
+        child: child!,
+      ),
+    );
+
+    if (picked != null && mounted) {
+      setState(() => _time = picked);
+    }
+  }
+
+  void _submit() {
+    FocusScope.of(context).unfocus();
+
+    if (!_formKey.currentState!.validate()) return;
+
+    final dueAt = DateTime(
+      _date.year,
+      _date.month,
+      _date.day,
+      _time.hour,
+      _time.minute,
+    );
+
+    if (dueAt.isBefore(DateTime.now())) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            _isEnglish
+                ? 'The due time must be in the future.'
+                : 'Thời gian thực hiện phải sau thời điểm hiện tại.',
+          ),
+        ),
+      );
+      return;
+    }
+
+    final task = CareTask(
+      id: 'task-${DateTime.now().millisecondsSinceEpoch}',
+      title: _titleController.text.trim(),
+      plantName: _plantName!,
+      type: _type,
+      dueDate: _formatDueDate(dueAt, _isEnglish),
+    );
+
+    Navigator.pop(context, task);
   }
 
   @override
@@ -137,101 +230,123 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         ),
       ),
       body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
-          children: [
-            _SectionLabel(strings.taskType),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                for (final info in kTaskTypes) _buildTypeChip(info, isEnglish),
-              ],
-            ),
-            const SizedBox(height: 20),
-            _SectionLabel(strings.title),
-            TextFormField(
-              maxLength: 40,
-              decoration: _inputDecoration(
-                isEnglish ? 'Task title' : 'Tên nhiệm vụ',
-                Icons.edit_outlined,
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+            children: [
+              _SectionLabel(strings.taskType),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  for (final info in kTaskTypes) _buildTypeChip(info, isEnglish),
+                ],
               ),
-            ),
-            const SizedBox(height: 12),
-            _SectionLabel(strings.plant),
-            DropdownButtonFormField<String>(
-              initialValue: _plantName,
-              isExpanded: true,
-              decoration: _inputDecoration(
-                strings.plant,
-                Icons.local_florist_outlined,
+              const SizedBox(height: 20),
+              _SectionLabel(strings.title),
+              TextFormField(
+                controller: _titleController,
+                textInputAction: TextInputAction.done,
+                maxLength: 40,
+                decoration: _inputDecoration(
+                  isEnglish ? 'Task title' : 'Tên nhiệm vụ',
+                  Icons.edit_outlined,
+                ),
+                validator: (value) {
+                  final text = value?.trim() ?? '';
+                  if (text.isEmpty) {
+                    return isEnglish
+                        ? 'Please enter a title'
+                        : 'Vui lòng nhập tiêu đề';
+                  }
+                  if (text.length < 3) {
+                    return isEnglish
+                        ? 'Title must be at least 3 characters'
+                        : 'Tiêu đề tối thiểu 3 ký tự';
+                  }
+                  return null;
+                },
               ),
-              items: [
-                for (final name in _plantOptions)
-                  DropdownMenuItem(value: name, child: Text(name)),
-              ],
-              onChanged: (value) => setState(() => _plantName = value),
-            ),
-            const SizedBox(height: 20),
-            _SectionLabel(strings.dueDate),
-            Row(
-              children: [
-                Expanded(
-                  child: _PickerField(
-                    label: isEnglish ? 'Date' : 'Ngày',
-                    value: _formatDate(_date),
-                    icon: Icons.calendar_today_outlined,
-                    onTap: () {},
-                  ),
+              const SizedBox(height: 12),
+              _SectionLabel(strings.plant),
+              DropdownButtonFormField<String>(
+                initialValue: _plantName,
+                isExpanded: true,
+                decoration: _inputDecoration(
+                  strings.plant,
+                  Icons.local_florist_outlined,
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _PickerField(
-                    label: isEnglish ? 'Time' : 'Giờ',
-                    value: _formatTime(_time),
-                    icon: Icons.access_time,
-                    onTap: () {},
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 28),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () => Navigator.pop(context),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: _primary,
-                      side: const BorderSide(color: _primary),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                    ),
-                    child: Text(strings.cancel),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  flex: 2,
-                  child: FilledButton.icon(
-                    onPressed: () {},
-                    icon: const Icon(Icons.check),
-                    label: Text(strings.save),
-                    style: FilledButton.styleFrom(
-                      backgroundColor: _primary,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
+                items: [
+                  for (final name in _plantOptions)
+                    DropdownMenuItem(value: name, child: Text(name)),
+                ],
+                onChanged: (value) => setState(() => _plantName = value),
+                validator: (value) => value == null
+                    ? (isEnglish ? 'Please choose a plant' : 'Vui lòng chọn cây')
+                    : null,
+              ),
+              const SizedBox(height: 20),
+              _SectionLabel(strings.dueDate),
+              Row(
+                children: [
+                  Expanded(
+                    child: _PickerField(
+                      label: isEnglish ? 'Date' : 'Ngày',
+                      value: _formatDate(_date),
+                      icon: Icons.calendar_today_outlined,
+                      onTap: _pickDate,
                     ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _PickerField(
+                      label: isEnglish ? 'Time' : 'Giờ',
+                      value: _formatTime(_time),
+                      icon: Icons.access_time,
+                      onTap: _pickTime,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 28),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: _primary,
+                        side: const BorderSide(color: _primary),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      ),
+                      child: Text(strings.cancel),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    flex: 2,
+                    child: FilledButton.icon(
+                      onPressed: _submit,
+                      icon: const Icon(Icons.check),
+                      label: Text(strings.save),
+                      style: FilledButton.styleFrom(
+                        backgroundColor: _primary,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -255,7 +370,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         color: selected ? Colors.white : _textColor,
         fontWeight: FontWeight.w600,
       ),
-      onSelected: (_) => setState(() => _type = info.id),
+      onSelected: (_) => _onTypeSelected(info),
     );
   }
 }
@@ -339,3 +454,39 @@ String _two(int n) => n.toString().padLeft(2, '0');
 String _formatDate(DateTime d) => '${_two(d.day)}/${_two(d.month)}/${d.year}';
 
 String _formatTime(TimeOfDay t) => '${_two(t.hour)}:${_two(t.minute)}';
+
+String _formatDueDate(DateTime dueAt, bool isEnglish) {
+  final now = DateTime.now();
+  final today = DateTime.utc(now.year, now.month, now.day);
+  final dueDay = DateTime.utc(dueAt.year, dueAt.month, dueAt.day);
+  final diffDays = dueDay.difference(today).inDays;
+  final time = '${_two(dueAt.hour)}:${_two(dueAt.minute)}';
+
+  if (diffDays == 0) return '${isEnglish ? 'Today' : 'Hôm nay'}, $time';
+  if (diffDays == 1) return '${isEnglish ? 'Tomorrow' : 'Ngày mai'}, $time';
+
+  if (diffDays < 7) {
+    const weekdaysVi = [
+      'Thứ Hai',
+      'Thứ Ba',
+      'Thứ Tư',
+      'Thứ Năm',
+      'Thứ Sáu',
+      'Thứ Bảy',
+      'Chủ Nhật',
+    ];
+    const weekdaysEn = [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday',
+    ];
+    final names = isEnglish ? weekdaysEn : weekdaysVi;
+    return '${names[dueAt.weekday - 1]}, $time';
+  }
+
+  return '${_formatDate(dueAt)}, $time';
+}
