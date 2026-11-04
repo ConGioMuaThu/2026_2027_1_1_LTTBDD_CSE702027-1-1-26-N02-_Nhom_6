@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:greenlife_app/data/sample_data.dart';
 import 'package:greenlife_app/l10n/app_localizations.dart';
+import 'package:greenlife_app/widgets/detail_sheet.dart';
 
 class DevelopersScreen extends StatefulWidget {
   const DevelopersScreen({super.key});
@@ -10,10 +11,31 @@ class DevelopersScreen extends StatefulWidget {
 }
 
 class _DevelopersScreenState extends State<DevelopersScreen> {
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  List<Map<String, String>> get _filteredMembers {
+    final query = _searchController.text.trim().toLowerCase();
+    final source = projectTeamFor(Localizations.localeOf(context));
+    if (query.isEmpty) {
+      return source;
+    }
+    return source.where((member) {
+      return (member['name'] ?? '').toLowerCase().contains(query) ||
+          (member['role'] ?? '').toLowerCase().contains(query) ||
+          (member['focus'] ?? '').toLowerCase().contains(query);
+    }).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     final strings = AppLocalizations.of(context);
-    final members = projectTeamFor(Localizations.localeOf(context));
+    final members = _filteredMembers;
 
     return SafeArea(
       child: Padding(
@@ -54,6 +76,8 @@ class _DevelopersScreenState extends State<DevelopersScreen> {
             ),
             const SizedBox(height: 16),
             TextField(
+              controller: _searchController,
+              onChanged: (_) => setState(() {}),
               decoration: InputDecoration(
                 hintText: strings.searchMembersHint,
                 prefixIcon: const Icon(Icons.search),
@@ -68,66 +92,75 @@ class _DevelopersScreenState extends State<DevelopersScreen> {
             ),
             const SizedBox(height: 16),
             Expanded(
-              child: ListView.separated(
-                itemCount: members.length,
-                separatorBuilder: (_, _) => const SizedBox(height: 12),
-                itemBuilder: (context, index) {
-                  final member = members[index];
-                  return Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(18),
-                    ),
-                    child: Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 26,
-                          backgroundColor: const Color(0xFFE2F4E4),
-                          child: Text(
-                            member['name']?.substring(0, 1) ?? 'A',
-                            style: const TextStyle(
-                              color: Color(0xFF2F6A4F),
-                              fontWeight: FontWeight.w800,
+              child: members.isEmpty
+                  ? Center(child: Text(strings.noMembersFoundDetail))
+                  : ListView.separated(
+                      itemCount: members.length,
+                      separatorBuilder: (_, _) => const SizedBox(height: 12),
+                      itemBuilder: (context, index) {
+                        final member = members[index];
+                        return Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () => showMemberDetailSheet(context, member),
+                            borderRadius: BorderRadius.circular(18),
+                            child: Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(18),
+                              ),
+                              child: Row(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 26,
+                                    backgroundColor: const Color(0xFFE2F4E4),
+                                    child: Text(
+                                      member['name']?.substring(0, 1) ?? 'A',
+                                      style: const TextStyle(
+                                        color: Color(0xFF2F6A4F),
+                                        fontWeight: FontWeight.w800,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          member['name'] ?? '',
+                                          style: const TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          member['role'] ?? '',
+                                          style: const TextStyle(
+                                            color: Color(0xFF5F6F62),
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          member['focus'] ?? '',
+                                          style: const TextStyle(
+                                            color: Color(0xFF697B6E),
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                member['name'] ?? '',
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                member['role'] ?? '',
-                                style: const TextStyle(
-                                  color: Color(0xFF5F6F62),
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                member['focus'] ?? '',
-                                style: const TextStyle(
-                                  color: Color(0xFF697B6E),
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
             ),
           ],
         ),
