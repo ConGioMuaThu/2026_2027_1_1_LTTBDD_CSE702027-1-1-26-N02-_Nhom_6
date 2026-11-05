@@ -1,27 +1,61 @@
 import 'package:flutter/material.dart';
 import 'package:greenlife_app/l10n/app_localizations.dart';
+import 'package:greenlife_app/models/care_task.dart';
 import 'package:greenlife_app/models/plant.dart';
+import 'package:greenlife_app/screens/care/add_task_screen.dart';
 
 const Color _primary = Color(0xFF2F6A4F);
 const Color _soft = Color(0xFFE2F4E4);
 const Color _background = Color(0xFFF5F8F2);
 const Color _textColor = Color(0xFF1D2A1F);
 const Color _muted = Color(0xFF5F6F62);
+const Color _danger = Color(0xFFE46D5F);
 
 class PlantDetailScreen extends StatefulWidget {
   const PlantDetailScreen({
     super.key,
     required this.plant,
+    this.onToggleFavorite,
+    this.onAddTask,
   });
 
   final Plant plant;
+  final VoidCallback? onToggleFavorite;
+  final void Function(CareTask task)? onAddTask;
 
   @override
   State<PlantDetailScreen> createState() => _PlantDetailScreenState();
 }
 
 class _PlantDetailScreenState extends State<PlantDetailScreen> {
+  late bool _isFavorite = widget.plant.isFavorite;
+
   bool get _isEnglish => Localizations.localeOf(context).languageCode == 'en';
+
+  void _toggleFavorite() {
+    setState(() => _isFavorite = !_isFavorite);
+    widget.onToggleFavorite?.call();
+  }
+
+  Future<void> _openAddTask() async {
+    final task = await Navigator.push<CareTask>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => AddTaskScreen(initialPlantName: widget.plant.name),
+      ),
+    );
+
+    if (task == null || !mounted) return;
+
+    widget.onAddTask?.call(task);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          _isEnglish ? 'Care task added' : 'Đã thêm nhiệm vụ chăm sóc',
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +76,15 @@ class _PlantDetailScreenState extends State<PlantDetailScreen> {
               icon: Icons.arrow_back,
               onPressed: () => Navigator.pop(context),
             ),
+            actions: [
+              if (widget.onToggleFavorite != null)
+                _CircleButton(
+                  icon: _isFavorite ? Icons.favorite : Icons.favorite_border,
+                  iconColor: _isFavorite ? _danger : _textColor,
+                  onPressed: _toggleFavorite,
+                ),
+              const SizedBox(width: 8),
+            ],
             flexibleSpace: FlexibleSpaceBar(
               background: _PlantImage(plant: plant),
             ),
@@ -149,6 +192,28 @@ class _PlantDetailScreenState extends State<PlantDetailScreen> {
           ),
         ],
       ),
+      bottomNavigationBar: widget.onAddTask == null
+          ? null
+          : SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
+                child: FilledButton.icon(
+                  onPressed: _openAddTask,
+                  icon: const Icon(Icons.event_available_outlined),
+                  label: Text(
+                    isEnglish ? 'Add care task' : 'Thêm nhiệm vụ chăm sóc',
+                  ),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: _primary,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                ),
+              ),
+            ),
     );
   }
 }
