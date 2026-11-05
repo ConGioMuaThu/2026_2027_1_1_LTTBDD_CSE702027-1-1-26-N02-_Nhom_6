@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:greenlife_app/l10n/app_localizations.dart';
 import 'package:greenlife_app/models/care_task.dart';
-import 'package:greenlife_app/widgets/detail_sheet.dart';
+import 'package:greenlife_app/screens/care/add_task_screen.dart';
+import 'package:greenlife_app/screens/care/task_detail_screen.dart';
 
 class CareScreen extends StatefulWidget {
   final List<CareTask> tasks;
   final void Function(String taskId) onToggleTask;
+  final void Function(CareTask task)? onAddTask;
 
   const CareScreen({
     super.key,
     required this.tasks,
     required this.onToggleTask,
+    this.onAddTask,
   });
 
   @override
@@ -39,6 +42,16 @@ class _CareScreenState extends State<CareScreen> {
     }).toList();
   }
 
+  Future<void> _openAddTask() async {
+    final newTask = await Navigator.push<CareTask>(
+      context,
+      MaterialPageRoute(builder: (_) => const AddTaskScreen()),
+    );
+    if (newTask != null) {
+      widget.onAddTask?.call(newTask);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final strings = AppLocalizations.of(context);
@@ -52,9 +65,26 @@ class _CareScreenState extends State<CareScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              strings.careScheduleTitle,
-              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w800),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    strings.careScheduleTitle,
+                    style: const TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ),
+                if (widget.onAddTask != null)
+                  IconButton.filled(
+                    style: IconButton.styleFrom(
+                      backgroundColor: const Color(0xFF2F6A4F),
+                    ),
+                    icon: const Icon(Icons.add),
+                    onPressed: _openAddTask,
+                  ),
+              ],
             ),
             const SizedBox(height: 12),
             Row(
@@ -151,14 +181,17 @@ class _CareScreenState extends State<CareScreen> {
                           child: InkWell(
                             onTap: () {
                               setState(() => _selectedTaskId = task.id);
-                              showTaskDetailSheet(
+                              Navigator.push(
                                 context,
-                                task,
-                                onToggle: () {
-                                  widget.onToggleTask(task.id);
-                                  Navigator.pop(context);
-                                  setState(() {});
-                                },
+                                MaterialPageRoute(
+                                  builder: (_) => TaskDetailScreen(
+                                    task: task,
+                                    onToggle: () {
+                                      widget.onToggleTask(task.id);
+                                      setState(() {});
+                                    },
+                                  ),
+                                ),
                               );
                             },
                             borderRadius: BorderRadius.circular(18),
