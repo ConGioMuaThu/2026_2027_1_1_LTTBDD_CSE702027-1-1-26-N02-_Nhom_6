@@ -128,9 +128,10 @@ class _PlantDetailScreenState extends State<PlantDetailScreen> {
                     side: BorderSide.none,
                   ),
                   const SizedBox(height: 16),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
+                  IntrinsicHeight(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
                       Expanded(
                         child: _InfoTile(
                           icon: Icons.spa_outlined,
@@ -154,7 +155,8 @@ class _PlantDetailScreenState extends State<PlantDetailScreen> {
                           value: plant.sunlight,
                         ),
                       ),
-                    ],
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 20),
                   _SectionTitle(isEnglish ? 'Description' : 'Mô tả'),
