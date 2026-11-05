@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:greenlife_app/data/sample_data.dart';
 import 'package:greenlife_app/l10n/app_localizations.dart';
 import 'package:greenlife_app/models/care_task.dart';
+import 'package:greenlife_app/models/plant.dart';
 import 'package:greenlife_app/screens/care/care_screen.dart';
 import 'package:greenlife_app/screens/developers/developers_screen.dart';
 import 'package:greenlife_app/screens/plant_library/plant_library_screen.dart';
@@ -23,21 +24,84 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _index = 0;
-  late final List<CareTask> _tasks = sampleTasksFor(widget.locale);
+  late List<CareTask> _tasks = sampleTasksFor(widget.locale);
+  late List<Plant> _plants = samplePlantsFor(widget.locale);
+
+  @override
+  void didUpdateWidget(covariant MainScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.locale.languageCode != widget.locale.languageCode) {
+      _reloadForLocale();
+    }
+  }
+
+  void _reloadForLocale() {
+    final freshTasks = {
+      for (final task in sampleTasksFor(widget.locale)) task.id: task,
+    };
+    final freshPlants = {
+      for (final plant in samplePlantsFor(widget.locale)) plant.id: plant,
+    };
+
+    _tasks = [
+      for (final task in _tasks)
+        freshTasks.containsKey(task.id)
+            ? _taskWithCompleted(freshTasks[task.id]!, task.isCompleted)
+            : task,
+    ];
+    _plants = [
+      for (final plant in _plants)
+        freshPlants.containsKey(plant.id)
+            ? _plantWithFavorite(freshPlants[plant.id]!, plant.isFavorite)
+            : plant,
+    ];
+  }
+
+  CareTask _taskWithCompleted(CareTask t, bool isCompleted) {
+    return CareTask(
+      id: t.id,
+      title: t.title,
+      plantName: t.plantName,
+      type: t.type,
+      dueDate: t.dueDate,
+      isCompleted: isCompleted,
+    );
+  }
+
+  Plant _plantWithFavorite(Plant p, bool isFavorite) {
+    return Plant(
+      id: p.id,
+      name: p.name,
+      scientificName: p.scientificName,
+      category: p.category,
+      description: p.description,
+      careLevel: p.careLevel,
+      waterNeed: p.waterNeed,
+      sunlight: p.sunlight,
+      imageAsset: p.imageAsset,
+      imageUrl: p.imageUrl,
+      isFavorite: isFavorite,
+      tags: p.tags,
+    );
+  }
 
   void _toggleTask(String id) {
     setState(() {
       final i = _tasks.indexWhere((t) => t.id == id);
       if (i == -1) return;
-      final t = _tasks[i];
-      _tasks[i] = CareTask(
-        id: t.id,
-        title: t.title,
-        plantName: t.plantName,
-        type: t.type,
-        dueDate: t.dueDate,
-        isCompleted: !t.isCompleted,
-      );
+      _tasks[i] = _taskWithCompleted(_tasks[i], !_tasks[i].isCompleted);
+    });
+  }
+
+  void _addTask(CareTask task) {
+    setState(() => _tasks.insert(0, task));
+  }
+
+  void _toggleFavorite(String id) {
+    setState(() {
+      final i = _plants.indexWhere((p) => p.id == id);
+      if (i == -1) return;
+      _plants[i] = _plantWithFavorite(_plants[i], !_plants[i].isFavorite);
     });
   }
 
@@ -46,11 +110,47 @@ class _MainScreenState extends State<MainScreen> {
     final strings = AppLocalizations.of(context);
 
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        title: Text(
+          strings.appName,
+          style: const TextStyle(fontWeight: FontWeight.w800),
+        ),
+        actions: [
+          PopupMenuButton<Locale>(
+            tooltip: strings.language,
+            icon: const Icon(Icons.language),
+            onSelected: widget.onLocaleChanged,
+            itemBuilder: (context) => [
+              for (final locale in AppLocalizations.supportedLocales)
+                PopupMenuItem<Locale>(
+                  value: locale,
+                  child: Text(
+                    locale.languageCode == 'vi'
+                        ? strings.vietnamese
+                        : strings.english,
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(width: 8),
+        ],
+      ),
       body: IndexedStack(
         index: _index,
         children: [
-          CareScreen(tasks: _tasks, onToggleTask: _toggleTask),
-          const PlantLibraryScreen(),
+          CareScreen(
+            tasks: _tasks,
+            onToggleTask: _toggleTask,
+            onAddTask: _addTask,
+          ),
+          PlantLibraryScreen(
+            plants: _plants,
+            onToggleFavorite: _toggleFavorite,
+            onAddTask: _addTask,
+          ),
           const TipsScreen(),
           const DevelopersScreen(),
         ],
@@ -79,4 +179,4 @@ class _MainScreenState extends State<MainScreen> {
       ),
     );
   }
-}
+} 
