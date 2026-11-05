@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:greenlife_app/data/sample_data.dart';
 import 'package:greenlife_app/l10n/app_localizations.dart';
+import 'package:greenlife_app/models/care_task.dart';
 import 'package:greenlife_app/models/plant.dart';
 import 'package:greenlife_app/screens/plant_library/plant_detail_screen.dart';
 import 'package:greenlife_app/widgets/plant_card.dart';
 
 class PlantLibraryScreen extends StatefulWidget {
   final List<Plant> plants;
+  final void Function(String plantId)? onToggleFavorite;
+  final void Function(CareTask task)? onAddTask;
 
   const PlantLibraryScreen({
     super.key,
     this.plants = const [],
+    this.onToggleFavorite,
+    this.onAddTask,
   });
 
   @override
@@ -153,7 +158,13 @@ class _PlantLibraryScreenState extends State<PlantLibraryScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => PlantDetailScreen(plant: plant),
+                                builder: (_) => PlantDetailScreen(
+                                  plant: plant,
+                                  onToggleFavorite: widget.onToggleFavorite == null
+                                      ? null
+                                      : () => widget.onToggleFavorite!(plant.id),
+                                  onAddTask: widget.onAddTask,
+                                ),
                               ),
                             );
                           },
