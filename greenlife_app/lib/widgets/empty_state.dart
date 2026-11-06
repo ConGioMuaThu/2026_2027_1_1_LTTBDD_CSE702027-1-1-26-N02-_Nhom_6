@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 
 class EmptyState extends StatelessWidget {
   final String message;
+  final String? title;
   final IconData icon;
 
   const EmptyState({
     super.key,
     required this.message,
+    this.title,
     this.icon = Icons.search_off,
   });
 
@@ -27,6 +29,17 @@ class EmptyState extends StatelessWidget {
               child: Icon(icon, size: 40, color: const Color(0xFF2F6A4F)),
             ),
             const SizedBox(height: 16),
+            if (title != null) ...[
+              Text(
+                title!,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 6),
+            ],
             Text(
               message,
               textAlign: TextAlign.center,
