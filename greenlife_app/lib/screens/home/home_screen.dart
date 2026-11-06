@@ -5,8 +5,11 @@ import 'package:greenlife_app/l10n/app_localizations.dart';
 import 'package:greenlife_app/models/care_task.dart';
 import 'package:greenlife_app/models/growth_note.dart';
 import 'package:greenlife_app/models/plant.dart';
+import 'package:greenlife_app/screens/care/add_task_screen.dart' show taskTypeInfoOf;
 import 'package:greenlife_app/widgets/detail_sheet.dart';
+import 'package:greenlife_app/widgets/growth_note_card.dart';
 import 'package:greenlife_app/widgets/plant_card.dart';
+import 'package:greenlife_app/widgets/search_bar.dart';
 import 'package:greenlife_app/widgets/stat_card.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -15,6 +18,8 @@ class HomeScreen extends StatefulWidget {
   final List<GrowthNote> notes;
   final Locale locale;
   final ValueChanged<Locale>? onLocaleChanged;
+  final void Function(String taskId)? onToggleTask;
+  final VoidCallback? onViewCareSchedule;
 
   const HomeScreen({
     super.key,
@@ -23,6 +28,8 @@ class HomeScreen extends StatefulWidget {
     this.notes = const [],
     this.locale = const Locale('vi'),
     this.onLocaleChanged,
+    this.onToggleTask,
+    this.onViewCareSchedule,
   });
 
   @override
@@ -36,6 +43,13 @@ class _HomeScreenState extends State<HomeScreen> {
   void dispose() {
     _searchController.dispose();
     super.dispose();
+  }
+
+  String get _gardenHealth {
+    final total = widget.tasks.length;
+    if (total == 0) return '100%';
+    final done = widget.tasks.where((task) => task.isCompleted).length;
+    return '${(done * 100 / total).round()}%';
   }
 
   List<Plant> get _filteredFavoritePlants {
@@ -146,20 +160,10 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
             const SizedBox(height: 16),
-            TextField(
+            CustomSearchBar(
               controller: _searchController,
+              hintText: strings.searchHint,
               onChanged: (_) => setState(() {}),
-              decoration: InputDecoration(
-                hintText: strings.searchHint,
-                prefixIcon: const Icon(Icons.search),
-                filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16),
-                  borderSide: BorderSide.none,
-                ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 14),
-              ),
             ),
             const SizedBox(height: 22),
             Container(
@@ -197,7 +201,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         const SizedBox(height: 12),
                         ElevatedButton(
-                          onPressed: () {},
+                          onPressed: widget.onViewCareSchedule,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
                             foregroundColor: AppTheme.primary,
@@ -238,7 +242,7 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 StatCard(
                   label: strings.health,
-                  value: '92%',
+                  value: _gardenHealth,
                   icon: Icons.favorite,
                   color: AppTheme.success,
                 ),
@@ -260,13 +264,23 @@ class _HomeScreenState extends State<HomeScreen> {
             if (todayTasks.isEmpty)
               Text(strings.noTodayTasks, style: const TextStyle(color: AppTheme.muted))
             else
-              ...todayTasks.map(
-                (task) => Padding(
+              ...todayTasks.map((task) {
+                final typeInfo = taskTypeInfoOf(task.type);
+                return Padding(
                   padding: const EdgeInsets.only(bottom: 10),
                   child: Material(
                     color: Colors.transparent,
                     child: InkWell(
-                      onTap: () => showTaskDetailSheet(context, task),
+                      onTap: () => showTaskDetailSheet(
+                        context,
+                        task,
+                        onToggle: widget.onToggleTask == null
+                            ? null
+                            : () {
+                                widget.onToggleTask!(task.id);
+                                Navigator.pop(context);
+                              },
+                      ),
                       borderRadius: BorderRadius.circular(18),
                       child: Container(
                         padding: const EdgeInsets.all(16),
@@ -280,12 +294,12 @@ class _HomeScreenState extends State<HomeScreen> {
                               width: 40,
                               height: 40,
                               decoration: BoxDecoration(
-                                color: const Color(0xFFDDF3E0),
+                                color: typeInfo.color.withAlpha(38),
                                 borderRadius: BorderRadius.circular(12),
                               ),
-                              child: const Icon(
-                                Icons.water_drop,
-                                color: AppTheme.primary,
+                              child: Icon(
+                                typeInfo.icon,
+                                color: typeInfo.color,
                               ),
                             ),
                             const SizedBox(width: 12),
@@ -317,8 +331,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
-                ),
-              ),
+                );
+              }),
+            const SizedBox(height: 16),
             Text(
               strings.favoritePlants,
               style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800),
@@ -339,6 +354,18 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               ),
+            if (widget.notes.isNotEmpty) ...[
+              const SizedBox(height: 26),
+              Text(
+                strings.growthJournal,
+                style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800),
+              ),
+              const SizedBox(height: 12),
+              GrowthNoteCard(
+                note: widget.notes.first,
+                onTap: () => showGrowthNoteDetailSheet(context, widget.notes.first),
+              ),
+            ],
             const SizedBox(height: 26),
             Text(
               strings.highlightTips,
