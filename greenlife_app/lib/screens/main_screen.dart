@@ -132,6 +132,8 @@ class _MainScreenState extends State<MainScreen> {
             notes: _notes,
             locale: widget.locale,
             onLocaleChanged: widget.onLocaleChanged,
+            onToggleTask: _toggleTask,
+            onViewCareSchedule: () => setState(() => _index = 3),
           ),
           PlantLibraryScreen(
             plants: _plants,
