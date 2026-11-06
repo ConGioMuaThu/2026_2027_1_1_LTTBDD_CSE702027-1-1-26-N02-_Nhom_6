@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:greenlife_app/l10n/app_localizations.dart';
 import 'package:greenlife_app/models/care_task.dart';
+import 'package:greenlife_app/models/growth_note.dart';
 import 'package:greenlife_app/models/plant.dart';
 import 'package:greenlife_app/screens/care/add_task_screen.dart' show taskTypeInfoOf;
 
@@ -12,7 +13,7 @@ const Color _muted = Color(0xFF5F6F62);
 Future<void> showTaskDetailSheet(
   BuildContext context,
   CareTask task, {
-  required VoidCallback onToggle,
+  VoidCallback? onToggle,
 }) {
   final strings = AppLocalizations.of(context);
   final isEnglish = Localizations.localeOf(context).languageCode == 'en';
@@ -78,26 +79,28 @@ Future<void> showTaskDetailSheet(
               ),
               _SheetRow(label: strings.dueDate, value: task.dueDate),
               _SheetRow(label: strings.status, value: statusText),
-              const SizedBox(height: 16),
-              SizedBox(
-                width: double.infinity,
-                child: FilledButton(
-                  onPressed: onToggle,
-                  style: FilledButton.styleFrom(
-                    backgroundColor: _primary,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
+              if (onToggle != null) ...[
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton(
+                    onPressed: onToggle,
+                    style: FilledButton.styleFrom(
+                      backgroundColor: _primary,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                    child: Text(
+                      task.isCompleted
+                          ? strings.togglePending
+                          : strings.toggleDone,
                     ),
                   ),
-                  child: Text(
-                    task.isCompleted
-                        ? strings.togglePending
-                        : strings.toggleDone,
-                  ),
                 ),
-              ),
+              ],
             ],
           ),
         ),
@@ -317,6 +320,82 @@ Future<void> showTipDetailSheet(
               const SizedBox(height: 16),
               Text(
                 tip['content'] ?? '',
+                style: const TextStyle(
+                  fontSize: 15,
+                  height: 1.6,
+                  color: Color(0xFF425246),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
+Future<void> showGrowthNoteDetailSheet(BuildContext context, GrowthNote note) {
+  final strings = AppLocalizations.of(context);
+  final isEnglish = Localizations.localeOf(context).languageCode == 'en';
+
+  return showModalBottomSheet<void>(
+    context: context,
+    backgroundColor: Colors.white,
+    isScrollControlled: true,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+    ),
+    builder: (sheetContext) {
+      return SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 44,
+                  height: 5,
+                  decoration: BoxDecoration(
+                    color: Colors.black12,
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: _soft,
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: const Icon(Icons.menu_book_outlined, color: _primary),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      note.title,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w800,
+                        color: _textColor,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              _SheetRow(label: strings.plant, value: note.plantName),
+              _SheetRow(
+                label: isEnglish ? 'Date' : 'Ngày ghi',
+                value: note.date,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                note.summary,
                 style: const TextStyle(
                   fontSize: 15,
                   height: 1.6,
