@@ -14,21 +14,35 @@ class CustomSearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      controller: controller,
-      onChanged: onChanged,
-      textInputAction: TextInputAction.search,
-      decoration: InputDecoration(
-        hintText: hintText,
-        prefixIcon: const Icon(Icons.search),
-        filled: true,
-        fillColor: Colors.white,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide.none,
-        ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 14),
-      ),
+    return ValueListenableBuilder<TextEditingValue>(
+      valueListenable: controller,
+      builder: (context, value, _) {
+        return TextField(
+          controller: controller,
+          onChanged: onChanged,
+          textInputAction: TextInputAction.search,
+          decoration: InputDecoration(
+            hintText: hintText,
+            prefixIcon: const Icon(Icons.search),
+            suffixIcon: value.text.isEmpty
+                ? null
+                : IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () {
+                      controller.clear();
+                      onChanged?.call('');
+                    },
+                  ),
+            filled: true,
+            fillColor: Colors.white,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: BorderSide.none,
+            ),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 14),
+          ),
+        );
+      },
     );
   }
 }
