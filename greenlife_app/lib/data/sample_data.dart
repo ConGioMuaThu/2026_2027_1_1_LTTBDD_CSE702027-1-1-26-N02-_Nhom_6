@@ -188,17 +188,40 @@ List<Map<String, String>> greenTipsFor(Locale locale) {
 List<Map<String, String>> projectTeamFor(Locale locale) {
   final isEnglish = locale.languageCode == 'en';
 
-  return [
+   return [
     {
-      'name': isEnglish ? 'Trịnh Xuân Hồng Phong' : 'Trịnh Xuân Hồng Phong',
+      'name': 'Trịnh Xuân Hồng Phong',
       'role': 'Leader / Product Owner',
-      'focus': isEnglish ? 'Project timeline management' : 'Quản lý tiến độ dự án',
+      'focus': isEnglish
+          ? 'Project timeline management'
+          : 'Quản lý tiến độ dự án',
+      'bio': isEnglish
+          ? 'Leads the product direction, coordinates the roadmap, and ensures the app stays aligned with user goals and real-world care routines.'
+          : 'Dẫn dắt hướng đi sản phẩm, điều phối lộ trình và đảm bảo ứng dụng luôn phù hợp với nhu cầu người dùng và thói quen chăm sóc thực tế.',
+      'experience': isEnglish
+          ? 'Experienced in product management and mobile application development'
+          : 'Có kinh nghiệm trong quản lý sản phẩm và triển khai ứng dụng di động',
+      'specialty': isEnglish
+          ? 'Roadmap planning, feature prioritization, stakeholder communication'
+          : 'Lập kế hoạch lộ trình, ưu tiên tính năng, giao tiếp với bên liên quan',
+      'contact': 'phong@gmai.com',
     },
     {
-      'name': isEnglish ? 'Nguyễn Huy Kiên' : 'Nguyễn Huy Kiên',
+      'name': 'Nguyễn Huy Kiên',
       'role': 'UI/UX Designer',
-      'focus': isEnglish ? 'User experience design' : 'Thiết kế trải nghiệm người dùng',
+      'focus': isEnglish
+          ? 'User experience design'
+          : 'Thiết kế trải nghiệm người dùng',
+      'bio': isEnglish
+          ? 'Transforms complex plant-care workflows into friendly interactions with clean visual systems and intuitive user journeys.'
+          : 'Biến quy trình chăm sóc cây phức tạp thành trải nghiệm thân thiện nhờ hệ thống giao diện rõ ràng và hành trình người dùng dễ hiểu.',
+      'experience': isEnglish
+          ? 'Experienced in UI/UX design for mobile products'
+          : 'Có kinh nghiệm trong thiết kế UI/UX cho sản phẩm di động',
+      'specialty': isEnglish
+          ? 'Interaction design, design systems, mobile interface prototyping'
+          : 'Thiết kế tương tác, hệ thống thiết kế, nguyên mẫu giao diện di động',
+      'contact': 'kien@gmail.com',
     },
-    
   ];
 }
