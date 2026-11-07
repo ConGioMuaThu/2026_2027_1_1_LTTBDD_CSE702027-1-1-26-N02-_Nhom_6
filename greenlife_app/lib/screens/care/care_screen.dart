@@ -3,6 +3,8 @@ import 'package:greenlife_app/l10n/app_localizations.dart';
 import 'package:greenlife_app/models/care_task.dart';
 import 'package:greenlife_app/screens/care/add_task_screen.dart';
 import 'package:greenlife_app/screens/care/task_detail_screen.dart';
+import 'package:greenlife_app/widgets/empty_state.dart';
+import 'package:greenlife_app/widgets/search_bar.dart';
 
 class CareScreen extends StatefulWidget {
   final List<CareTask> tasks;
@@ -38,9 +40,12 @@ class _CareScreenState extends State<CareScreen> {
       return widget.tasks;
     }
     return widget.tasks.where((task) {
+      final typeInfo = taskTypeInfoOf(task.type);
       return task.title.toLowerCase().contains(query) ||
           task.plantName.toLowerCase().contains(query) ||
-          task.type.toLowerCase().contains(query);
+          task.type.toLowerCase().contains(query) ||
+          typeInfo.labelVi.toLowerCase().contains(query) ||
+          typeInfo.labelEn.toLowerCase().contains(query);
     }).toList();
   }
 
@@ -59,6 +64,7 @@ class _CareScreenState extends State<CareScreen> {
   @override
   Widget build(BuildContext context) {
     final strings = AppLocalizations.of(context);
+    final isEnglish = Localizations.localeOf(context).languageCode == 'en';
     final totalTasks = widget.tasks.length;
     final completedTasks = widget.tasks.where((task) => task.isCompleted).length;
     final filteredTasks = _filteredTasks;
@@ -149,27 +155,15 @@ class _CareScreenState extends State<CareScreen> {
               ],
             ),
             const SizedBox(height: 14),
-            TextField(
+            CustomSearchBar(
               controller: _searchController,
+              hintText: strings.searchTasksHint,
               onChanged: (_) => setState(() {}),
-              decoration: InputDecoration(
-                hintText: strings.searchTasksHint,
-                prefixIcon: const Icon(Icons.search),
-                filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16),
-                  borderSide: BorderSide.none,
-                ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 14),
-              ),
             ),
             const SizedBox(height: 16),
             Expanded(
               child: filteredTasks.isEmpty
-                  ? Center(
-                      child: Text(strings.noTasksFoundDetail),
-                    )
+                  ? EmptyState(message: strings.noTasksFoundDetail)
                   : ListView.separated(
                       itemCount: filteredTasks.length,
                       separatorBuilder: (_, _) => const SizedBox(height: 12),
@@ -237,7 +231,7 @@ class _CareScreenState extends State<CareScreen> {
                                         ),
                                         const SizedBox(height: 4),
                                         Text(
-                                          '${task.plantName} • ${task.type}',
+                                          '${task.plantName} • ${taskTypeInfoOf(task.type).label(isEnglish)}',
                                           style: const TextStyle(
                                             fontSize: 12,
                                             color: Color(0xFF5F6F62),
