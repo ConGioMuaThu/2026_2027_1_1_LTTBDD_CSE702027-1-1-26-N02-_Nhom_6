@@ -6,6 +6,7 @@ import 'package:greenlife_app/models/growth_note.dart';
 import 'package:greenlife_app/models/plant.dart';
 import 'package:greenlife_app/screens/care/care_screen.dart';
 import 'package:greenlife_app/screens/developers/developers_screen.dart';
+import 'package:greenlife_app/screens/growth_journal/growth_journal_screen.dart';
 import 'package:greenlife_app/screens/home/home_screen.dart';
 import 'package:greenlife_app/screens/my_plants/my_plants_screen.dart';
 import 'package:greenlife_app/screens/plant_library/plant_library_screen.dart';
@@ -59,7 +60,13 @@ class _MainScreenState extends State<MainScreen> {
             ? _plantWithFavorite(freshPlants[plant.id]!, plant.isFavorite)
             : plant,
     ];
-    _notes = sampleNotesFor(widget.locale);
+    final freshNotes = {
+      for (final note in sampleNotesFor(widget.locale)) note.id: note,
+    };
+    _notes = [
+      for (final note in _notes)
+        freshNotes.containsKey(note.id) ? freshNotes[note.id]! : note,
+    ];
   }
 
   CareTask _taskWithCompleted(CareTask t, bool isCompleted) {
@@ -114,6 +121,12 @@ class _MainScreenState extends State<MainScreen> {
     setState(() => _plants.insert(0, plant));
   }
 
+  void _addNote(GrowthNote note) {
+    setState(() => _notes.insert(0, note));
+  }
+
+  List<String> get _plantNames => _plants.map((p) => p.name).toList();
+
   void _deletePlant(String id) {
     setState(() => _plants.removeWhere((p) => p.id == id));
   }
@@ -149,7 +162,9 @@ class _MainScreenState extends State<MainScreen> {
             tasks: _tasks,
             onToggleTask: _toggleTask,
             onAddTask: _addTask,
+            plantNames: _plantNames,
           ),
+          GrowthJournalScreen(notes: _notes, onAddNote: _addNote),
           const TipsScreen(),
           const DevelopersScreen(),
         ],
@@ -178,6 +193,11 @@ class _MainScreenState extends State<MainScreen> {
             icon: const Icon(Icons.calendar_month_outlined),
             selectedIcon: const Icon(Icons.calendar_month),
             label: strings.care,
+          ),
+          NavigationDestination(
+            icon: const Icon(Icons.menu_book_outlined),
+            selectedIcon: const Icon(Icons.menu_book),
+            label: strings.journal,
           ),
           NavigationDestination(
             icon: const Icon(Icons.tips_and_updates_outlined),
