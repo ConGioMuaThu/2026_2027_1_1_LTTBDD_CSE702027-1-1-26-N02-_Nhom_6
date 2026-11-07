@@ -53,7 +53,8 @@ class _PlantLibraryScreenState extends State<PlantLibraryScreen> {
       final matchesSearch = query.isEmpty ||
           plant.name.toLowerCase().contains(query) ||
           plant.scientificName.toLowerCase().contains(query) ||
-          plant.description.toLowerCase().contains(query);
+          plant.description.toLowerCase().contains(query) ||
+          plant.tags.any((tag) => tag.toLowerCase().contains(query));
 
       return matchesCategory && matchesSearch;
     }).toList();
