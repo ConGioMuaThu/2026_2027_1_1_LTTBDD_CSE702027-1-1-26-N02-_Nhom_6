@@ -3,12 +3,14 @@ import 'package:greenlife_app/l10n/app_localizations.dart';
 import 'package:greenlife_app/models/growth_note.dart';
 import 'package:greenlife_app/screens/growth_journal/add_note_screen.dart';
 import 'package:greenlife_app/screens/growth_journal/note_detail_screen.dart';
+import 'package:greenlife_app/widgets/empty_state.dart';
 import 'package:greenlife_app/widgets/growth_note_card.dart';
 
 class GrowthJournalScreen extends StatefulWidget {
   final List<GrowthNote> notes;
   final void Function(GrowthNote note) onAddNote;
   final void Function(String id)? onDeleteNote;
+  final void Function(GrowthNote note)? onUpdateNote;
   final List<String>? plantNames;
 
   const GrowthJournalScreen({
@@ -16,6 +18,7 @@ class GrowthJournalScreen extends StatefulWidget {
     required this.notes,
     required this.onAddNote,
     this.onDeleteNote,
+    this.onUpdateNote,
     this.plantNames,
   });
 
@@ -79,6 +82,13 @@ class _GrowthJournalScreenState extends State<GrowthJournalScreen> {
                     SnackBar(content: Text(strings.noteDeleted)),
                   );
                 },
+          onUpdate: widget.onUpdateNote == null
+              ? null
+              : (updated) {
+                  widget.onUpdateNote!(updated);
+                  if (mounted) setState(() {});
+                },
+          plantNames: widget.plantNames,
         ),
       ),
     );
@@ -120,9 +130,15 @@ class _GrowthJournalScreenState extends State<GrowthJournalScreen> {
                 const SizedBox(height: 14),
                 Expanded(
                   child: filteredNotes.isEmpty
-                      ? Center(
-                          child: Text(strings.noNotesMatch),
-                        )
+                      ? (widget.notes.isEmpty
+                          ? EmptyState(
+                              icon: Icons.menu_book_outlined,
+                              title: strings.emptyJournalTitle,
+                              message: strings.emptyJournalMessage,
+                            )
+                          : Center(
+                              child: Text(strings.noNotesMatch),
+                            ))
                       : ListView.separated(
                           itemCount: filteredNotes.length,
                           separatorBuilder: (_, _) => const SizedBox(height: 14),
