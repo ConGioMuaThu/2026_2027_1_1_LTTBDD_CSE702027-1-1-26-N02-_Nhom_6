@@ -7,14 +7,45 @@ const Color _soft = Color(0xFFE2F4E4);
 const Color _background = Color(0xFFF5F8F2);
 const Color _textColor = Color(0xFF1D2A1F);
 const Color _muted = Color(0xFF5F6F62);
+const Color _danger = Color(0xFFE46D5F);
 
 class NoteDetailScreen extends StatelessWidget {
   const NoteDetailScreen({
     super.key,
     required this.note,
+    this.onDelete,
   });
 
   final GrowthNote note;
+  final VoidCallback? onDelete;
+
+  Future<void> _confirmDelete(BuildContext context) async {
+    final strings = AppLocalizations.of(context);
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(strings.deleteNoteQuestion),
+        content: Text(strings.deleteNoteMessage(note.title, note.plantName)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: Text(strings.cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            style: TextButton.styleFrom(foregroundColor: _danger),
+            child: Text(strings.deleteAction),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && context.mounted) {
+      onDelete?.call();
+      Navigator.pop(context);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -164,6 +195,22 @@ class NoteDetailScreen extends StatelessWidget {
                 ],
               ),
             ),
+            if (onDelete != null) ...[
+              const SizedBox(height: 24),
+              OutlinedButton.icon(
+                onPressed: () => _confirmDelete(context),
+                icon: const Icon(Icons.delete_outline),
+                label: Text(strings.deleteNote),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: _danger,
+                  side: const BorderSide(color: _danger),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                ),
+              ),
+            ],
           ],
         ),
       ),
