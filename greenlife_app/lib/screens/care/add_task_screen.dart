@@ -187,11 +187,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     if (dueAt.isBefore(DateTime.now())) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            _isEnglish
-                ? 'The due time must be in the future.'
-                : 'Thời gian thực hiện phải sau thời điểm hiện tại.',
-          ),
+          content: Text(AppLocalizations.of(context).dueTimeInPast),
         ),
       );
       return;
@@ -221,7 +217,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         scrolledUnderElevation: 0,
         iconTheme: const IconThemeData(color: _textColor),
         title: Text(
-          isEnglish ? 'Add task' : 'Thêm nhiệm vụ',
+          strings.addTaskTitle,
           style: const TextStyle(
             color: _textColor,
             fontSize: 24,
@@ -250,20 +246,16 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                 textInputAction: TextInputAction.done,
                 maxLength: 40,
                 decoration: _inputDecoration(
-                  isEnglish ? 'Task title' : 'Tên nhiệm vụ',
+                  strings.taskTitleLabel,
                   Icons.edit_outlined,
                 ),
                 validator: (value) {
                   final text = value?.trim() ?? '';
                   if (text.isEmpty) {
-                    return isEnglish
-                        ? 'Please enter a title'
-                        : 'Vui lòng nhập tiêu đề';
+                    return strings.taskTitleRequired;
                   }
                   if (text.length < 3) {
-                    return isEnglish
-                        ? 'Title must be at least 3 characters'
-                        : 'Tiêu đề tối thiểu 3 ký tự';
+                    return strings.taskTitleTooShort;
                   }
                   return null;
                 },
@@ -282,9 +274,8 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                     DropdownMenuItem(value: name, child: Text(name)),
                 ],
                 onChanged: (value) => setState(() => _plantName = value),
-                validator: (value) => value == null
-                    ? (isEnglish ? 'Please choose a plant' : 'Vui lòng chọn cây')
-                    : null,
+                validator: (value) =>
+                    value == null ? strings.choosePlantRequired : null,
               ),
               const SizedBox(height: 20),
               _SectionLabel(strings.dueDate),
@@ -292,7 +283,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                 children: [
                   Expanded(
                     child: _PickerField(
-                      label: isEnglish ? 'Date' : 'Ngày',
+                      label: strings.dateLabel,
                       value: _formatDate(_date),
                       icon: Icons.calendar_today_outlined,
                       onTap: _pickDate,
@@ -301,7 +292,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: _PickerField(
-                      label: isEnglish ? 'Time' : 'Giờ',
+                      label: strings.timeLabel,
                       value: _formatTime(_time),
                       icon: Icons.access_time,
                       onTap: _pickTime,

@@ -197,11 +197,7 @@ class _CareScreenState extends State<CareScreen> {
                                             setState(() {});
                                             ScaffoldMessenger.of(context).showSnackBar(
                                               SnackBar(
-                                                content: Text(
-                                                  isEnglish
-                                                      ? 'Task deleted'
-                                                      : 'Đã xóa nhiệm vụ',
-                                                ),
+                                                content: Text(strings.taskDeleted),
                                               ),
                                             );
                                           },

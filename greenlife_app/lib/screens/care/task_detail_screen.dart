@@ -26,17 +26,12 @@ class TaskDetailScreen extends StatelessWidget {
 
   Future<void> _confirmDelete(BuildContext context) async {
     final strings = AppLocalizations.of(context);
-    final isEnglish = Localizations.localeOf(context).languageCode == 'en';
 
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: Text(isEnglish ? 'Delete task?' : 'Xóa nhiệm vụ?'),
-        content: Text(
-          isEnglish
-              ? '"${task.title}" for ${task.plantName} will be removed.'
-              : 'Nhiệm vụ "${task.title}" của ${task.plantName} sẽ bị xóa.',
-        ),
+        title: Text(strings.deleteTaskQuestion),
+        content: Text(strings.deleteTaskMessage(task.title, task.plantName)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, false),
@@ -45,7 +40,7 @@ class TaskDetailScreen extends StatelessWidget {
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, true),
             style: TextButton.styleFrom(foregroundColor: _danger),
-            child: Text(isEnglish ? 'Delete' : 'Xóa'),
+            child: Text(strings.deleteAction),
           ),
         ],
       ),
@@ -74,7 +69,7 @@ class TaskDetailScreen extends StatelessWidget {
         scrolledUnderElevation: 0,
         iconTheme: const IconThemeData(color: _textColor),
         title: Text(
-          isEnglish ? 'Task details' : 'Chi tiết nhiệm vụ',
+          strings.taskDetailsTitle,
           style: const TextStyle(
             color: _textColor,
             fontSize: 24,
@@ -211,7 +206,7 @@ class TaskDetailScreen extends StatelessWidget {
               OutlinedButton.icon(
                 onPressed: () => _confirmDelete(context),
                 icon: const Icon(Icons.delete_outline),
-                label: Text(isEnglish ? 'Delete task' : 'Xóa nhiệm vụ'),
+                label: Text(strings.deleteTask),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: _danger,
                   side: const BorderSide(color: _danger),
