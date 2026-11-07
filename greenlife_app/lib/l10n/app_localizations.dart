@@ -150,6 +150,10 @@ class AppLocalizations {
       'noteAdded': 'Đã thêm ghi chú',
       'editNote': 'Sửa ghi chú',
       'noteUpdated': 'Đã cập nhật ghi chú',
+      'discardChangesQuestion': 'Bỏ thay đổi?',
+      'discardChangesMessage': 'Nội dung bạn vừa nhập sẽ không được lưu.',
+      'keepEditing': 'Tiếp tục nhập',
+      'discardAction': 'Bỏ',
       'emptyJournalTitle': 'Chưa có ghi chú nào',
       'emptyJournalMessage': 'Bấm nút + để ghi lại sự phát triển của cây.',
       'noteDeleted': 'Đã xóa ghi chú',
@@ -288,6 +292,10 @@ class AppLocalizations {
       'noteAdded': 'Note added',
       'editNote': 'Edit note',
       'noteUpdated': 'Note updated',
+      'discardChangesQuestion': 'Discard changes?',
+      'discardChangesMessage': 'What you just entered will not be saved.',
+      'keepEditing': 'Keep editing',
+      'discardAction': 'Discard',
       'emptyJournalTitle': 'No notes yet',
       'emptyJournalMessage': 'Tap + to record how your plants are growing.',
       'noteDeleted': 'Note deleted',
@@ -426,6 +434,10 @@ class AppLocalizations {
   String get noteAdded => _val('noteAdded');
   String get editNote => _val('editNote');
   String get noteUpdated => _val('noteUpdated');
+  String get discardChangesQuestion => _val('discardChangesQuestion');
+  String get discardChangesMessage => _val('discardChangesMessage');
+  String get keepEditing => _val('keepEditing');
+  String get discardAction => _val('discardAction');
   String get emptyJournalTitle => _val('emptyJournalTitle');
   String get emptyJournalMessage => _val('emptyJournalMessage');
   String get noteDeleted => _val('noteDeleted');
