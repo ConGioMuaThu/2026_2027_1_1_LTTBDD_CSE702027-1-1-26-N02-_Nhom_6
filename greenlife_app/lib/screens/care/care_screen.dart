@@ -10,6 +10,7 @@ class CareScreen extends StatefulWidget {
   final List<CareTask> tasks;
   final void Function(String taskId) onToggleTask;
   final void Function(CareTask task)? onAddTask;
+  final void Function(String taskId)? onDeleteTask;
   final List<String>? plantNames;
 
   const CareScreen({
@@ -17,6 +18,7 @@ class CareScreen extends StatefulWidget {
     required this.tasks,
     required this.onToggleTask,
     this.onAddTask,
+    this.onDeleteTask,
     this.plantNames,
   });
 
@@ -188,6 +190,21 @@ class _CareScreenState extends State<CareScreen> {
                                       widget.onToggleTask(task.id);
                                       setState(() {});
                                     },
+                                    onDelete: widget.onDeleteTask == null
+                                        ? null
+                                        : () {
+                                            widget.onDeleteTask!(task.id);
+                                            setState(() {});
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                  isEnglish
+                                                      ? 'Task deleted'
+                                                      : 'Đã xóa nhiệm vụ',
+                                                ),
+                                              ),
+                                            );
+                                          },
                                   ),
                                 ),
                               );
