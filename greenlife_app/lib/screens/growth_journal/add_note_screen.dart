@@ -6,6 +6,7 @@ import 'package:greenlife_app/models/growth_note.dart';
 const Color _primary = Color(0xFF2F6A4F);
 const Color _background = Color(0xFFF5F8F2);
 const Color _textColor = Color(0xFF1D2A1F);
+const Color _danger = Color(0xFFE46D5F);
 
 class AddNoteScreen extends StatefulWidget {
   const AddNoteScreen({
@@ -93,6 +94,42 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
     }
   }
 
+  bool get _isDirty {
+    final note = widget.initialNote;
+    final title = _titleController.text.trim();
+    final summary = _summaryController.text.trim();
+    if (note == null) return title.isNotEmpty || summary.isNotEmpty;
+    return title != note.title ||
+        summary != note.summary ||
+        _plantName != note.plantName ||
+        _formatDate(_date) != note.date;
+  }
+
+  Future<bool> _confirmDiscard() async {
+    final strings = AppLocalizations.of(context);
+
+    final discard = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(strings.discardChangesQuestion),
+        content: Text(strings.discardChangesMessage),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: Text(strings.keepEditing),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            style: TextButton.styleFrom(foregroundColor: _danger),
+            child: Text(strings.discardAction),
+          ),
+        ],
+      ),
+    );
+
+    return discard == true;
+  }
+
   void _submit() {
     FocusScope.of(context).unfocus();
 
@@ -113,7 +150,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
   Widget build(BuildContext context) {
     final strings = AppLocalizations.of(context);
 
-    return Scaffold(
+    final scaffold = Scaffold(
       backgroundColor: _background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -132,6 +169,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
       body: SafeArea(
         child: Form(
           key: _formKey,
+          onChanged: () => setState(() {}),
           child: ListView(
             padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
@@ -203,7 +241,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                 children: [
                   Expanded(
                     child: OutlinedButton(
-                      onPressed: () => Navigator.pop(context),
+                      onPressed: () => Navigator.maybePop(context),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: _primary,
                         side: const BorderSide(color: _primary),
@@ -238,6 +276,16 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
           ),
         ),
       ),
+    );
+
+    return PopScope(
+      canPop: !_isDirty,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        final discard = await _confirmDiscard();
+        if (discard && mounted) Navigator.pop(context);
+      },
+      child: scaffold,
     );
   }
 }
