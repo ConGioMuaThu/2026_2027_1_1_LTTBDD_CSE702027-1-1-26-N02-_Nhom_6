@@ -31,6 +31,7 @@ class _MainScreenState extends State<MainScreen> {
   late List<CareTask> _tasks = sampleTasksFor(widget.locale);
   late List<Plant> _plants = samplePlantsFor(widget.locale);
   late List<GrowthNote> _notes = sampleNotesFor(widget.locale);
+  final Set<String> _editedNoteIds = {};
 
   @override
   void didUpdateWidget(covariant MainScreen oldWidget) {
@@ -65,7 +66,9 @@ class _MainScreenState extends State<MainScreen> {
     };
     _notes = [
       for (final note in _notes)
-        freshNotes.containsKey(note.id) ? freshNotes[note.id]! : note,
+        freshNotes.containsKey(note.id) && !_editedNoteIds.contains(note.id)
+            ? freshNotes[note.id]!
+            : note,
     ];
   }
 
@@ -125,8 +128,33 @@ class _MainScreenState extends State<MainScreen> {
     setState(() => _plants.insert(0, plant));
   }
 
+  DateTime _noteDate(String value) {
+    final parts = value.split('/');
+    final fallback = DateTime.fromMillisecondsSinceEpoch(0);
+    if (parts.length != 3) return fallback;
+    final day = int.tryParse(parts[0]);
+    final month = int.tryParse(parts[1]);
+    final year = int.tryParse(parts[2]);
+    if (day == null || month == null || year == null) return fallback;
+    return DateTime(year, month, day);
+  }
+
+  void _insertNote(GrowthNote note) {
+    final date = _noteDate(note.date);
+    final index = _notes.indexWhere((n) => !_noteDate(n.date).isAfter(date));
+    _notes.insert(index == -1 ? _notes.length : index, note);
+  }
+
   void _addNote(GrowthNote note) {
-    setState(() => _notes.insert(0, note));
+    setState(() => _insertNote(note));
+  }
+
+  void _updateNote(GrowthNote note) {
+    setState(() {
+      _notes.removeWhere((n) => n.id == note.id);
+      _insertNote(note);
+      _editedNoteIds.add(note.id);
+    });
   }
 
   void _deleteNote(String id) {
@@ -177,6 +205,7 @@ class _MainScreenState extends State<MainScreen> {
             notes: _notes,
             onAddNote: _addNote,
             onDeleteNote: _deleteNote,
+            onUpdateNote: _updateNote,
             plantNames: _plantNames,
           ),
           const TipsScreen(),
