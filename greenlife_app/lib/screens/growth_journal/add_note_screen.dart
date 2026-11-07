@@ -7,22 +7,19 @@ const Color _primary = Color(0xFF2F6A4F);
 const Color _background = Color(0xFFF5F8F2);
 const Color _textColor = Color(0xFF1D2A1F);
 
-/// Màn hình thêm ghi chú nhật ký phát triển.
-///
-/// Trả về [GrowthNote] qua `Navigator.pop` khi người dùng bấm Lưu,
-/// hoặc `null` nếu người dùng hủy / quay lại.
 class AddNoteScreen extends StatefulWidget {
   const AddNoteScreen({
     super.key,
     this.plantNames,
     this.initialPlantName,
+    this.initialNote,
   });
 
-  /// Danh sách tên cây để chọn. Nếu null sẽ dùng danh sách cây mẫu.
   final List<String>? plantNames;
 
-  /// Cây được chọn sẵn (ví dụ mở từ trang chi tiết cây).
   final String? initialPlantName;
+
+  final GrowthNote? initialNote;
 
   @override
   State<AddNoteScreen> createState() => _AddNoteScreenState();
@@ -53,7 +50,8 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
           : samplePlantsFor(locale).map((p) => p.name),
     );
 
-    final initial = widget.initialPlantName;
+    final editing = widget.initialNote;
+    final initial = editing?.plantName ?? widget.initialPlantName;
     if (initial != null && !_plantOptions.contains(initial)) {
       _plantOptions.insert(0, initial);
     }
@@ -62,6 +60,12 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
 
     final now = DateTime.now();
     _date = DateTime(now.year, now.month, now.day);
+
+    if (editing != null) {
+      _titleController.text = editing.title;
+      _summaryController.text = editing.summary;
+      _date = _parseDate(editing.date) ?? _date;
+    }
   }
 
   @override
@@ -75,11 +79,12 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
 
+    final earliest = DateTime(today.year - 5);
+
     final picked = await showDatePicker(
       context: context,
       initialDate: _date.isAfter(today) ? today : _date,
-      // Nhật ký ghi lại những gì đã xảy ra nên chỉ cho chọn đến hôm nay.
-      firstDate: DateTime(today.year - 5),
+      firstDate: _date.isBefore(earliest) ? _date : earliest,
       lastDate: today,
     );
 
@@ -94,7 +99,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     final note = GrowthNote(
-      id: 'note-${DateTime.now().millisecondsSinceEpoch}',
+      id: widget.initialNote?.id ?? 'note-${DateTime.now().millisecondsSinceEpoch}',
       plantName: _plantName!,
       title: _titleController.text.trim(),
       date: _formatDate(_date),
@@ -116,7 +121,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
         scrolledUnderElevation: 0,
         iconTheme: const IconThemeData(color: _textColor),
         title: Text(
-          strings.newNoteTitle,
+          widget.initialNote == null ? strings.newNoteTitle : strings.editNote,
           style: const TextStyle(
             color: _textColor,
             fontSize: 24,
@@ -313,5 +318,14 @@ InputDecoration _inputDecoration(String label, IconData icon) {
 
 String _two(int n) => n.toString().padLeft(2, '0');
 
-/// Định dạng dd/MM/yyyy, khớp với dữ liệu mẫu ('18/10/2026').
 String _formatDate(DateTime d) => '${_two(d.day)}/${_two(d.month)}/${d.year}';
+
+DateTime? _parseDate(String value) {
+  final parts = value.split('/');
+  if (parts.length != 3) return null;
+  final day = int.tryParse(parts[0]);
+  final month = int.tryParse(parts[1]);
+  final year = int.tryParse(parts[2]);
+  if (day == null || month == null || year == null) return null;
+  return DateTime(year, month, day);
+}
