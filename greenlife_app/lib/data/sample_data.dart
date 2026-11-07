@@ -82,7 +82,7 @@ List<Plant> samplePlantsFor(Locale locale) {
       sunlight: isEnglish ? 'Soft light' : 'Ánh sáng mềm',
       imageAsset: '🌱',
       imageUrl:
-          'https://lomonoxop.edu.vn/images/ckeditor/images/lomonoxop/cay%20luoi%20ho.png',
+          'https://monhasfarm.com/wp-content/uploads/2025/03/8cb4490a502648609bd49542e68eafe8tplv-o3syd03w52-origin-jpeg-600x600.jpeg',
       isFavorite: true,
       tags: isEnglish ? ['resilient', 'small spaces'] : ['bền bỉ', 'không gian nhỏ'],
     ),
