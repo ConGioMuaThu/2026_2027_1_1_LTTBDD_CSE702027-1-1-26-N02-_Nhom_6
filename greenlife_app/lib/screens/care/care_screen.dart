@@ -8,12 +8,14 @@ class CareScreen extends StatefulWidget {
   final List<CareTask> tasks;
   final void Function(String taskId) onToggleTask;
   final void Function(CareTask task)? onAddTask;
+  final List<String>? plantNames;
 
   const CareScreen({
     super.key,
     required this.tasks,
     required this.onToggleTask,
     this.onAddTask,
+    this.plantNames,
   });
 
   @override
@@ -45,7 +47,9 @@ class _CareScreenState extends State<CareScreen> {
   Future<void> _openAddTask() async {
     final newTask = await Navigator.push<CareTask>(
       context,
-      MaterialPageRoute(builder: (_) => const AddTaskScreen()),
+      MaterialPageRoute(
+        builder: (_) => AddTaskScreen(plantNames: widget.plantNames),
+      ),
     );
     if (newTask != null) {
       widget.onAddTask?.call(newTask);
