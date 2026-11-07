@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:greenlife_app/l10n/app_localizations.dart';
 import 'package:greenlife_app/models/growth_note.dart';
-import 'package:greenlife_app/widgets/detail_sheet.dart';
+import 'package:greenlife_app/screens/growth_journal/add_note_screen.dart';
+import 'package:greenlife_app/screens/growth_journal/note_detail_screen.dart';
 import 'package:greenlife_app/widgets/growth_note_card.dart';
 
 class GrowthJournalScreen extends StatefulWidget {
   final List<GrowthNote> notes;
   final void Function(GrowthNote note) onAddNote;
+  final void Function(String id)? onDeleteNote;
+  final List<String>? plantNames;
 
   const GrowthJournalScreen({
     super.key,
     required this.notes,
     required this.onAddNote,
+    this.onDeleteNote,
+    this.plantNames,
   });
 
   @override
@@ -40,69 +45,42 @@ class _GrowthJournalScreenState extends State<GrowthJournalScreen> {
     }).toList();
   }
 
-  void _showAddNoteDialog(BuildContext context) {
+  Future<void> _openAddNote() async {
+    final newNote = await Navigator.push<GrowthNote>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => AddNoteScreen(plantNames: widget.plantNames),
+      ),
+    );
+    if (newNote == null || !mounted) return;
+
+    widget.onAddNote(newNote);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(AppLocalizations.of(context).noteAdded)),
+    );
+  }
+
+  void _openNoteDetail(GrowthNote note) {
     final strings = AppLocalizations.of(context);
-    final titleController = TextEditingController();
-    final plantController = TextEditingController(text: strings.notePlantDefault);
-    final summaryController = TextEditingController();
+    final messenger = ScaffoldMessenger.of(context);
 
-    showDialog(
-      context: context,
-      builder: (dialogContext) {
-        return AlertDialog(
-          title: Text(strings.newNoteTitle),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: titleController,
-                  decoration: InputDecoration(labelText: strings.title),
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: plantController,
-                  decoration: InputDecoration(labelText: strings.plantName),
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: summaryController,
-                  minLines: 3,
-                  maxLines: 5,
-                  decoration: InputDecoration(labelText: strings.descriptionGrowth),
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext),
-              child: Text(strings.cancel),
-            ),
-            FilledButton(
-              onPressed: () {
-                final title = titleController.text.trim();
-                final summary = summaryController.text.trim();
-                if (title.isEmpty || summary.isEmpty) return;
-
-                widget.onAddNote(
-                  GrowthNote(
-                    id: 'note-${DateTime.now().millisecondsSinceEpoch}',
-                    plantName: plantController.text.trim().isEmpty
-                        ? strings.myPlantDefault
-                        : plantController.text.trim(),
-                    title: title,
-                    date: '${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
-                    summary: summary,
-                  ),
-                );
-                Navigator.pop(dialogContext);
-              },
-              child: Text(strings.save),
-            ),
-          ],
-        );
-      },
+    setState(() => _selectedNoteId = note.id);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => NoteDetailScreen(
+          note: note,
+          onDelete: widget.onDeleteNote == null
+              ? null
+              : () {
+                  widget.onDeleteNote!(note.id);
+                  if (mounted) setState(() => _selectedNoteId = null);
+                  messenger.showSnackBar(
+                    SnackBar(content: Text(strings.noteDeleted)),
+                  );
+                },
+        ),
+      ),
     );
   }
 
@@ -153,10 +131,7 @@ class _GrowthJournalScreenState extends State<GrowthJournalScreen> {
                             return GrowthNoteCard(
                               note: note,
                               isSelected: _selectedNoteId == note.id,
-                              onTap: () {
-                                setState(() => _selectedNoteId = note.id);
-                                showGrowthNoteDetailSheet(context, note);
-                              },
+                              onTap: () => _openNoteDetail(note),
                             );
                           },
                         ),
@@ -168,7 +143,7 @@ class _GrowthJournalScreenState extends State<GrowthJournalScreen> {
             right: 22,
             bottom: 24,
             child: FloatingActionButton(
-              onPressed: () => _showAddNoteDialog(context),
+              onPressed: _openAddNote,
               backgroundColor: const Color(0xFF2F6A4F),
               child: const Icon(Icons.add),
             ),
