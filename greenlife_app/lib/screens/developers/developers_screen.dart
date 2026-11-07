@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:greenlife_app/data/sample_data.dart';
 import 'package:greenlife_app/l10n/app_localizations.dart';
 import 'package:greenlife_app/widgets/detail_sheet.dart';
+import 'package:greenlife_app/widgets/empty_state.dart';
+import 'package:greenlife_app/widgets/search_bar.dart';
 
 class DevelopersScreen extends StatefulWidget {
   const DevelopersScreen({super.key});
@@ -75,25 +77,15 @@ class _DevelopersScreenState extends State<DevelopersScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            TextField(
+            CustomSearchBar(
               controller: _searchController,
+              hintText: strings.searchMembersHint,
               onChanged: (_) => setState(() {}),
-              decoration: InputDecoration(
-                hintText: strings.searchMembersHint,
-                prefixIcon: const Icon(Icons.search),
-                filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16),
-                  borderSide: BorderSide.none,
-                ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 14),
-              ),
             ),
             const SizedBox(height: 16),
             Expanded(
               child: members.isEmpty
-                  ? Center(child: Text(strings.noMembersFoundDetail))
+                  ? EmptyState(message: strings.noMembersFoundDetail, icon: Icons.person_search)
                   : ListView.separated(
                       itemCount: members.length,
                       separatorBuilder: (_, _) => const SizedBox(height: 12),
