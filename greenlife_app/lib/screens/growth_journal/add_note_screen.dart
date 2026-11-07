@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:greenlife_app/data/sample_data.dart';
 import 'package:greenlife_app/l10n/app_localizations.dart';
+import 'package:greenlife_app/models/growth_note.dart';
 
 const Color _primary = Color(0xFF2F6A4F);
 const Color _background = Color(0xFFF5F8F2);
 const Color _textColor = Color(0xFF1D2A1F);
 
 /// Màn hình thêm ghi chú nhật ký phát triển.
+///
+/// Trả về [GrowthNote] qua `Navigator.pop` khi người dùng bấm Lưu,
+/// hoặc `null` nếu người dùng hủy / quay lại.
 class AddNoteScreen extends StatefulWidget {
   const AddNoteScreen({
     super.key,
@@ -86,7 +90,18 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
 
   void _submit() {
     FocusScope.of(context).unfocus();
-    Navigator.pop(context);
+
+    if (!_formKey.currentState!.validate()) return;
+
+    final note = GrowthNote(
+      id: 'note-${DateTime.now().millisecondsSinceEpoch}',
+      plantName: _plantName!,
+      title: _titleController.text.trim(),
+      date: _formatDate(_date),
+      summary: _summaryController.text.trim(),
+    );
+
+    Navigator.pop(context, note);
   }
 
   @override
@@ -129,6 +144,8 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                     DropdownMenuItem(value: name, child: Text(name)),
                 ],
                 onChanged: (value) => setState(() => _plantName = value),
+                validator: (value) =>
+                    value == null ? strings.choosePlantRequired : null,
               ),
               const SizedBox(height: 20),
               _SectionLabel(strings.title),
@@ -141,6 +158,12 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                   strings.title,
                   Icons.edit_outlined,
                 ),
+                validator: (value) {
+                  final text = value?.trim() ?? '';
+                  if (text.isEmpty) return strings.noteTitleRequired;
+                  if (text.length < 3) return strings.noteTitleTooShort;
+                  return null;
+                },
               ),
               const SizedBox(height: 12),
               _SectionLabel(strings.noteDate),
@@ -163,6 +186,12 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                   strings.noteContentHint,
                   Icons.notes_outlined,
                 ).copyWith(alignLabelWithHint: true),
+                validator: (value) {
+                  final text = value?.trim() ?? '';
+                  if (text.isEmpty) return strings.noteContentRequired;
+                  if (text.length < 10) return strings.noteContentTooShort;
+                  return null;
+                },
               ),
               const SizedBox(height: 16),
               Row(
