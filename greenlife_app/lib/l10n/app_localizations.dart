@@ -121,6 +121,10 @@ class AppLocalizations {
       'togglePending': 'Đánh dấu chưa xong',
       'role': 'Vai trò',
       'assignment': 'Phân công',
+      'bio': 'Giới thiệu',
+      'experience': 'Kinh nghiệm',
+      'specialty': 'Chuyên môn',
+      'contact': 'Liên hệ',
       'notFound': 'Không tìm thấy',
     },
     'en': {
@@ -225,6 +229,10 @@ class AppLocalizations {
       'togglePending': 'Mark as incomplete',
       'role': 'Role',
       'assignment': 'Assignment',
+      'bio': 'About',
+      'experience': 'Experience',
+      'specialty': 'Specialty',
+      'contact': 'Contact',
       'notFound': 'Not found',
     },
   };
@@ -330,6 +338,10 @@ class AppLocalizations {
   String get togglePending => _val('togglePending');
   String get role => _val('role');
   String get assignment => _val('assignment');
+  String get bio => _val('bio');
+  String get experience => _val('experience');
+  String get specialty => _val('specialty');
+  String get contact => _val('contact');
 
   String _val(String key) => _values[locale.languageCode]?[key] ?? _values['vi']![key]!;
 }
