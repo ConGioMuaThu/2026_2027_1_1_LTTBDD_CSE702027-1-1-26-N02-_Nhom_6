@@ -32,8 +32,6 @@ class PlantDetailScreen extends StatefulWidget {
 class _PlantDetailScreenState extends State<PlantDetailScreen> {
   late bool _isFavorite = widget.plant.isFavorite;
 
-  bool get _isEnglish => Localizations.localeOf(context).languageCode == 'en';
-
   void _toggleFavorite() {
     setState(() => _isFavorite = !_isFavorite);
     widget.onToggleFavorite?.call();
@@ -55,9 +53,7 @@ class _PlantDetailScreenState extends State<PlantDetailScreen> {
     widget.onAddTask?.call(task);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(
-          _isEnglish ? 'Care task added' : 'Đã thêm nhiệm vụ chăm sóc',
-        ),
+        content: Text(AppLocalizations.of(context).careTaskAdded),
       ),
     );
   }
@@ -65,7 +61,6 @@ class _PlantDetailScreenState extends State<PlantDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final strings = AppLocalizations.of(context);
-    final isEnglish = _isEnglish;
     final plant = widget.plant;
 
     return Scaffold(
@@ -164,7 +159,7 @@ class _PlantDetailScreenState extends State<PlantDetailScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  _SectionTitle(isEnglish ? 'Description' : 'Mô tả'),
+                  _SectionTitle(strings.descriptionLabel),
                   Text(
                     plant.description,
                     style: const TextStyle(
@@ -175,7 +170,7 @@ class _PlantDetailScreenState extends State<PlantDetailScreen> {
                   ),
                   if (plant.tags.isNotEmpty) ...[
                     const SizedBox(height: 20),
-                    _SectionTitle(isEnglish ? 'Highlights' : 'Đặc điểm'),
+                    _SectionTitle(strings.highlightsLabel),
                     Wrap(
                       spacing: 8,
                       runSpacing: 8,
@@ -207,9 +202,7 @@ class _PlantDetailScreenState extends State<PlantDetailScreen> {
                 child: FilledButton.icon(
                   onPressed: _openAddTask,
                   icon: const Icon(Icons.event_available_outlined),
-                  label: Text(
-                    isEnglish ? 'Add care task' : 'Thêm nhiệm vụ chăm sóc',
-                  ),
+                  label: Text(strings.addCareTask),
                   style: FilledButton.styleFrom(
                     backgroundColor: _primary,
                     foregroundColor: Colors.white,
