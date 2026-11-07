@@ -121,11 +121,26 @@ class AppLocalizations {
       'togglePending': 'Đánh dấu chưa xong',
       'role': 'Vai trò',
       'assignment': 'Phân công',
-      'bio': 'Giới thiệu',
-      'experience': 'Kinh nghiệm',
-      'specialty': 'Chuyên môn',
-      'contact': 'Liên hệ',
       'notFound': 'Không tìm thấy',
+      'addTaskTitle': 'Thêm nhiệm vụ',
+      'taskTitleLabel': 'Tên nhiệm vụ',
+      'taskTitleRequired': 'Vui lòng nhập tiêu đề',
+      'taskTitleTooShort': 'Tiêu đề tối thiểu 3 ký tự',
+      'choosePlantRequired': 'Vui lòng chọn cây',
+      'dateLabel': 'Ngày',
+      'timeLabel': 'Giờ',
+      'dueTimeInPast': 'Thời gian thực hiện phải sau thời điểm hiện tại.',
+      'taskDetailsTitle': 'Chi tiết nhiệm vụ',
+      'deleteTask': 'Xóa nhiệm vụ',
+      'deleteTaskQuestion': 'Xóa nhiệm vụ?',
+      'deleteAction': 'Xóa',
+      'taskDeleted': 'Đã xóa nhiệm vụ',
+      'deleteTaskMessage': 'Nhiệm vụ "{task}" của {plant} sẽ bị xóa.',
+      'careTaskAdded': 'Đã thêm nhiệm vụ chăm sóc',
+      'addCareTask': 'Thêm nhiệm vụ chăm sóc',
+      'descriptionLabel': 'Mô tả',
+      'highlightsLabel': 'Đặc điểm',
+      'noteDate': 'Ngày ghi',
     },
     'en': {
       'greeting': 'Hello,',
@@ -229,11 +244,26 @@ class AppLocalizations {
       'togglePending': 'Mark as incomplete',
       'role': 'Role',
       'assignment': 'Assignment',
-      'bio': 'About',
-      'experience': 'Experience',
-      'specialty': 'Specialty',
-      'contact': 'Contact',
       'notFound': 'Not found',
+      'addTaskTitle': 'Add task',
+      'taskTitleLabel': 'Task title',
+      'taskTitleRequired': 'Please enter a title',
+      'taskTitleTooShort': 'Title must be at least 3 characters',
+      'choosePlantRequired': 'Please choose a plant',
+      'dateLabel': 'Date',
+      'timeLabel': 'Time',
+      'dueTimeInPast': 'The due time must be in the future.',
+      'taskDetailsTitle': 'Task details',
+      'deleteTask': 'Delete task',
+      'deleteTaskQuestion': 'Delete task?',
+      'deleteAction': 'Delete',
+      'taskDeleted': 'Task deleted',
+      'deleteTaskMessage': '"{task}" for {plant} will be removed.',
+      'careTaskAdded': 'Care task added',
+      'addCareTask': 'Add care task',
+      'descriptionLabel': 'Description',
+      'highlightsLabel': 'Highlights',
+      'noteDate': 'Date',
     },
   };
 
@@ -338,10 +368,30 @@ class AppLocalizations {
   String get togglePending => _val('togglePending');
   String get role => _val('role');
   String get assignment => _val('assignment');
-  String get bio => _val('bio');
-  String get experience => _val('experience');
-  String get specialty => _val('specialty');
-  String get contact => _val('contact');
+
+  String get addTaskTitle => _val('addTaskTitle');
+  String get taskTitleLabel => _val('taskTitleLabel');
+  String get taskTitleRequired => _val('taskTitleRequired');
+  String get taskTitleTooShort => _val('taskTitleTooShort');
+  String get choosePlantRequired => _val('choosePlantRequired');
+  String get dateLabel => _val('dateLabel');
+  String get timeLabel => _val('timeLabel');
+  String get dueTimeInPast => _val('dueTimeInPast');
+  String get taskDetailsTitle => _val('taskDetailsTitle');
+  String get deleteTask => _val('deleteTask');
+  String get deleteTaskQuestion => _val('deleteTaskQuestion');
+  String get deleteAction => _val('deleteAction');
+  String get taskDeleted => _val('taskDeleted');
+  String get careTaskAdded => _val('careTaskAdded');
+  String get addCareTask => _val('addCareTask');
+  String get descriptionLabel => _val('descriptionLabel');
+  String get highlightsLabel => _val('highlightsLabel');
+  String get noteDate => _val('noteDate');
+  String deleteTaskMessage(String task, String plant) {
+    return _val('deleteTaskMessage')
+        .replaceAll('{task}', task)
+        .replaceAll('{plant}', plant);
+  }
 
   String _val(String key) => _values[locale.languageCode]?[key] ?? _values['vi']![key]!;
 }
