@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:greenlife_app/l10n/app_localizations.dart';
 import 'package:greenlife_app/models/growth_note.dart';
+import 'package:greenlife_app/screens/growth_journal/add_note_screen.dart';
 
 const Color _primary = Color(0xFF2F6A4F);
 const Color _soft = Color(0xFFE2F4E4);
@@ -9,15 +10,45 @@ const Color _textColor = Color(0xFF1D2A1F);
 const Color _muted = Color(0xFF5F6F62);
 const Color _danger = Color(0xFFE46D5F);
 
-class NoteDetailScreen extends StatelessWidget {
+class NoteDetailScreen extends StatefulWidget {
   const NoteDetailScreen({
     super.key,
     required this.note,
     this.onDelete,
+    this.onUpdate,
+    this.plantNames,
   });
 
   final GrowthNote note;
   final VoidCallback? onDelete;
+  final void Function(GrowthNote note)? onUpdate;
+  final List<String>? plantNames;
+
+  @override
+  State<NoteDetailScreen> createState() => _NoteDetailScreenState();
+}
+
+class _NoteDetailScreenState extends State<NoteDetailScreen> {
+  late GrowthNote _note = widget.note;
+
+  Future<void> _edit() async {
+    final updated = await Navigator.push<GrowthNote>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => AddNoteScreen(
+          plantNames: widget.plantNames,
+          initialNote: _note,
+        ),
+      ),
+    );
+    if (updated == null || !mounted) return;
+
+    widget.onUpdate!(updated);
+    setState(() => _note = updated);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(AppLocalizations.of(context).noteUpdated)),
+    );
+  }
 
   Future<void> _confirmDelete(BuildContext context) async {
     final strings = AppLocalizations.of(context);
@@ -26,7 +57,7 @@ class NoteDetailScreen extends StatelessWidget {
       context: context,
       builder: (dialogContext) => AlertDialog(
         title: Text(strings.deleteNoteQuestion),
-        content: Text(strings.deleteNoteMessage(note.title, note.plantName)),
+        content: Text(strings.deleteNoteMessage(_note.title, _note.plantName)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, false),
@@ -42,7 +73,7 @@ class NoteDetailScreen extends StatelessWidget {
     );
 
     if (confirmed == true && context.mounted) {
-      onDelete?.call();
+      widget.onDelete?.call();
       Navigator.pop(context);
     }
   }
@@ -58,6 +89,14 @@ class NoteDetailScreen extends StatelessWidget {
         elevation: 0,
         scrolledUnderElevation: 0,
         iconTheme: const IconThemeData(color: _textColor),
+        actions: [
+          if (widget.onUpdate != null)
+            IconButton(
+              onPressed: _edit,
+              tooltip: strings.editNote,
+              icon: const Icon(Icons.edit_outlined),
+            ),
+        ],
         title: Text(
           strings.noteDetailsTitle,
           style: const TextStyle(
@@ -94,7 +133,7 @@ class NoteDetailScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 14),
                   Text(
-                    note.title,
+                    _note.title,
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       fontSize: 22,
@@ -114,7 +153,7 @@ class NoteDetailScreen extends StatelessWidget {
                       const SizedBox(width: 6),
                       Flexible(
                         child: Text(
-                          note.plantName,
+                          _note.plantName,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(fontSize: 15, color: _muted),
                         ),
@@ -128,7 +167,7 @@ class NoteDetailScreen extends StatelessWidget {
                       size: 18,
                       color: _primary,
                     ),
-                    label: Text(note.date),
+                    label: Text(_note.date),
                     labelStyle: const TextStyle(
                       color: _primary,
                       fontWeight: FontWeight.w700,
@@ -151,13 +190,13 @@ class NoteDetailScreen extends StatelessWidget {
                   _InfoRow(
                     icon: Icons.local_florist_outlined,
                     label: strings.plant,
-                    value: note.plantName,
+                    value: _note.plantName,
                   ),
                   const Divider(height: 1),
                   _InfoRow(
                     icon: Icons.event_outlined,
                     label: strings.noteDate,
-                    value: note.date,
+                    value: _note.date,
                   ),
                 ],
               ),
@@ -185,7 +224,7 @@ class NoteDetailScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    note.summary,
+                    _note.summary,
                     style: const TextStyle(
                       fontSize: 15,
                       height: 1.6,
@@ -195,7 +234,7 @@ class NoteDetailScreen extends StatelessWidget {
                 ],
               ),
             ),
-            if (onDelete != null) ...[
+            if (widget.onDelete != null) ...[
               const SizedBox(height: 24),
               OutlinedButton.icon(
                 onPressed: () => _confirmDelete(context),
