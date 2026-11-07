@@ -109,6 +109,10 @@ class _MainScreenState extends State<MainScreen> {
     setState(() => _tasks.insert(0, task));
   }
 
+  void _deleteTask(String id) {
+    setState(() => _tasks.removeWhere((t) => t.id == id));
+  }
+
   void _toggleFavorite(String id) {
     setState(() {
       final i = _plants.indexWhere((p) => p.id == id);
@@ -162,6 +166,7 @@ class _MainScreenState extends State<MainScreen> {
             tasks: _tasks,
             onToggleTask: _toggleTask,
             onAddTask: _addTask,
+            onDeleteTask: _deleteTask,
             plantNames: _plantNames,
           ),
           GrowthJournalScreen(notes: _notes, onAddNote: _addNote),
