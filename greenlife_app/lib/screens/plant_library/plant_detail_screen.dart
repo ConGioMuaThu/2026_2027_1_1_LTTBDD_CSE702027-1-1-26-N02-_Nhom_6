@@ -17,11 +17,13 @@ class PlantDetailScreen extends StatefulWidget {
     required this.plant,
     this.onToggleFavorite,
     this.onAddTask,
+    this.plantNames,
   });
 
   final Plant plant;
   final VoidCallback? onToggleFavorite;
   final void Function(CareTask task)? onAddTask;
+  final List<String>? plantNames;
 
   @override
   State<PlantDetailScreen> createState() => _PlantDetailScreenState();
@@ -41,7 +43,10 @@ class _PlantDetailScreenState extends State<PlantDetailScreen> {
     final task = await Navigator.push<CareTask>(
       context,
       MaterialPageRoute(
-        builder: (_) => AddTaskScreen(initialPlantName: widget.plant.name),
+        builder: (_) => AddTaskScreen(
+          plantNames: widget.plantNames,
+          initialPlantName: widget.plant.name,
+        ),
       ),
     );
 

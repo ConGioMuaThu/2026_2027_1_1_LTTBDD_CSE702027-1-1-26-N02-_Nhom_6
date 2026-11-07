@@ -164,6 +164,9 @@ class _PlantLibraryScreenState extends State<PlantLibraryScreen> {
                                       ? null
                                       : () => widget.onToggleFavorite!(plant.id),
                                   onAddTask: widget.onAddTask,
+                                  plantNames: widget.plants.isEmpty
+                                      ? null
+                                      : widget.plants.map((p) => p.name).toList(),
                                 ),
                               ),
                             );
