@@ -3,8 +3,7 @@ import 'package:greenlife_app/l10n/app_localizations.dart';
 import 'package:greenlife_app/models/care_task.dart';
 import 'package:greenlife_app/models/growth_note.dart';
 import 'package:greenlife_app/models/plant.dart';
-import 'package:greenlife_app/screens/care/add_task_screen.dart'
-    show taskTypeInfoOf;
+import 'package:greenlife_app/screens/care/add_task_screen.dart' show taskTypeInfoOf;
 
 const Color _primary = Color(0xFF2F6A4F);
 const Color _soft = Color(0xFFE2F4E4);
@@ -19,9 +18,8 @@ Future<void> showTaskDetailSheet(
   final strings = AppLocalizations.of(context);
   final isEnglish = Localizations.localeOf(context).languageCode == 'en';
   final typeInfo = taskTypeInfoOf(task.type);
-  final statusText = task.isCompleted
-      ? strings.completedStatus
-      : strings.pendingStatus;
+  final statusText =
+      task.isCompleted ? strings.completedStatus : strings.pendingStatus;
 
   return showModalBottomSheet<void>(
     context: context,
@@ -32,7 +30,7 @@ Future<void> showTaskDetailSheet(
     ),
     builder: (sheetContext) {
       return SafeArea(
-        child: SingleChildScrollView(
+        child: Padding(
           padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -86,10 +84,7 @@ Future<void> showTaskDetailSheet(
                 SizedBox(
                   width: double.infinity,
                   child: FilledButton(
-                    onPressed: () {
-                      Navigator.of(sheetContext).maybePop();
-                      onToggle();
-                    },
+                    onPressed: onToggle,
                     style: FilledButton.styleFrom(
                       backgroundColor: _primary,
                       foregroundColor: Colors.white,
@@ -119,8 +114,7 @@ Future<void> showMemberDetailSheet(
   Map<String, String> member,
 ) {
   final strings = AppLocalizations.of(context);
-  final name = (member['name'] ?? '').trim();
-  final initials = name.isEmpty ? 'A' : name.substring(0, 1).toUpperCase();
+  final name = member['name'] ?? '';
 
   return showModalBottomSheet<void>(
     context: context,
@@ -131,7 +125,7 @@ Future<void> showMemberDetailSheet(
     ),
     builder: (sheetContext) {
       return SafeArea(
-        child: SingleChildScrollView(
+        child: Padding(
           padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -154,7 +148,7 @@ Future<void> showMemberDetailSheet(
                     radius: 28,
                     backgroundColor: _soft,
                     child: Text(
-                      initials,
+                      name.isEmpty ? 'A' : name.substring(0, 1),
                       style: const TextStyle(
                         color: _primary,
                         fontSize: 20,
@@ -165,7 +159,7 @@ Future<void> showMemberDetailSheet(
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      name.isEmpty ? 'Anonymous' : name,
+                      name,
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w800,
@@ -270,7 +264,10 @@ Future<void> showPlantDetailSheet(BuildContext context, Plant plant) {
   );
 }
 
-Future<void> showTipDetailSheet(BuildContext context, Map<String, String> tip) {
+Future<void> showTipDetailSheet(
+  BuildContext context,
+  Map<String, String> tip,
+) {
   return showModalBottomSheet<void>(
     context: context,
     backgroundColor: Colors.white,
@@ -339,7 +336,6 @@ Future<void> showTipDetailSheet(BuildContext context, Map<String, String> tip) {
 
 Future<void> showGrowthNoteDetailSheet(BuildContext context, GrowthNote note) {
   final strings = AppLocalizations.of(context);
-  final isEnglish = Localizations.localeOf(context).languageCode == 'en';
 
   return showModalBottomSheet<void>(
     context: context,
@@ -375,10 +371,7 @@ Future<void> showGrowthNoteDetailSheet(BuildContext context, GrowthNote note) {
                       color: _soft,
                       borderRadius: BorderRadius.circular(14),
                     ),
-                    child: const Icon(
-                      Icons.menu_book_outlined,
-                      color: _primary,
-                    ),
+                    child: const Icon(Icons.menu_book_outlined, color: _primary),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -396,7 +389,7 @@ Future<void> showGrowthNoteDetailSheet(BuildContext context, GrowthNote note) {
               const SizedBox(height: 16),
               _SheetRow(label: strings.plant, value: note.plantName),
               _SheetRow(
-                label: isEnglish ? 'Date' : 'Ngày ghi',
+                label: strings.noteDate,
                 value: note.date,
               ),
               const SizedBox(height: 8),
