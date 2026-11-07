@@ -141,6 +141,17 @@ class AppLocalizations {
       'descriptionLabel': 'Mô tả',
       'highlightsLabel': 'Đặc điểm',
       'noteDate': 'Ngày ghi',
+      'noteDetailsTitle': 'Chi tiết ghi chú',
+      'noteTitleRequired': 'Vui lòng nhập tiêu đề',
+      'noteTitleTooShort': 'Tiêu đề tối thiểu 3 ký tự',
+      'noteContentHint': 'Cây thay đổi thế nào? (lá mới, nụ hoa...)',
+      'noteContentRequired': 'Vui lòng nhập mô tả',
+      'noteContentTooShort': 'Mô tả tối thiểu 10 ký tự',
+      'noteAdded': 'Đã thêm ghi chú',
+      'noteDeleted': 'Đã xóa ghi chú',
+      'deleteNote': 'Xóa ghi chú',
+      'deleteNoteQuestion': 'Xóa ghi chú?',
+      'deleteNoteMessage': 'Ghi chú "{note}" của {plant} sẽ bị xóa.',
     },
     'en': {
       'greeting': 'Hello,',
@@ -264,6 +275,17 @@ class AppLocalizations {
       'descriptionLabel': 'Description',
       'highlightsLabel': 'Highlights',
       'noteDate': 'Date',
+      'noteDetailsTitle': 'Note details',
+      'noteTitleRequired': 'Please enter a title',
+      'noteTitleTooShort': 'Title must be at least 3 characters',
+      'noteContentHint': 'How did the plant change? (new leaves, buds...)',
+      'noteContentRequired': 'Please enter a description',
+      'noteContentTooShort': 'Description must be at least 10 characters',
+      'noteAdded': 'Note added',
+      'noteDeleted': 'Note deleted',
+      'deleteNote': 'Delete note',
+      'deleteNoteQuestion': 'Delete note?',
+      'deleteNoteMessage': '"{note}" for {plant} will be removed.',
     },
   };
 
@@ -387,6 +409,21 @@ class AppLocalizations {
   String get descriptionLabel => _val('descriptionLabel');
   String get highlightsLabel => _val('highlightsLabel');
   String get noteDate => _val('noteDate');
+  String get noteDetailsTitle => _val('noteDetailsTitle');
+  String get noteTitleRequired => _val('noteTitleRequired');
+  String get noteTitleTooShort => _val('noteTitleTooShort');
+  String get noteContentHint => _val('noteContentHint');
+  String get noteContentRequired => _val('noteContentRequired');
+  String get noteContentTooShort => _val('noteContentTooShort');
+  String get noteAdded => _val('noteAdded');
+  String get noteDeleted => _val('noteDeleted');
+  String get deleteNote => _val('deleteNote');
+  String get deleteNoteQuestion => _val('deleteNoteQuestion');
+  String deleteNoteMessage(String note, String plant) {
+    return _val('deleteNoteMessage')
+        .replaceAll('{note}', note)
+        .replaceAll('{plant}', plant);
+  }
   String deleteTaskMessage(String task, String plant) {
     return _val('deleteTaskMessage')
         .replaceAll('{task}', task)
