@@ -148,6 +148,10 @@ class AppLocalizations {
       'noteContentRequired': 'Vui lòng nhập mô tả',
       'noteContentTooShort': 'Mô tả tối thiểu 10 ký tự',
       'noteAdded': 'Đã thêm ghi chú',
+      'editNote': 'Sửa ghi chú',
+      'noteUpdated': 'Đã cập nhật ghi chú',
+      'emptyJournalTitle': 'Chưa có ghi chú nào',
+      'emptyJournalMessage': 'Bấm nút + để ghi lại sự phát triển của cây.',
       'noteDeleted': 'Đã xóa ghi chú',
       'deleteNote': 'Xóa ghi chú',
       'deleteNoteQuestion': 'Xóa ghi chú?',
@@ -282,6 +286,10 @@ class AppLocalizations {
       'noteContentRequired': 'Please enter a description',
       'noteContentTooShort': 'Description must be at least 10 characters',
       'noteAdded': 'Note added',
+      'editNote': 'Edit note',
+      'noteUpdated': 'Note updated',
+      'emptyJournalTitle': 'No notes yet',
+      'emptyJournalMessage': 'Tap + to record how your plants are growing.',
       'noteDeleted': 'Note deleted',
       'deleteNote': 'Delete note',
       'deleteNoteQuestion': 'Delete note?',
@@ -416,6 +424,10 @@ class AppLocalizations {
   String get noteContentRequired => _val('noteContentRequired');
   String get noteContentTooShort => _val('noteContentTooShort');
   String get noteAdded => _val('noteAdded');
+  String get editNote => _val('editNote');
+  String get noteUpdated => _val('noteUpdated');
+  String get emptyJournalTitle => _val('emptyJournalTitle');
+  String get emptyJournalMessage => _val('emptyJournalMessage');
   String get noteDeleted => _val('noteDeleted');
   String get deleteNote => _val('deleteNote');
   String get deleteNoteQuestion => _val('deleteNoteQuestion');
