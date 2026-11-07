@@ -5,6 +5,8 @@ import 'package:greenlife_app/models/care_task.dart';
 import 'package:greenlife_app/models/plant.dart';
 import 'package:greenlife_app/screens/plant_library/plant_detail_screen.dart';
 import 'package:greenlife_app/widgets/plant_card.dart';
+import 'package:greenlife_app/widgets/empty_state.dart';
+import 'package:greenlife_app/widgets/search_bar.dart';
 
 class PlantLibraryScreen extends StatefulWidget {
   final List<Plant> plants;
@@ -75,20 +77,10 @@ class _PlantLibraryScreenState extends State<PlantLibraryScreen> {
               style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w800),
             ),
             const SizedBox(height: 12),
-            TextField(
+            CustomSearchBar(
               controller: _searchController,
+              hintText: strings.searchPlants,
               onChanged: (_) => setState(() {}),
-              decoration: InputDecoration(
-                hintText: strings.searchPlants,
-                prefixIcon: const Icon(Icons.search),
-                filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16),
-                  borderSide: BorderSide.none,
-                ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 14),
-              ),
             ),
             const SizedBox(height: 12),
             SizedBox(
@@ -137,9 +129,7 @@ class _PlantLibraryScreenState extends State<PlantLibraryScreen> {
             const SizedBox(height: 18),
             Expanded(
               child: displayPlants.isEmpty
-                  ? Center(
-                      child: Text(strings.noPlantsFound),
-                    )
+                  ? EmptyState(message: strings.noPlantsFound)
                   : GridView.builder(
                       itemCount: displayPlants.length,
                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

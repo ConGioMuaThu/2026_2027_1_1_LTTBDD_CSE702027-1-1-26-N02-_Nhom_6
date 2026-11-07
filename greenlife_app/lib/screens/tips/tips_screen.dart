@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:greenlife_app/data/sample_data.dart';
 import 'package:greenlife_app/l10n/app_localizations.dart';
 import 'package:greenlife_app/widgets/detail_sheet.dart';
+import 'package:greenlife_app/widgets/empty_state.dart';
+import 'package:greenlife_app/widgets/search_bar.dart';
 
 class TipsScreen extends StatefulWidget {
   const TipsScreen({super.key});
@@ -47,25 +49,15 @@ class _TipsScreenState extends State<TipsScreen> {
               style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w800),
             ),
             const SizedBox(height: 12),
-            TextField(
+            CustomSearchBar(
               controller: _searchController,
+              hintText: strings.searchTipsHint,
               onChanged: (_) => setState(() {}),
-              decoration: InputDecoration(
-                hintText: strings.searchTipsHint,
-                prefixIcon: const Icon(Icons.search),
-                filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16),
-                  borderSide: BorderSide.none,
-                ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 14),
-              ),
             ),
             const SizedBox(height: 14),
             Expanded(
               child: filteredTips.isEmpty
-                  ? Center(child: Text(strings.noTipsMatch))
+                  ? EmptyState(message: strings.noTipsMatch)
                   : ListView.separated(
                       itemCount: filteredTips.length,
                       separatorBuilder: (_, _) => const SizedBox(height: 14),
