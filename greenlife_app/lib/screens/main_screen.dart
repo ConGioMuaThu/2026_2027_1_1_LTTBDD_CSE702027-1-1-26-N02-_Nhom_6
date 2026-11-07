@@ -129,6 +129,10 @@ class _MainScreenState extends State<MainScreen> {
     setState(() => _notes.insert(0, note));
   }
 
+  void _deleteNote(String id) {
+    setState(() => _notes.removeWhere((n) => n.id == id));
+  }
+
   List<String> get _plantNames => _plants.map((p) => p.name).toList();
 
   void _deletePlant(String id) {
@@ -169,7 +173,12 @@ class _MainScreenState extends State<MainScreen> {
             onDeleteTask: _deleteTask,
             plantNames: _plantNames,
           ),
-          GrowthJournalScreen(notes: _notes, onAddNote: _addNote),
+          GrowthJournalScreen(
+            notes: _notes,
+            onAddNote: _addNote,
+            onDeleteNote: _deleteNote,
+            plantNames: _plantNames,
+          ),
           const TipsScreen(),
           const DevelopersScreen(),
         ],
