@@ -10,16 +10,52 @@ const Color _textColor = Color(0xFF1D2A1F);
 const Color _muted = Color(0xFF5F6F62);
 const Color _doneColor = Color(0xFF74B97D);
 const Color _pendingColor = Color(0xFFEAB349);
+const Color _danger = Color(0xFFE46D5F);
 
 class TaskDetailScreen extends StatelessWidget {
   const TaskDetailScreen({
     super.key,
     required this.task,
     required this.onToggle,
+    this.onDelete,
   });
 
   final CareTask task;
   final VoidCallback onToggle;
+  final VoidCallback? onDelete;
+
+  Future<void> _confirmDelete(BuildContext context) async {
+    final strings = AppLocalizations.of(context);
+    final isEnglish = Localizations.localeOf(context).languageCode == 'en';
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(isEnglish ? 'Delete task?' : 'Xóa nhiệm vụ?'),
+        content: Text(
+          isEnglish
+              ? '"${task.title}" for ${task.plantName} will be removed.'
+              : 'Nhiệm vụ "${task.title}" của ${task.plantName} sẽ bị xóa.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: Text(strings.cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            style: TextButton.styleFrom(foregroundColor: _danger),
+            child: Text(isEnglish ? 'Delete' : 'Xóa'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && context.mounted) {
+      onDelete!();
+      Navigator.pop(context);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -170,6 +206,22 @@ class TaskDetailScreen extends StatelessWidget {
                 ),
               ),
             ),
+            if (onDelete != null) ...[
+              const SizedBox(height: 12),
+              OutlinedButton.icon(
+                onPressed: () => _confirmDelete(context),
+                icon: const Icon(Icons.delete_outline),
+                label: Text(isEnglish ? 'Delete task' : 'Xóa nhiệm vụ'),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: _danger,
+                  side: const BorderSide(color: _danger),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                ),
+              ),
+            ],
           ],
         ),
       ),
