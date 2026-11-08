@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:greenlife_app/l10n/app_localizations.dart';
+import 'package:greenlife_app/utils/app_constants.dart';
 
 class GreenLifeSplash extends StatefulWidget {
   const GreenLifeSplash({
@@ -23,11 +24,11 @@ class _GreenLifeSplashState extends State<GreenLifeSplash>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 3000),
+      duration: AppConstants.splashDuration,
     );
     _controller.forward();
 
-    Future.delayed(const Duration(milliseconds: 3000), () {
+    Future.delayed(AppConstants.splashDuration, () {
       if (!mounted) return;
       Navigator.of(context).pushReplacement(
         PageRouteBuilder(
@@ -47,8 +48,8 @@ class _GreenLifeSplashState extends State<GreenLifeSplash>
               ),
             );
           },
-          transitionDuration: const Duration(milliseconds: 650),
-          reverseTransitionDuration: const Duration(milliseconds: 350),
+          transitionDuration: AppConstants.splashTransitionDuration,
+          reverseTransitionDuration: AppConstants.splashReverseTransitionDuration,
         ),
       );
     });

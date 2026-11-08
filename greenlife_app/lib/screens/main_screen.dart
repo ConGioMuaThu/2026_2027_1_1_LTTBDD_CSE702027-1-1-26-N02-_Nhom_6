@@ -13,6 +13,7 @@ import 'package:greenlife_app/screens/plant_library/plant_library_screen.dart';
 import 'package:greenlife_app/screens/tips/tips_screen.dart';
 import 'package:greenlife_app/services/notification_service.dart';
 import 'package:greenlife_app/services/storage_service.dart';
+import 'package:greenlife_app/utils/date_utils.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({
@@ -198,14 +199,7 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   DateTime _noteDate(String value) {
-    final parts = value.split('/');
-    final fallback = DateTime.fromMillisecondsSinceEpoch(0);
-    if (parts.length != 3) return fallback;
-    final day = int.tryParse(parts[0]);
-    final month = int.tryParse(parts[1]);
-    final year = int.tryParse(parts[2]);
-    if (day == null || month == null || year == null) return fallback;
-    return DateTime(year, month, day);
+    return AppDateUtils.parseDate(value) ?? AppDateUtils.epoch;
   }
 
   void _insertNote(GrowthNote note) {
