@@ -4,27 +4,27 @@ import 'package:greenlife_app/config/theme.dart';
 import 'package:greenlife_app/l10n/app_localizations.dart';
 import 'package:greenlife_app/screens/main_screen.dart';
 import 'package:greenlife_app/screens/splash_screen.dart';
+import 'package:greenlife_app/services/localization_service.dart';
 
 class GreenLifeApp extends StatefulWidget {
-  const GreenLifeApp({super.key});
+  const GreenLifeApp({super.key, this.initialLocale = const Locale('vi')});
+
+  final Locale initialLocale;
 
   @override
   State<GreenLifeApp> createState() => _GreenLifeAppState();
 }
 
 class _GreenLifeAppState extends State<GreenLifeApp> {
-  Locale _locale = const Locale('vi');
+  late Locale _locale = widget.initialLocale;
 
   void _setLocale(Locale locale) {
-    final supported = AppLocalizations.supportedLocales.any(
-      (supportedLocale) => supportedLocale.languageCode == locale.languageCode,
-    );
-
-    if (!supported) return;
+    if (!LocalizationService.instance.isSupported(locale)) return;
 
     setState(() {
       _locale = locale;
     });
+    LocalizationService.instance.saveLocale(locale);
   }
 
   @override
