@@ -5,6 +5,7 @@ class CareTask {
   final String type;
   final String dueDate;
   final bool isCompleted;
+  final DateTime? dueAt;
 
   const CareTask({
     required this.id,
@@ -13,5 +14,6 @@ class CareTask {
     required this.type,
     required this.dueDate,
     this.isCompleted = false,
+    this.dueAt,
   });
 }
