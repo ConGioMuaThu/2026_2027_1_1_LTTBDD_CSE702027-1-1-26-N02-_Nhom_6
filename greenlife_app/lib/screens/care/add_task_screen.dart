@@ -199,6 +199,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       plantName: _plantName!,
       type: _type,
       dueDate: _formatDueDate(dueAt, _isEnglish),
+      dueAt: dueAt,
     );
 
     Navigator.pop(context, task);
