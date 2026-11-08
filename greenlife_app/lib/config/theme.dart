@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:greenlife_app/utils/app_colors.dart';
 
 class AppTheme {
-  static const Color primary = Color(0xFF2F6A4F);
-  static const Color primarySoft = Color(0xFFD7EEDD);
-  static const Color secondary = Color(0xFF9BCB8A);
-  static const Color accent = Color(0xFFB8D99B);
-  static const Color background = Color(0xFFF5F8F2);
-  static const Color card = Color(0xFFFFFFFF);
-  static const Color text = Color(0xFF1D2A1F);
-  static const Color muted = Color(0xFF728370);
-  static const Color success = Color(0xFF3B9B6A);
-  static const Color warning = Color(0xFFE7A84D);
-  static const Color danger = Color(0xFFE46D5F);
+  static const Color primary = AppColors.primary;
+  static const Color primarySoft = AppColors.primarySoft;
+  static const Color secondary = AppColors.secondary;
+  static const Color accent = AppColors.accent;
+  static const Color background = AppColors.background;
+  static const Color card = AppColors.card;
+  static const Color text = AppColors.text;
+  static const Color muted = AppColors.muted;
+  static const Color success = AppColors.success;
+  static const Color warning = AppColors.warning;
+  static const Color danger = AppColors.danger;
 
   static final ThemeData lightTheme = ThemeData(
     useMaterial3: true,
