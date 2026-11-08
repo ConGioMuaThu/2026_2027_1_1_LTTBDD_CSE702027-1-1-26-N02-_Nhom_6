@@ -27,29 +27,34 @@ class NotificationService {
   Future<void> init() async {
     if (_initialized || !isSupported) return;
 
-    tz_data.initializeTimeZones();
+    try {
+      tz_data.initializeTimeZones();
 
-    const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
-    const darwinSettings = DarwinInitializationSettings(
-      requestAlertPermission: false,
-      requestBadgePermission: false,
-      requestSoundPermission: false,
-    );
+      const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
+      const darwinSettings = DarwinInitializationSettings(
+        requestAlertPermission: false,
+        requestBadgePermission: false,
+        requestSoundPermission: false,
+      );
 
-    await _plugin.initialize(
-      settings: const InitializationSettings(
-        android: androidSettings,
-        iOS: darwinSettings,
-        macOS: darwinSettings,
-      ),
-    );
+      await _plugin.initialize(
+        settings: const InitializationSettings(
+          android: androidSettings,
+          iOS: darwinSettings,
+          macOS: darwinSettings,
+        ),
+      );
 
-    _initialized = true;
+      _initialized = true;
+    } catch (_) {
+      _initialized = false;
+    }
   }
 
   Future<bool> requestPermission() async {
     if (!isSupported) return false;
     await init();
+    if (!_initialized) return false;
 
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -83,6 +88,7 @@ class NotificationService {
   }) async {
     if (!isSupported) return false;
     await init();
+    if (!_initialized) return false;
 
     if (!scheduledAt.isAfter(DateTime.now())) return false;
 
@@ -108,6 +114,7 @@ class NotificationService {
   }) async {
     if (!isSupported) return;
     await init();
+    if (!_initialized) return;
 
     try {
       await _plugin.show(
@@ -124,12 +131,14 @@ class NotificationService {
   Future<void> cancelTaskReminder(String taskId) async {
     if (!isSupported) return;
     await init();
+    if (!_initialized) return;
     await _plugin.cancel(id: _notificationId(taskId));
   }
 
   Future<void> cancelAll() async {
     if (!isSupported) return;
     await init();
+    if (!_initialized) return;
     await _plugin.cancelAll();
   }
 

@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:greenlife_app/models/care_task.dart';
 import 'package:greenlife_app/models/growth_note.dart';
 import 'package:greenlife_app/models/plant.dart';
@@ -15,7 +14,7 @@ class StorageService {
   static const String _notesKey = 'growth_notes';
   static const String _localeKey = 'locale_code';
 
-  final SharedPreferencesAsync _prefs = SharedPreferencesAsync();
+  late final SharedPreferencesAsync _prefs = SharedPreferencesAsync();
 
   Future<void> saveTasks(List<CareTask> tasks) {
     return _saveList(_tasksKey, tasks.map(_taskToMap).toList());
@@ -44,30 +43,46 @@ class StorageService {
     return list?.map(_noteFromMap).toList();
   }
 
-  Future<void> saveLocaleCode(String languageCode) {
-    return _prefs.setString(_localeKey, languageCode);
+  Future<void> saveLocaleCode(String languageCode) async {
+    try {
+      await _prefs.setString(_localeKey, languageCode);
+    } catch (_) {
+      return;
+    }
   }
 
-  Future<String?> loadLocaleCode() {
-    return _prefs.getString(_localeKey);
+  Future<String?> loadLocaleCode() async {
+    try {
+      return await _prefs.getString(_localeKey);
+    } catch (_) {
+      return null;
+    }
   }
 
   Future<void> clearAll() async {
-    await _prefs.remove(_tasksKey);
-    await _prefs.remove(_plantsKey);
-    await _prefs.remove(_notesKey);
-    await _prefs.remove(_localeKey);
+    try {
+      await _prefs.remove(_tasksKey);
+      await _prefs.remove(_plantsKey);
+      await _prefs.remove(_notesKey);
+      await _prefs.remove(_localeKey);
+    } catch (_) {
+      return;
+    }
   }
 
-  Future<void> _saveList(String key, List<Map<String, Object?>> items) {
-    return _prefs.setString(key, jsonEncode(items));
+  Future<void> _saveList(String key, List<Map<String, Object?>> items) async {
+    try {
+      await _prefs.setString(key, jsonEncode(items));
+    } catch (_) {
+      return;
+    }
   }
 
   Future<List<Map<String, dynamic>>?> _loadList(String key) async {
-    final raw = await _prefs.getString(key);
-    if (raw == null) return null;
-
     try {
+      final raw = await _prefs.getString(key);
+      if (raw == null) return null;
+
       final decoded = jsonDecode(raw);
       if (decoded is! List) return null;
       return decoded.whereType<Map<String, dynamic>>().toList();
@@ -84,6 +99,7 @@ class StorageService {
       'type': task.type,
       'dueDate': task.dueDate,
       'isCompleted': task.isCompleted,
+      'dueAt': task.dueAt?.toIso8601String(),
     };
   }
 
@@ -95,6 +111,7 @@ class StorageService {
       type: map['type'] as String? ?? '',
       dueDate: map['dueDate'] as String? ?? '',
       isCompleted: map['isCompleted'] as bool? ?? false,
+      dueAt: DateTime.tryParse(map['dueAt'] as String? ?? ''),
     );
   }
 
