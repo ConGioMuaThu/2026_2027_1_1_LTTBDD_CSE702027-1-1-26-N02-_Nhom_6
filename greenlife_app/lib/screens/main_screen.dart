@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:greenlife_app/data/sample_data.dart';
 import 'package:greenlife_app/l10n/app_localizations.dart';
-import 'package:greenlife_app/models/care_task.dart';
-import 'package:greenlife_app/models/growth_note.dart';
-import 'package:greenlife_app/models/plant.dart';
+import 'package:greenlife_app/providers/care_provider.dart';
+import 'package:greenlife_app/providers/growth_provider.dart';
+import 'package:greenlife_app/providers/plant_provider.dart';
 import 'package:greenlife_app/screens/care/care_screen.dart';
 import 'package:greenlife_app/screens/developers/developers_screen.dart';
 import 'package:greenlife_app/screens/growth_journal/growth_journal_screen.dart';
@@ -11,9 +10,6 @@ import 'package:greenlife_app/screens/home/home_screen.dart';
 import 'package:greenlife_app/screens/my_plants/my_plants_screen.dart';
 import 'package:greenlife_app/screens/plant_library/plant_library_screen.dart';
 import 'package:greenlife_app/screens/tips/tips_screen.dart';
-import 'package:greenlife_app/services/notification_service.dart';
-import 'package:greenlife_app/services/storage_service.dart';
-import 'package:greenlife_app/utils/date_utils.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({
@@ -29,251 +25,94 @@ class MainScreen extends StatefulWidget {
   State<MainScreen> createState() => _MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   int _index = 0;
-  late List<CareTask> _tasks = sampleTasksFor(widget.locale);
-  late List<Plant> _plants = samplePlantsFor(widget.locale);
-  late List<GrowthNote> _notes = sampleNotesFor(widget.locale);
-  final Set<String> _editedNoteIds = {};
+  late final CareProvider _care = CareProvider(locale: widget.locale);
+  late final PlantProvider _plants = PlantProvider(locale: widget.locale);
+  late final GrowthProvider _growth = GrowthProvider(locale: widget.locale);
 
   @override
   void initState() {
     super.initState();
-    _restoreSavedData();
+    WidgetsBinding.instance.addObserver(this);
+    _care.load();
+    _plants.load();
+    _growth.load();
   }
 
   @override
-  void didUpdateWidget(covariant MainScreen oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.locale.languageCode != widget.locale.languageCode) {
-      _reloadForLocale();
-      _persistTasks();
-      _persistPlants();
-      _persistNotes();
-    }
-  }
-
-  Future<void> _restoreSavedData() async {
-    final storage = StorageService.instance;
-    final tasks = await storage.loadTasks();
-    final plants = await storage.loadPlants();
-    final notes = await storage.loadNotes();
-    if (!mounted) return;
-    if (tasks == null && plants == null && notes == null) return;
-
-    setState(() {
-      if (tasks != null) _tasks = tasks;
-      if (plants != null) _plants = plants;
-      if (notes != null) _notes = notes;
-      _reloadForLocale();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final locale = Localizations.localeOf(context);
+    Future.microtask(() {
+      if (!mounted) return;
+      _care.updateLocale(locale);
+      _plants.updateLocale(locale);
+      _growth.updateLocale(locale);
     });
   }
 
-  void _persistTasks() {
-    StorageService.instance.saveTasks(_tasks);
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) _care.refreshLabels();
   }
 
-  void _persistPlants() {
-    StorageService.instance.savePlants(_plants);
-  }
-
-  void _persistNotes() {
-    StorageService.instance.saveNotes(_notes);
-  }
-
-  Future<void> _scheduleReminder(CareTask task) async {
-    final dueAt = task.dueAt;
-    if (dueAt == null || task.isCompleted) return;
-
-    final service = NotificationService.instance;
-    if (!service.isSupported) return;
-
-    await service.requestPermission();
-    await service.scheduleTaskReminder(
-      taskId: task.id,
-      title: task.title,
-      body: task.plantName,
-      scheduledAt: dueAt,
-    );
-  }
-
-  void _reloadForLocale() {
-    final freshTasks = {
-      for (final task in sampleTasksFor(widget.locale)) task.id: task,
-    };
-    final freshPlants = {
-      for (final plant in samplePlantsFor(widget.locale)) plant.id: plant,
-    };
-
-    _tasks = [
-      for (final task in _tasks)
-        freshTasks.containsKey(task.id)
-            ? _taskWithCompleted(freshTasks[task.id]!, task.isCompleted)
-            : task,
-    ];
-    _plants = [
-      for (final plant in _plants)
-        freshPlants.containsKey(plant.id)
-            ? _plantWithFavorite(freshPlants[plant.id]!, plant.isFavorite)
-            : plant,
-    ];
-    final freshNotes = {
-      for (final note in sampleNotesFor(widget.locale)) note.id: note,
-    };
-    _notes = [
-      for (final note in _notes)
-        freshNotes.containsKey(note.id) && !_editedNoteIds.contains(note.id)
-            ? freshNotes[note.id]!
-            : note,
-    ];
-  }
-
-  CareTask _taskWithCompleted(CareTask t, bool isCompleted) {
-    return CareTask(
-      id: t.id,
-      title: t.title,
-      plantName: t.plantName,
-      type: t.type,
-      dueDate: t.dueDate,
-      isCompleted: isCompleted,
-      dueAt: t.dueAt,
-    );
-  }
-
-  Plant _plantWithFavorite(Plant p, bool isFavorite) {
-    return Plant(
-      id: p.id,
-      name: p.name,
-      scientificName: p.scientificName,
-      category: p.category,
-      description: p.description,
-      careLevel: p.careLevel,
-      waterNeed: p.waterNeed,
-      sunlight: p.sunlight,
-      imageAsset: p.imageAsset,
-      imageUrl: p.imageUrl,
-      isFavorite: isFavorite,
-      tags: p.tags,
-    );
-  }
-
-  void _toggleTask(String id) {
-    final i = _tasks.indexWhere((t) => t.id == id);
-    if (i == -1) return;
-
-    final updated = _taskWithCompleted(_tasks[i], !_tasks[i].isCompleted);
-    setState(() => _tasks[i] = updated);
-    _persistTasks();
-
-    if (updated.isCompleted) {
-      NotificationService.instance.cancelTaskReminder(updated.id);
-    } else {
-      _scheduleReminder(updated);
-    }
-  }
-
-  void _addTask(CareTask task) {
-    setState(() => _tasks.insert(0, task));
-    _persistTasks();
-    _scheduleReminder(task);
-  }
-
-  void _deleteTask(String id) {
-    setState(() => _tasks.removeWhere((t) => t.id == id));
-    _persistTasks();
-    NotificationService.instance.cancelTaskReminder(id);
-  }
-
-  void _toggleFavorite(String id) {
-    setState(() {
-      final i = _plants.indexWhere((p) => p.id == id);
-      if (i == -1) return;
-      _plants[i] = _plantWithFavorite(_plants[i], !_plants[i].isFavorite);
-    });
-    _persistPlants();
-  }
-
-  void _addPlant(Plant plant) {
-    setState(() => _plants.insert(0, plant));
-    _persistPlants();
-  }
-
-  DateTime _noteDate(String value) {
-    return AppDateUtils.parseDate(value) ?? AppDateUtils.epoch;
-  }
-
-  void _insertNote(GrowthNote note) {
-    final date = _noteDate(note.date);
-    final index = _notes.indexWhere((n) => !_noteDate(n.date).isAfter(date));
-    _notes.insert(index == -1 ? _notes.length : index, note);
-  }
-
-  void _addNote(GrowthNote note) {
-    setState(() => _insertNote(note));
-    _persistNotes();
-  }
-
-  void _updateNote(GrowthNote note) {
-    setState(() {
-      _notes.removeWhere((n) => n.id == note.id);
-      _insertNote(note);
-      _editedNoteIds.add(note.id);
-    });
-    _persistNotes();
-  }
-
-  void _deleteNote(String id) {
-    setState(() => _notes.removeWhere((n) => n.id == id));
-    _persistNotes();
-  }
-
-  List<String> get _plantNames => _plants.map((p) => p.name).toList();
-
-  void _deletePlant(String id) {
-    setState(() => _plants.removeWhere((p) => p.id == id));
-    _persistPlants();
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _care.dispose();
+    _plants.dispose();
+    _growth.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final strings = AppLocalizations.of(context);
 
+    return ListenableBuilder(
+      listenable: Listenable.merge([_care, _plants, _growth]),
+      builder: (context, _) => _buildScaffold(context, strings),
+    );
+  }
+
+  Widget _buildScaffold(BuildContext context, AppLocalizations strings) {
     return Scaffold(
       body: IndexedStack(
         index: _index,
         children: [
           HomeScreen(
-            plants: _plants,
-            tasks: _tasks,
-            notes: _notes,
-            locale: widget.locale,
+            plants: _plants.plants,
+            tasks: _care.tasks,
+            notes: _growth.notes,
+            locale: Localizations.localeOf(context),
             onLocaleChanged: widget.onLocaleChanged,
-            onToggleTask: _toggleTask,
+            onToggleTask: _care.toggle,
             onViewCareSchedule: () => setState(() => _index = 3),
           ),
           PlantLibraryScreen(
-            plants: _plants,
-            onToggleFavorite: _toggleFavorite,
-            onAddTask: _addTask,
+            plants: _plants.plants,
+            onToggleFavorite: _plants.toggleFavorite,
+            onAddTask: _care.add,
           ),
           MyPlantsScreen(
-            plants: _plants,
-            onAddPlant: _addPlant,
-            onDeletePlant: _deletePlant,
+            plants: _plants.plants,
+            onAddPlant: _plants.add,
+            onDeletePlant: _plants.remove,
           ),
           CareScreen(
-            tasks: _tasks,
-            onToggleTask: _toggleTask,
-            onAddTask: _addTask,
-            onDeleteTask: _deleteTask,
-            plantNames: _plantNames,
+            tasks: _care.tasks,
+            onToggleTask: _care.toggle,
+            onAddTask: _care.add,
+            onDeleteTask: _care.remove,
+            plantNames: _plants.plantNames,
           ),
           GrowthJournalScreen(
-            notes: _notes,
-            onAddNote: _addNote,
-            onDeleteNote: _deleteNote,
-            onUpdateNote: _updateNote,
-            plantNames: _plantNames,
+            notes: _growth.notes,
+            onAddNote: _growth.add,
+            onDeleteNote: _growth.remove,
+            onUpdateNote: _growth.update,
+            plantNames: _plants.plantNames,
           ),
           const TipsScreen(),
           const DevelopersScreen(),
