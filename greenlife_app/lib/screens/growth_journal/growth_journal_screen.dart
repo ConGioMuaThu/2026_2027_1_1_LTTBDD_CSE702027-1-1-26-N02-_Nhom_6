@@ -3,6 +3,7 @@ import 'package:greenlife_app/l10n/app_localizations.dart';
 import 'package:greenlife_app/models/growth_note.dart';
 import 'package:greenlife_app/screens/growth_journal/add_note_screen.dart';
 import 'package:greenlife_app/screens/growth_journal/note_detail_screen.dart';
+import 'package:greenlife_app/utils/app_colors.dart';
 import 'package:greenlife_app/widgets/empty_state.dart';
 import 'package:greenlife_app/widgets/growth_note_card.dart';
 
@@ -160,7 +161,7 @@ class _GrowthJournalScreenState extends State<GrowthJournalScreen> {
             bottom: 24,
             child: FloatingActionButton(
               onPressed: _openAddNote,
-              backgroundColor: const Color(0xFF2F6A4F),
+              backgroundColor: AppColors.primary,
               child: const Icon(Icons.add),
             ),
           ),

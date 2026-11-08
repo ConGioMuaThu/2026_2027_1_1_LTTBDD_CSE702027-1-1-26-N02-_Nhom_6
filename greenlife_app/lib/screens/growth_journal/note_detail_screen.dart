@@ -2,13 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:greenlife_app/l10n/app_localizations.dart';
 import 'package:greenlife_app/models/growth_note.dart';
 import 'package:greenlife_app/screens/growth_journal/add_note_screen.dart';
-
-const Color _primary = Color(0xFF2F6A4F);
-const Color _soft = Color(0xFFE2F4E4);
-const Color _background = Color(0xFFF5F8F2);
-const Color _textColor = Color(0xFF1D2A1F);
-const Color _muted = Color(0xFF5F6F62);
-const Color _danger = Color(0xFFE46D5F);
+import 'package:greenlife_app/utils/app_colors.dart';
 
 class NoteDetailScreen extends StatefulWidget {
   const NoteDetailScreen({
@@ -65,7 +59,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
           ),
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, true),
-            style: TextButton.styleFrom(foregroundColor: _danger),
+            style: TextButton.styleFrom(foregroundColor: AppColors.danger),
             child: Text(strings.deleteAction),
           ),
         ],
@@ -83,12 +77,12 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
     final strings = AppLocalizations.of(context);
 
     return Scaffold(
-      backgroundColor: _background,
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
-        iconTheme: const IconThemeData(color: _textColor),
+        iconTheme: const IconThemeData(color: AppColors.text),
         actions: [
           if (widget.onUpdate != null)
             IconButton(
@@ -100,7 +94,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
         title: Text(
           strings.noteDetailsTitle,
           style: const TextStyle(
-            color: _textColor,
+            color: AppColors.text,
             fontSize: 24,
             fontWeight: FontWeight.w800,
           ),
@@ -113,7 +107,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: _soft,
+                color: AppColors.soft,
                 borderRadius: BorderRadius.circular(24),
               ),
               child: Column(
@@ -128,7 +122,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                     child: const Icon(
                       Icons.menu_book_outlined,
                       size: 38,
-                      color: _primary,
+                      color: AppColors.primary,
                     ),
                   ),
                   const SizedBox(height: 14),
@@ -138,7 +132,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                     style: const TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.w800,
-                      color: _textColor,
+                      color: AppColors.text,
                     ),
                   ),
                   const SizedBox(height: 6),
@@ -148,14 +142,14 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                       const Icon(
                         Icons.local_florist_outlined,
                         size: 18,
-                        color: _muted,
+                        color: AppColors.textSecondary,
                       ),
                       const SizedBox(width: 6),
                       Flexible(
                         child: Text(
                           _note.plantName,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontSize: 15, color: _muted),
+                          style: const TextStyle(fontSize: 15, color: AppColors.textSecondary),
                         ),
                       ),
                     ],
@@ -165,11 +159,11 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                     avatar: const Icon(
                       Icons.event_outlined,
                       size: 18,
-                      color: _primary,
+                      color: AppColors.primary,
                     ),
                     label: Text(_note.date),
                     labelStyle: const TextStyle(
-                      color: _primary,
+                      color: AppColors.primary,
                       fontWeight: FontWeight.w700,
                     ),
                     backgroundColor: Colors.white,
@@ -214,11 +208,11 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                 children: [
                   Row(
                     children: [
-                      const Icon(Icons.notes_outlined, size: 22, color: _primary),
+                      const Icon(Icons.notes_outlined, size: 22, color: AppColors.primary),
                       const SizedBox(width: 12),
                       Text(
                         strings.descriptionGrowth,
-                        style: const TextStyle(fontSize: 15, color: _muted),
+                        style: const TextStyle(fontSize: 15, color: AppColors.textSecondary),
                       ),
                     ],
                   ),
@@ -228,7 +222,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                     style: const TextStyle(
                       fontSize: 15,
                       height: 1.6,
-                      color: Color(0xFF425246),
+                      color: AppColors.textBody,
                     ),
                   ),
                 ],
@@ -241,8 +235,8 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                 icon: const Icon(Icons.delete_outline),
                 label: Text(strings.deleteNote),
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: _danger,
-                  side: const BorderSide(color: _danger),
+                  foregroundColor: AppColors.danger,
+                  side: const BorderSide(color: AppColors.danger),
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
@@ -274,9 +268,9 @@ class _InfoRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 14),
       child: Row(
         children: [
-          Icon(icon, size: 22, color: _primary),
+          Icon(icon, size: 22, color: AppColors.primary),
           const SizedBox(width: 12),
-          Text(label, style: const TextStyle(fontSize: 15, color: _muted)),
+          Text(label, style: const TextStyle(fontSize: 15, color: AppColors.textSecondary)),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
@@ -285,7 +279,7 @@ class _InfoRow extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w700,
-                color: _textColor,
+                color: AppColors.text,
               ),
             ),
           ),

@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:greenlife_app/data/sample_data.dart';
 import 'package:greenlife_app/l10n/app_localizations.dart';
 import 'package:greenlife_app/models/growth_note.dart';
-
-const Color _primary = Color(0xFF2F6A4F);
-const Color _background = Color(0xFFF5F8F2);
-const Color _textColor = Color(0xFF1D2A1F);
-const Color _danger = Color(0xFFE46D5F);
+import 'package:greenlife_app/utils/app_colors.dart';
+import 'package:greenlife_app/utils/app_constants.dart';
+import 'package:greenlife_app/utils/date_utils.dart';
+import 'package:greenlife_app/utils/validators.dart';
 
 class AddNoteScreen extends StatefulWidget {
   const AddNoteScreen({
@@ -59,13 +58,12 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
     _plantName =
         initial ?? (_plantOptions.isNotEmpty ? _plantOptions.first : null);
 
-    final now = DateTime.now();
-    _date = DateTime(now.year, now.month, now.day);
+    _date = AppDateUtils.today();
 
     if (editing != null) {
       _titleController.text = editing.title;
       _summaryController.text = editing.summary;
-      _date = _parseDate(editing.date) ?? _date;
+      _date = AppDateUtils.parseDate(editing.date) ?? _date;
     }
   }
 
@@ -77,10 +75,8 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
   }
 
   Future<void> _pickDate() async {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-
-    final earliest = DateTime(today.year - 5);
+    final today = AppDateUtils.today();
+    final earliest = DateTime(today.year - AppConstants.noteHistoryYears);
 
     final picked = await showDatePicker(
       context: context,
@@ -102,7 +98,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
     return title != note.title ||
         summary != note.summary ||
         _plantName != note.plantName ||
-        _formatDate(_date) != note.date;
+        AppDateUtils.formatDate(_date) != note.date;
   }
 
   Future<bool> _confirmDiscard() async {
@@ -120,7 +116,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
           ),
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, true),
-            style: TextButton.styleFrom(foregroundColor: _danger),
+            style: TextButton.styleFrom(foregroundColor: AppColors.danger),
             child: Text(strings.discardAction),
           ),
         ],
@@ -139,7 +135,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
       id: widget.initialNote?.id ?? 'note-${DateTime.now().millisecondsSinceEpoch}',
       plantName: _plantName!,
       title: _titleController.text.trim(),
-      date: _formatDate(_date),
+      date: AppDateUtils.formatDate(_date),
       summary: _summaryController.text.trim(),
     );
 
@@ -151,16 +147,16 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
     final strings = AppLocalizations.of(context);
 
     final scaffold = Scaffold(
-      backgroundColor: _background,
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
-        iconTheme: const IconThemeData(color: _textColor),
+        iconTheme: const IconThemeData(color: AppColors.text),
         title: Text(
           widget.initialNote == null ? strings.newNoteTitle : strings.editNote,
           style: const TextStyle(
-            color: _textColor,
+            color: AppColors.text,
             fontSize: 24,
             fontWeight: FontWeight.w800,
           ),
@@ -188,7 +184,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                 ],
                 onChanged: (value) => setState(() => _plantName = value),
                 validator: (value) =>
-                    value == null ? strings.choosePlantRequired : null,
+                    Validators.selection(value, strings.choosePlantRequired),
               ),
               const SizedBox(height: 20),
               _SectionLabel(strings.title),
@@ -196,23 +192,22 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                 controller: _titleController,
                 textInputAction: TextInputAction.next,
                 textCapitalization: TextCapitalization.sentences,
-                maxLength: 40,
+                maxLength: AppConstants.titleMaxLength,
                 decoration: _inputDecoration(
                   strings.title,
                   Icons.edit_outlined,
                 ),
-                validator: (value) {
-                  final text = value?.trim() ?? '';
-                  if (text.isEmpty) return strings.noteTitleRequired;
-                  if (text.length < 3) return strings.noteTitleTooShort;
-                  return null;
-                },
+                validator: Validators.text(
+                  emptyMessage: strings.noteTitleRequired,
+                  min: AppConstants.titleMinLength,
+                  tooShortMessage: strings.noteTitleTooShort,
+                ),
               ),
               const SizedBox(height: 12),
               _SectionLabel(strings.noteDate),
               _PickerField(
                 label: strings.dateLabel,
-                value: _formatDate(_date),
+                value: AppDateUtils.formatDate(_date),
                 icon: Icons.calendar_today_outlined,
                 onTap: _pickDate,
               ),
@@ -222,19 +217,18 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                 controller: _summaryController,
                 minLines: 4,
                 maxLines: 8,
-                maxLength: 300,
+                maxLength: AppConstants.noteSummaryMaxLength,
                 keyboardType: TextInputType.multiline,
                 textCapitalization: TextCapitalization.sentences,
                 decoration: _inputDecoration(
                   strings.noteContentHint,
                   Icons.notes_outlined,
                 ).copyWith(alignLabelWithHint: true),
-                validator: (value) {
-                  final text = value?.trim() ?? '';
-                  if (text.isEmpty) return strings.noteContentRequired;
-                  if (text.length < 10) return strings.noteContentTooShort;
-                  return null;
-                },
+                validator: Validators.text(
+                  emptyMessage: strings.noteContentRequired,
+                  min: AppConstants.noteSummaryMinLength,
+                  tooShortMessage: strings.noteContentTooShort,
+                ),
               ),
               const SizedBox(height: 16),
               Row(
@@ -243,8 +237,8 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                     child: OutlinedButton(
                       onPressed: () => Navigator.maybePop(context),
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: _primary,
-                        side: const BorderSide(color: _primary),
+                        foregroundColor: AppColors.primary,
+                        side: const BorderSide(color: AppColors.primary),
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
@@ -261,7 +255,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                       icon: const Icon(Icons.check),
                       label: Text(strings.save),
                       style: FilledButton.styleFrom(
-                        backgroundColor: _primary,
+                        backgroundColor: AppColors.primary,
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(
@@ -304,7 +298,7 @@ class _SectionLabel extends StatelessWidget {
         style: const TextStyle(
           fontSize: 15,
           fontWeight: FontWeight.w700,
-          color: _textColor,
+          color: AppColors.text,
         ),
       ),
     );
@@ -336,7 +330,7 @@ class _PickerField extends StatelessWidget {
           style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            color: _textColor,
+            color: AppColors.text,
           ),
         ),
       ),
@@ -347,33 +341,19 @@ class _PickerField extends StatelessWidget {
 InputDecoration _inputDecoration(String label, IconData icon) {
   final border = OutlineInputBorder(
     borderRadius: BorderRadius.circular(16),
-    borderSide: BorderSide(color: _primary.withAlpha(51)),
+    borderSide: BorderSide(color: AppColors.primary.withAlpha(51)),
   );
 
   return InputDecoration(
     labelText: label,
-    prefixIcon: Icon(icon, color: _primary),
+    prefixIcon: Icon(icon, color: AppColors.primary),
     filled: true,
     fillColor: Colors.white,
     border: border,
     enabledBorder: border,
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(16),
-      borderSide: const BorderSide(color: _primary, width: 1.5),
+      borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
     ),
   );
-}
-
-String _two(int n) => n.toString().padLeft(2, '0');
-
-String _formatDate(DateTime d) => '${_two(d.day)}/${_two(d.month)}/${d.year}';
-
-DateTime? _parseDate(String value) {
-  final parts = value.split('/');
-  if (parts.length != 3) return null;
-  final day = int.tryParse(parts[0]);
-  final month = int.tryParse(parts[1]);
-  final year = int.tryParse(parts[2]);
-  if (day == null || month == null || year == null) return null;
-  return DateTime(year, month, day);
 }
