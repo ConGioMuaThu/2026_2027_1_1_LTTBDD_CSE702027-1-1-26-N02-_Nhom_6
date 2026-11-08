@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:greenlife_app/data/sample_data.dart';
 import 'package:greenlife_app/l10n/app_localizations.dart';
 import 'package:greenlife_app/models/care_task.dart';
-
-const Color _primary = Color(0xFF2F6A4F);
-const Color _background = Color(0xFFF5F8F2);
-const Color _textColor = Color(0xFF1D2A1F);
+import 'package:greenlife_app/utils/app_colors.dart';
+import 'package:greenlife_app/utils/app_constants.dart';
+import 'package:greenlife_app/utils/date_utils.dart';
+import 'package:greenlife_app/utils/validators.dart';
 
 class TaskTypeInfo {
   const TaskTypeInfo({
@@ -62,7 +62,7 @@ TaskTypeInfo taskTypeInfoOf(String id) {
     orElse: () => const TaskTypeInfo(
       id: 'other',
       icon: Icons.task_alt,
-      color: Color(0xFF5F6F62),
+      color: AppColors.textSecondary,
       labelVi: 'Khác',
       labelEn: 'Other',
     ),
@@ -116,7 +116,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     _plantName = initial ?? (_plantOptions.isNotEmpty ? _plantOptions.first : null);
 
     final start = DateTime.now().add(const Duration(hours: 1));
-    _date = DateTime(start.year, start.month, start.day);
+    _date = AppDateUtils.dateOnly(start);
     _time = TimeOfDay(hour: start.hour, minute: 0);
 
     _autoTitle = taskTypeInfoOf(_type).label(_isEnglish);
@@ -141,14 +141,13 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   }
 
   Future<void> _pickDate() async {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
+    final today = AppDateUtils.today();
 
     final picked = await showDatePicker(
       context: context,
       initialDate: _date.isBefore(today) ? today : _date,
       firstDate: today,
-      lastDate: today.add(const Duration(days: 365)),
+      lastDate: today.add(const Duration(days: AppConstants.taskMaxDaysAhead)),
     );
 
     if (picked != null && mounted) {
@@ -198,7 +197,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       title: _titleController.text.trim(),
       plantName: _plantName!,
       type: _type,
-      dueDate: _formatDueDate(dueAt, _isEnglish),
+      dueDate: AppDateUtils.formatDueDate(dueAt, isEnglish: _isEnglish),
       dueAt: dueAt,
     );
 
@@ -211,16 +210,16 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     final isEnglish = _isEnglish;
 
     return Scaffold(
-      backgroundColor: _background,
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
-        iconTheme: const IconThemeData(color: _textColor),
+        iconTheme: const IconThemeData(color: AppColors.text),
         title: Text(
           strings.addTaskTitle,
           style: const TextStyle(
-            color: _textColor,
+            color: AppColors.text,
             fontSize: 24,
             fontWeight: FontWeight.w800,
           ),
@@ -245,21 +244,16 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
               TextFormField(
                 controller: _titleController,
                 textInputAction: TextInputAction.done,
-                maxLength: 40,
+                maxLength: AppConstants.titleMaxLength,
                 decoration: _inputDecoration(
                   strings.taskTitleLabel,
                   Icons.edit_outlined,
                 ),
-                validator: (value) {
-                  final text = value?.trim() ?? '';
-                  if (text.isEmpty) {
-                    return strings.taskTitleRequired;
-                  }
-                  if (text.length < 3) {
-                    return strings.taskTitleTooShort;
-                  }
-                  return null;
-                },
+                validator: Validators.text(
+                  emptyMessage: strings.taskTitleRequired,
+                  min: AppConstants.titleMinLength,
+                  tooShortMessage: strings.taskTitleTooShort,
+                ),
               ),
               const SizedBox(height: 12),
               _SectionLabel(strings.plant),
@@ -276,7 +270,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                 ],
                 onChanged: (value) => setState(() => _plantName = value),
                 validator: (value) =>
-                    value == null ? strings.choosePlantRequired : null,
+                    Validators.selection(value, strings.choosePlantRequired),
               ),
               const SizedBox(height: 20),
               _SectionLabel(strings.dueDate),
@@ -285,7 +279,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                   Expanded(
                     child: _PickerField(
                       label: strings.dateLabel,
-                      value: _formatDate(_date),
+                      value: AppDateUtils.formatDate(_date),
                       icon: Icons.calendar_today_outlined,
                       onTap: _pickDate,
                     ),
@@ -294,7 +288,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                   Expanded(
                     child: _PickerField(
                       label: strings.timeLabel,
-                      value: _formatTime(_time),
+                      value: AppDateUtils.formatTime(_time),
                       icon: Icons.access_time,
                       onTap: _pickTime,
                     ),
@@ -308,8 +302,8 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                     child: OutlinedButton(
                       onPressed: () => Navigator.pop(context),
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: _primary,
-                        side: const BorderSide(color: _primary),
+                        foregroundColor: AppColors.primary,
+                        side: const BorderSide(color: AppColors.primary),
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
@@ -326,7 +320,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                       icon: const Icon(Icons.check),
                       label: Text(strings.save),
                       style: FilledButton.styleFrom(
-                        backgroundColor: _primary,
+                        backgroundColor: AppColors.primary,
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(
@@ -359,7 +353,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       ),
       label: Text(info.label(isEnglish)),
       labelStyle: TextStyle(
-        color: selected ? Colors.white : _textColor,
+        color: selected ? Colors.white : AppColors.text,
         fontWeight: FontWeight.w600,
       ),
       onSelected: (_) => _onTypeSelected(info),
@@ -381,7 +375,7 @@ class _SectionLabel extends StatelessWidget {
         style: const TextStyle(
           fontSize: 15,
           fontWeight: FontWeight.w700,
-          color: _textColor,
+          color: AppColors.text,
         ),
       ),
     );
@@ -413,7 +407,7 @@ class _PickerField extends StatelessWidget {
           style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            color: _textColor,
+            color: AppColors.text,
           ),
         ),
       ),
@@ -424,61 +418,19 @@ class _PickerField extends StatelessWidget {
 InputDecoration _inputDecoration(String label, IconData icon) {
   final border = OutlineInputBorder(
     borderRadius: BorderRadius.circular(16),
-    borderSide: BorderSide(color: _primary.withAlpha(51)),
+    borderSide: BorderSide(color: AppColors.primary.withAlpha(51)),
   );
 
   return InputDecoration(
     labelText: label,
-    prefixIcon: Icon(icon, color: _primary),
+    prefixIcon: Icon(icon, color: AppColors.primary),
     filled: true,
     fillColor: Colors.white,
     border: border,
     enabledBorder: border,
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(16),
-      borderSide: const BorderSide(color: _primary, width: 1.5),
+      borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
     ),
   );
-}
-
-String _two(int n) => n.toString().padLeft(2, '0');
-
-String _formatDate(DateTime d) => '${_two(d.day)}/${_two(d.month)}/${d.year}';
-
-String _formatTime(TimeOfDay t) => '${_two(t.hour)}:${_two(t.minute)}';
-
-String _formatDueDate(DateTime dueAt, bool isEnglish) {
-  final now = DateTime.now();
-  final today = DateTime.utc(now.year, now.month, now.day);
-  final dueDay = DateTime.utc(dueAt.year, dueAt.month, dueAt.day);
-  final diffDays = dueDay.difference(today).inDays;
-  final time = '${_two(dueAt.hour)}:${_two(dueAt.minute)}';
-
-  if (diffDays == 0) return '${isEnglish ? 'Today' : 'Hôm nay'}, $time';
-  if (diffDays == 1) return '${isEnglish ? 'Tomorrow' : 'Ngày mai'}, $time';
-
-  if (diffDays < 7) {
-    const weekdaysVi = [
-      'Thứ Hai',
-      'Thứ Ba',
-      'Thứ Tư',
-      'Thứ Năm',
-      'Thứ Sáu',
-      'Thứ Bảy',
-      'Chủ Nhật',
-    ];
-    const weekdaysEn = [
-      'Monday',
-      'Tuesday',
-      'Wednesday',
-      'Thursday',
-      'Friday',
-      'Saturday',
-      'Sunday',
-    ];
-    final names = isEnglish ? weekdaysEn : weekdaysVi;
-    return '${names[dueAt.weekday - 1]}, $time';
-  }
-
-  return '${_formatDate(dueAt)}, $time';
 }

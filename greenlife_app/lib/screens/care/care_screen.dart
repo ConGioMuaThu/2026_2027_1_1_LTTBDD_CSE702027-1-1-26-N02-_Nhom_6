@@ -3,6 +3,7 @@ import 'package:greenlife_app/l10n/app_localizations.dart';
 import 'package:greenlife_app/models/care_task.dart';
 import 'package:greenlife_app/screens/care/add_task_screen.dart';
 import 'package:greenlife_app/screens/care/task_detail_screen.dart';
+import 'package:greenlife_app/utils/app_colors.dart';
 import 'package:greenlife_app/widgets/empty_state.dart';
 import 'package:greenlife_app/widgets/search_bar.dart';
 
@@ -91,7 +92,7 @@ class _CareScreenState extends State<CareScreen> {
                 if (widget.onAddTask != null)
                   IconButton.filled(
                     style: IconButton.styleFrom(
-                      backgroundColor: const Color(0xFF2F6A4F),
+                      backgroundColor: AppColors.primary,
                     ),
                     icon: const Icon(Icons.add),
                     onPressed: _openAddTask,
@@ -113,7 +114,7 @@ class _CareScreenState extends State<CareScreen> {
                       children: [
                         Text(
                           strings.thisWeekLabel,
-                          style: const TextStyle(color: Color(0xFF5F6F62)),
+                          style: const TextStyle(color: AppColors.textSecondary),
                         ),
                         const SizedBox(height: 6),
                         Text(
@@ -132,7 +133,7 @@ class _CareScreenState extends State<CareScreen> {
                   child: Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFE2F4E4),
+                      color: AppColors.soft,
                       borderRadius: BorderRadius.circular(18),
                     ),
                     child: Column(
@@ -140,7 +141,7 @@ class _CareScreenState extends State<CareScreen> {
                       children: [
                         Text(
                           strings.completedLabel,
-                          style: const TextStyle(color: Color(0xFF5F6F62)),
+                          style: const TextStyle(color: AppColors.textSecondary),
                         ),
                         const SizedBox(height: 6),
                         Text(
@@ -172,8 +173,8 @@ class _CareScreenState extends State<CareScreen> {
                       itemBuilder: (context, index) {
                         final task = filteredTasks[index];
                         final color = task.isCompleted
-                            ? const Color(0xFF74B97D)
-                            : const Color(0xFFEAB349);
+                            ? AppColors.taskDone
+                            : AppColors.taskPending;
                         final isSelected = _selectedTaskId == task.id;
 
                         return Material(
@@ -212,7 +213,7 @@ class _CareScreenState extends State<CareScreen> {
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(18),
                                 border: Border.all(
-                                  color: isSelected ? const Color(0xFF2F6A4F) : Colors.transparent,
+                                  color: isSelected ? AppColors.primary : Colors.transparent,
                                   width: 2,
                                 ),
                               ),
@@ -247,7 +248,7 @@ class _CareScreenState extends State<CareScreen> {
                                           '${task.plantName} • ${taskTypeInfoOf(task.type).label(isEnglish)}',
                                           style: const TextStyle(
                                             fontSize: 12,
-                                            color: Color(0xFF5F6F62),
+                                            color: AppColors.textSecondary,
                                           ),
                                         ),
                                       ],
