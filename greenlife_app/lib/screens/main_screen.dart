@@ -11,6 +11,8 @@ import 'package:greenlife_app/screens/home/home_screen.dart';
 import 'package:greenlife_app/screens/my_plants/my_plants_screen.dart';
 import 'package:greenlife_app/screens/plant_library/plant_library_screen.dart';
 import 'package:greenlife_app/screens/tips/tips_screen.dart';
+import 'package:greenlife_app/services/notification_service.dart';
+import 'package:greenlife_app/services/storage_service.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({
@@ -34,11 +36,64 @@ class _MainScreenState extends State<MainScreen> {
   final Set<String> _editedNoteIds = {};
 
   @override
+  void initState() {
+    super.initState();
+    _restoreSavedData();
+  }
+
+  @override
   void didUpdateWidget(covariant MainScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.locale.languageCode != widget.locale.languageCode) {
       _reloadForLocale();
+      _persistTasks();
+      _persistPlants();
+      _persistNotes();
     }
+  }
+
+  Future<void> _restoreSavedData() async {
+    final storage = StorageService.instance;
+    final tasks = await storage.loadTasks();
+    final plants = await storage.loadPlants();
+    final notes = await storage.loadNotes();
+    if (!mounted) return;
+    if (tasks == null && plants == null && notes == null) return;
+
+    setState(() {
+      if (tasks != null) _tasks = tasks;
+      if (plants != null) _plants = plants;
+      if (notes != null) _notes = notes;
+      _reloadForLocale();
+    });
+  }
+
+  void _persistTasks() {
+    StorageService.instance.saveTasks(_tasks);
+  }
+
+  void _persistPlants() {
+    StorageService.instance.savePlants(_plants);
+  }
+
+  void _persistNotes() {
+    StorageService.instance.saveNotes(_notes);
+  }
+
+  Future<void> _scheduleReminder(CareTask task) async {
+    final dueAt = task.dueAt;
+    if (dueAt == null || task.isCompleted) return;
+
+    final service = NotificationService.instance;
+    if (!service.isSupported) return;
+
+    await service.requestPermission();
+    await service.scheduleTaskReminder(
+      taskId: task.id,
+      title: task.title,
+      body: task.plantName,
+      scheduledAt: dueAt,
+    );
   }
 
   void _reloadForLocale() {
@@ -80,6 +135,7 @@ class _MainScreenState extends State<MainScreen> {
       type: t.type,
       dueDate: t.dueDate,
       isCompleted: isCompleted,
+      dueAt: t.dueAt,
     );
   }
 
@@ -101,19 +157,30 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _toggleTask(String id) {
-    setState(() {
-      final i = _tasks.indexWhere((t) => t.id == id);
-      if (i == -1) return;
-      _tasks[i] = _taskWithCompleted(_tasks[i], !_tasks[i].isCompleted);
-    });
+    final i = _tasks.indexWhere((t) => t.id == id);
+    if (i == -1) return;
+
+    final updated = _taskWithCompleted(_tasks[i], !_tasks[i].isCompleted);
+    setState(() => _tasks[i] = updated);
+    _persistTasks();
+
+    if (updated.isCompleted) {
+      NotificationService.instance.cancelTaskReminder(updated.id);
+    } else {
+      _scheduleReminder(updated);
+    }
   }
 
   void _addTask(CareTask task) {
     setState(() => _tasks.insert(0, task));
+    _persistTasks();
+    _scheduleReminder(task);
   }
 
   void _deleteTask(String id) {
     setState(() => _tasks.removeWhere((t) => t.id == id));
+    _persistTasks();
+    NotificationService.instance.cancelTaskReminder(id);
   }
 
   void _toggleFavorite(String id) {
@@ -122,10 +189,12 @@ class _MainScreenState extends State<MainScreen> {
       if (i == -1) return;
       _plants[i] = _plantWithFavorite(_plants[i], !_plants[i].isFavorite);
     });
+    _persistPlants();
   }
 
   void _addPlant(Plant plant) {
     setState(() => _plants.insert(0, plant));
+    _persistPlants();
   }
 
   DateTime _noteDate(String value) {
@@ -147,6 +216,7 @@ class _MainScreenState extends State<MainScreen> {
 
   void _addNote(GrowthNote note) {
     setState(() => _insertNote(note));
+    _persistNotes();
   }
 
   void _updateNote(GrowthNote note) {
@@ -155,16 +225,19 @@ class _MainScreenState extends State<MainScreen> {
       _insertNote(note);
       _editedNoteIds.add(note.id);
     });
+    _persistNotes();
   }
 
   void _deleteNote(String id) {
     setState(() => _notes.removeWhere((n) => n.id == id));
+    _persistNotes();
   }
 
   List<String> get _plantNames => _plants.map((p) => p.name).toList();
 
   void _deletePlant(String id) {
     setState(() => _plants.removeWhere((p) => p.id == id));
+    _persistPlants();
   }
 
   @override
