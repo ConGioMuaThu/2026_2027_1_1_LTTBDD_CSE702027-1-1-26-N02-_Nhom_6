@@ -2,20 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:greenlife_app/l10n/app_localizations.dart';
 import 'package:greenlife_app/models/plant.dart';
 import 'package:greenlife_app/screens/my_plants/add_plant_screen.dart';
+import 'package:greenlife_app/screens/my_plants/edit_plant_screen.dart';
 import 'package:greenlife_app/utils/app_colors.dart';
 import 'package:greenlife_app/widgets/detail_sheet.dart';
 import 'package:greenlife_app/widgets/empty_state.dart';
+
+enum _PlantAction { edit, delete }
 
 class MyPlantsScreen extends StatefulWidget {
   final List<Plant> plants;
   final void Function(Plant plant) onAddPlant;
   final void Function(String plantId) onDeletePlant;
+  final void Function(Plant plant)? onUpdatePlant;
 
   const MyPlantsScreen({
     super.key,
     required this.plants,
     required this.onAddPlant,
     required this.onDeletePlant,
+    this.onUpdatePlant,
   });
 
   @override
@@ -68,6 +73,49 @@ class _MyPlantsScreenState extends State<MyPlantsScreen> {
     _showMessage(strings.plantAdded);
   }
 
+  Future<void> _openEditPlant(Plant plant) async {
+    final strings = AppLocalizations.of(context);
+
+    final updated = await Navigator.push<Plant>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => EditPlantScreen(
+          plant: plant,
+          existingNames: _plantNames,
+        ),
+      ),
+    );
+    if (updated == null || !mounted) return;
+
+    widget.onUpdatePlant?.call(updated);
+    _showMessage(strings.plantUpdated);
+  }
+
+  Future<bool> _confirmDelete(Plant plant) async {
+    final strings = AppLocalizations.of(context);
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(strings.deletePlantQuestion),
+        content: Text(strings.deletePlantMessage(plant.name)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: Text(strings.cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            style: TextButton.styleFrom(foregroundColor: AppColors.danger),
+            child: Text(strings.deleteAction),
+          ),
+        ],
+      ),
+    );
+
+    return confirmed == true;
+  }
+
   void _deletePlant(Plant plant) {
     final strings = AppLocalizations.of(context);
 
@@ -76,6 +124,16 @@ class _MyPlantsScreenState extends State<MyPlantsScreen> {
       setState(() => _selectedPlantId = null);
     }
     _showMessage(strings.plantDeleted);
+  }
+
+  Future<void> _onMenuAction(_PlantAction action, Plant plant) async {
+    switch (action) {
+      case _PlantAction.edit:
+        await _openEditPlant(plant);
+      case _PlantAction.delete:
+        final confirmed = await _confirmDelete(plant);
+        if (confirmed && mounted) _deletePlant(plant);
+    }
   }
 
   @override
@@ -152,6 +210,7 @@ class _MyPlantsScreenState extends State<MyPlantsScreen> {
                             ),
                           ),
                           direction: DismissDirection.endToStart,
+                          confirmDismiss: (_) => _confirmDelete(plant),
                           onDismissed: (_) => _deletePlant(plant),
                           child: Material(
                             color: Colors.transparent,
@@ -162,7 +221,7 @@ class _MyPlantsScreenState extends State<MyPlantsScreen> {
                               },
                               borderRadius: BorderRadius.circular(20),
                               child: Container(
-                                padding: const EdgeInsets.all(16),
+                                padding: const EdgeInsets.fromLTRB(16, 16, 4, 16),
                                 decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(20),
@@ -220,9 +279,42 @@ class _MyPlantsScreenState extends State<MyPlantsScreen> {
                                         ],
                                       ),
                                     ),
-                                    const Icon(
-                                      Icons.chevron_right,
-                                      color: AppColors.textSecondary,
+                                    PopupMenuButton<_PlantAction>(
+                                      icon: const Icon(
+                                        Icons.more_vert,
+                                        color: AppColors.textSecondary,
+                                      ),
+                                      onSelected: (action) =>
+                                          _onMenuAction(action, plant),
+                                      itemBuilder: (_) => [
+                                        if (widget.onUpdatePlant != null)
+                                          PopupMenuItem(
+                                            value: _PlantAction.edit,
+                                            child: ListTile(
+                                              dense: true,
+                                              contentPadding: EdgeInsets.zero,
+                                              leading: const Icon(Icons.edit_outlined),
+                                              title: Text(strings.editPlant),
+                                            ),
+                                          ),
+                                        PopupMenuItem(
+                                          value: _PlantAction.delete,
+                                          child: ListTile(
+                                            dense: true,
+                                            contentPadding: EdgeInsets.zero,
+                                            leading: const Icon(
+                                              Icons.delete_outline,
+                                              color: AppColors.danger,
+                                            ),
+                                            title: Text(
+                                              strings.deletePlant,
+                                              style: const TextStyle(
+                                                color: AppColors.danger,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
