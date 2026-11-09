@@ -1,29 +1,26 @@
 import 'dart:collection';
-
 import 'package:flutter/widgets.dart';
-import 'package:greenlife_app/data/sample_data.dart';
-import 'package:greenlife_app/l10n/app_localizations.dart';
 import 'package:greenlife_app/models/care_task.dart';
+import 'package:greenlife_app/repositories/care_repository.dart';
 import 'package:greenlife_app/services/notification_service.dart';
-import 'package:greenlife_app/services/storage_service.dart';
-import 'package:greenlife_app/utils/date_utils.dart';
 
 class CareProvider extends ChangeNotifier {
   CareProvider({
     required Locale locale,
-    StorageService? storage,
+    CareRepository? repository,
     NotificationService? notifications,
   })  : _locale = locale,
-        _storage = storage ?? StorageService.instance,
-        _notifications = notifications ?? NotificationService.instance,
-        _tasks = sampleTasksFor(locale);
+        _repository = repository ?? CareRepository(),
+        _notifications = notifications ?? NotificationService.instance {
+    _tasks = _repository.initialTasks(locale);
+  }
 
-  final StorageService _storage;
+  final CareRepository _repository;
   final NotificationService _notifications;
   final List<VoidCallback> _pending = [];
 
   Locale _locale;
-  List<CareTask> _tasks;
+  late List<CareTask> _tasks;
   bool _loading = false;
   bool _disposed = false;
 
@@ -34,10 +31,10 @@ class CareProvider extends ChangeNotifier {
     var restored = false;
 
     try {
-      final saved = await _storage.loadTasks();
+      final saved = await _repository.loadTasks();
       if (_disposed) return;
       if (saved != null) {
-        _tasks = _refreshed(saved, _locale);
+        _tasks = _repository.localize(saved, _locale);
         restored = true;
       }
     } finally {
@@ -54,13 +51,13 @@ class CareProvider extends ChangeNotifier {
     if (locale.languageCode == _locale.languageCode) return;
 
     _locale = locale;
-    _tasks = _refreshed(_tasks, locale);
+    _tasks = _repository.localize(_tasks, locale);
     if (!_loading) _persist();
     notifyListeners();
   }
 
   void refreshLabels() {
-    final refreshed = _refreshed(_tasks, _locale);
+    final refreshed = _repository.localize(_tasks, _locale);
 
     var changed = false;
     for (var i = 0; i < refreshed.length; i++) {
@@ -80,7 +77,7 @@ class CareProvider extends ChangeNotifier {
       final index = _tasks.indexWhere((t) => t.id == id);
       if (index == -1) return;
 
-      final updated = _copyWith(
+      final updated = _repository.copyWith(
         _tasks[index],
         isCompleted: !_tasks[index].isCompleted,
       );
@@ -153,7 +150,7 @@ class CareProvider extends ChangeNotifier {
   }
 
   void _persist() {
-    _storage.saveTasks(_tasks);
+    _repository.saveTasks(_tasks);
   }
 
   Future<void> _scheduleReminder(CareTask task) async {
@@ -173,11 +170,7 @@ class CareProvider extends ChangeNotifier {
   Future<void> _rescheduleAll() async {
     if (!_notifications.isSupported) return;
 
-    final now = DateTime.now();
-    final upcoming = _tasks.where((task) {
-      final dueAt = task.dueAt;
-      return !task.isCompleted && dueAt != null && dueAt.isAfter(now);
-    }).toList();
+    final upcoming = _repository.upcomingReminders(_tasks);
     if (upcoming.isEmpty) return;
 
     final granted = await _notifications.requestPermission();
@@ -194,67 +187,9 @@ class CareProvider extends ChangeNotifier {
   }
 
   CareTask _withPlantName(CareTask task, String name, List<CareTask> sink) {
-    final renamed = CareTask(
-      id: task.id,
-      title: task.title,
-      plantName: name,
-      type: task.type,
-      dueDate: task.dueDate,
-      isCompleted: task.isCompleted,
-      dueAt: task.dueAt,
-    );
+    final renamed = _repository.copyWith(task, plantName: name);
     sink.add(renamed);
     return renamed;
-  }
-
-  bool _isUntouchedSample(CareTask task) {
-    for (final locale in AppLocalizations.supportedLocales) {
-      for (final sample in sampleTasksFor(locale)) {
-        if (sample.id == task.id &&
-            sample.title == task.title &&
-            sample.plantName == task.plantName &&
-            sample.type == task.type &&
-            sample.dueDate == task.dueDate) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
-  List<CareTask> _refreshed(List<CareTask> source, Locale locale) {
-    final isEnglish = locale.languageCode == 'en';
-    final samples = {
-      for (final task in sampleTasksFor(locale)) task.id: task,
-    };
-
-    return [
-      for (final task in source)
-        if (samples.containsKey(task.id) && _isUntouchedSample(task))
-          _copyWith(samples[task.id]!, isCompleted: task.isCompleted)
-        else if (task.dueAt != null)
-          _copyWith(
-            task,
-            dueDate: AppDateUtils.formatDueDate(
-              task.dueAt!,
-              isEnglish: isEnglish,
-            ),
-          )
-        else
-          task,
-    ];
-  }
-
-  CareTask _copyWith(CareTask task, {bool? isCompleted, String? dueDate}) {
-    return CareTask(
-      id: task.id,
-      title: task.title,
-      plantName: task.plantName,
-      type: task.type,
-      dueDate: dueDate ?? task.dueDate,
-      isCompleted: isCompleted ?? task.isCompleted,
-      dueAt: task.dueAt,
-    );
   }
 
   @override

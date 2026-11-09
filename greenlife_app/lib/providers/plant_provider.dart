@@ -1,45 +1,38 @@
 import 'dart:collection';
-
 import 'package:flutter/widgets.dart';
-import 'package:greenlife_app/data/sample_data.dart';
-import 'package:greenlife_app/l10n/app_localizations.dart';
 import 'package:greenlife_app/models/plant.dart';
-import 'package:greenlife_app/services/storage_service.dart';
+import 'package:greenlife_app/repositories/plant_repository.dart';
 
 class PlantProvider extends ChangeNotifier {
   PlantProvider({
     required Locale locale,
-    StorageService? storage,
+    PlantRepository? repository,
   })  : _locale = locale,
-        _storage = storage ?? StorageService.instance,
-        _plants = samplePlantsFor(locale);
+        _repository = repository ?? PlantRepository() {
+    _plants = _repository.initialPlants(locale);
+  }
 
-  final StorageService _storage;
+  final PlantRepository _repository;
   final List<VoidCallback> _pending = [];
 
   Locale _locale;
-  List<Plant> _plants;
+  late List<Plant> _plants;
   bool _loading = false;
   bool _disposed = false;
 
   UnmodifiableListView<Plant> get plants => UnmodifiableListView(_plants);
 
-  List<String> get plantNames => _plants.map((p) => p.name).toList();
+  List<String> get plantNames => _repository.plantNames(_plants);
 
-  Plant? findById(String id) {
-    for (final plant in _plants) {
-      if (plant.id == id) return plant;
-    }
-    return null;
-  }
+  Plant? findById(String id) => _repository.findById(_plants, id);
 
   Future<void> load() async {
     _loading = true;
 
     try {
-      final saved = await _storage.loadPlants();
+      final saved = await _repository.loadPlants();
       if (_disposed) return;
-      if (saved != null) _plants = _localized(saved, _locale);
+      if (saved != null) _plants = _repository.localize(saved, _locale);
     } finally {
       _loading = false;
       if (!_disposed) _flushPending();
@@ -52,7 +45,7 @@ class PlantProvider extends ChangeNotifier {
     if (locale.languageCode == _locale.languageCode) return;
 
     _locale = locale;
-    _plants = _localized(_plants, locale);
+    _plants = _repository.localize(_plants, locale);
     if (!_loading) _persist();
     notifyListeners();
   }
@@ -62,7 +55,7 @@ class PlantProvider extends ChangeNotifier {
       final index = _plants.indexWhere((p) => p.id == id);
       if (index == -1) return;
 
-      _plants[index] = _copyWith(
+      _plants[index] = _repository.copyWith(
         _plants[index],
         isFavorite: !_plants[index].isFavorite,
       );
@@ -115,57 +108,7 @@ class PlantProvider extends ChangeNotifier {
   }
 
   void _persist() {
-    _storage.savePlants(_plants);
-  }
-
-  bool _isUntouchedSample(Plant plant) {
-    for (final locale in AppLocalizations.supportedLocales) {
-      for (final sample in samplePlantsFor(locale)) {
-        if (sample.id == plant.id &&
-            sample.name == plant.name &&
-            sample.scientificName == plant.scientificName &&
-            sample.category == plant.category &&
-            sample.description == plant.description &&
-            sample.careLevel == plant.careLevel &&
-            sample.waterNeed == plant.waterNeed &&
-            sample.sunlight == plant.sunlight &&
-            sample.imageAsset == plant.imageAsset &&
-            sample.imageUrl == plant.imageUrl) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
-  List<Plant> _localized(List<Plant> source, Locale locale) {
-    final fresh = {
-      for (final plant in samplePlantsFor(locale)) plant.id: plant,
-    };
-
-    return [
-      for (final plant in source)
-        fresh.containsKey(plant.id) && _isUntouchedSample(plant)
-            ? _copyWith(fresh[plant.id]!, isFavorite: plant.isFavorite)
-            : plant,
-    ];
-  }
-
-  Plant _copyWith(Plant plant, {required bool isFavorite}) {
-    return Plant(
-      id: plant.id,
-      name: plant.name,
-      scientificName: plant.scientificName,
-      category: plant.category,
-      description: plant.description,
-      careLevel: plant.careLevel,
-      waterNeed: plant.waterNeed,
-      sunlight: plant.sunlight,
-      imageAsset: plant.imageAsset,
-      imageUrl: plant.imageUrl,
-      isFavorite: isFavorite,
-      tags: plant.tags,
-    );
+    _repository.savePlants(_plants);
   }
 
   @override
