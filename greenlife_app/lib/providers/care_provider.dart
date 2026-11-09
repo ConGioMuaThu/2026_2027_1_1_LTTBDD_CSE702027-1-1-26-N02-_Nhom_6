@@ -2,6 +2,7 @@ import 'dart:collection';
 
 import 'package:flutter/widgets.dart';
 import 'package:greenlife_app/data/sample_data.dart';
+import 'package:greenlife_app/l10n/app_localizations.dart';
 import 'package:greenlife_app/models/care_task.dart';
 import 'package:greenlife_app/services/notification_service.dart';
 import 'package:greenlife_app/services/storage_service.dart';
@@ -104,6 +105,28 @@ class CareProvider extends ChangeNotifier {
     });
   }
 
+  void renamePlant(String oldName, String newName) {
+    _run(() {
+      final renamed = <CareTask>[];
+      final updated = [
+        for (final task in _tasks)
+          if (task.plantName == oldName)
+            _withPlantName(task, newName, renamed)
+          else
+            task,
+      ];
+      if (renamed.isEmpty) return;
+
+      _tasks = updated;
+      _persist();
+      notifyListeners();
+
+      for (final task in renamed) {
+        _scheduleReminder(task);
+      }
+    });
+  }
+
   void remove(String id) {
     _run(() {
       _tasks.removeWhere((t) => t.id == id);
@@ -170,6 +193,35 @@ class CareProvider extends ChangeNotifier {
     }
   }
 
+  CareTask _withPlantName(CareTask task, String name, List<CareTask> sink) {
+    final renamed = CareTask(
+      id: task.id,
+      title: task.title,
+      plantName: name,
+      type: task.type,
+      dueDate: task.dueDate,
+      isCompleted: task.isCompleted,
+      dueAt: task.dueAt,
+    );
+    sink.add(renamed);
+    return renamed;
+  }
+
+  bool _isUntouchedSample(CareTask task) {
+    for (final locale in AppLocalizations.supportedLocales) {
+      for (final sample in sampleTasksFor(locale)) {
+        if (sample.id == task.id &&
+            sample.title == task.title &&
+            sample.plantName == task.plantName &&
+            sample.type == task.type &&
+            sample.dueDate == task.dueDate) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
   List<CareTask> _refreshed(List<CareTask> source, Locale locale) {
     final isEnglish = locale.languageCode == 'en';
     final samples = {
@@ -178,7 +230,7 @@ class CareProvider extends ChangeNotifier {
 
     return [
       for (final task in source)
-        if (samples.containsKey(task.id))
+        if (samples.containsKey(task.id) && _isUntouchedSample(task))
           _copyWith(samples[task.id]!, isCompleted: task.isCompleted)
         else if (task.dueAt != null)
           _copyWith(

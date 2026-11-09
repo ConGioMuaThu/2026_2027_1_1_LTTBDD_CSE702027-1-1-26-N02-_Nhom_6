@@ -66,6 +66,24 @@ class GrowthProvider extends ChangeNotifier {
     });
   }
 
+  void renamePlant(String oldName, String newName) {
+    _run(() {
+      var changed = false;
+      final updated = [
+        for (final note in _notes)
+          if (note.plantName == oldName)
+            _withPlantName(note, newName, () => changed = true)
+          else
+            note,
+      ];
+      if (!changed) return;
+
+      _notes = updated;
+      _persist();
+      notifyListeners();
+    });
+  }
+
   void remove(String id) {
     _run(() {
       _notes.removeWhere((n) => n.id == id);
@@ -92,6 +110,17 @@ class GrowthProvider extends ChangeNotifier {
 
   void _persist() {
     _storage.saveNotes(_notes);
+  }
+
+  GrowthNote _withPlantName(GrowthNote note, String name, VoidCallback onChanged) {
+    onChanged();
+    return GrowthNote(
+      id: note.id,
+      plantName: name,
+      title: note.title,
+      date: note.date,
+      summary: note.summary,
+    );
   }
 
   DateTime _dateOf(GrowthNote note) {

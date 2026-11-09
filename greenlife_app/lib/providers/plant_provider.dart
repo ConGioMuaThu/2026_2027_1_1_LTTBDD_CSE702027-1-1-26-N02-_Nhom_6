@@ -2,6 +2,7 @@ import 'dart:collection';
 
 import 'package:flutter/widgets.dart';
 import 'package:greenlife_app/data/sample_data.dart';
+import 'package:greenlife_app/l10n/app_localizations.dart';
 import 'package:greenlife_app/models/plant.dart';
 import 'package:greenlife_app/services/storage_service.dart';
 
@@ -24,6 +25,13 @@ class PlantProvider extends ChangeNotifier {
   UnmodifiableListView<Plant> get plants => UnmodifiableListView(_plants);
 
   List<String> get plantNames => _plants.map((p) => p.name).toList();
+
+  Plant? findById(String id) {
+    for (final plant in _plants) {
+      if (plant.id == id) return plant;
+    }
+    return null;
+  }
 
   Future<void> load() async {
     _loading = true;
@@ -71,6 +79,17 @@ class PlantProvider extends ChangeNotifier {
     });
   }
 
+  void update(Plant plant) {
+    _run(() {
+      final index = _plants.indexWhere((p) => p.id == plant.id);
+      if (index == -1) return;
+
+      _plants[index] = plant;
+      _persist();
+      notifyListeners();
+    });
+  }
+
   void remove(String id) {
     _run(() {
       _plants.removeWhere((p) => p.id == id);
@@ -99,6 +118,26 @@ class PlantProvider extends ChangeNotifier {
     _storage.savePlants(_plants);
   }
 
+  bool _isUntouchedSample(Plant plant) {
+    for (final locale in AppLocalizations.supportedLocales) {
+      for (final sample in samplePlantsFor(locale)) {
+        if (sample.id == plant.id &&
+            sample.name == plant.name &&
+            sample.scientificName == plant.scientificName &&
+            sample.category == plant.category &&
+            sample.description == plant.description &&
+            sample.careLevel == plant.careLevel &&
+            sample.waterNeed == plant.waterNeed &&
+            sample.sunlight == plant.sunlight &&
+            sample.imageAsset == plant.imageAsset &&
+            sample.imageUrl == plant.imageUrl) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
   List<Plant> _localized(List<Plant> source, Locale locale) {
     final fresh = {
       for (final plant in samplePlantsFor(locale)) plant.id: plant,
@@ -106,7 +145,7 @@ class PlantProvider extends ChangeNotifier {
 
     return [
       for (final plant in source)
-        fresh.containsKey(plant.id)
+        fresh.containsKey(plant.id) && _isUntouchedSample(plant)
             ? _copyWith(fresh[plant.id]!, isFavorite: plant.isFavorite)
             : plant,
     ];
