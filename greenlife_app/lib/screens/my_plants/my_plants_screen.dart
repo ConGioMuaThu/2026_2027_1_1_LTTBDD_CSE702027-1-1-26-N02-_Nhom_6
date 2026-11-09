@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:greenlife_app/l10n/app_localizations.dart';
 import 'package:greenlife_app/models/plant.dart';
+import 'package:greenlife_app/screens/my_plants/add_plant_screen.dart';
+import 'package:greenlife_app/utils/app_colors.dart';
 import 'package:greenlife_app/widgets/detail_sheet.dart';
+import 'package:greenlife_app/widgets/empty_state.dart';
 
 class MyPlantsScreen extends StatefulWidget {
   final List<Plant> plants;
@@ -29,6 +32,8 @@ class _MyPlantsScreenState extends State<MyPlantsScreen> {
     super.dispose();
   }
 
+  List<String> get _plantNames => widget.plants.map((p) => p.name).toList();
+
   List<Plant> get _filteredPlants {
     final query = _searchController.text.trim().toLowerCase();
     if (query.isEmpty) {
@@ -36,81 +41,41 @@ class _MyPlantsScreenState extends State<MyPlantsScreen> {
     }
     return widget.plants.where((plant) {
       return plant.name.toLowerCase().contains(query) ||
+          plant.scientificName.toLowerCase().contains(query) ||
           plant.category.toLowerCase().contains(query) ||
           plant.waterNeed.toLowerCase().contains(query);
     }).toList();
   }
 
-  void _showAddPlantDialog(BuildContext context) {
-    final strings = AppLocalizations.of(context);
-    final nameController = TextEditingController();
-    final categoryController = TextEditingController(text: strings.indoorPlantDefault);
-    final waterNeedController = TextEditingController(text: strings.waterNeedDefault);
-
-    showDialog(
-      context: context,
-      builder: (dialogContext) {
-        return AlertDialog(
-          title: Text(strings.addPlantTitle),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: nameController,
-                  decoration: InputDecoration(labelText: strings.plantName),
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: categoryController,
-                  decoration: InputDecoration(labelText: strings.plantType),
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: waterNeedController,
-                  decoration: InputDecoration(labelText: strings.waterNeed),
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext),
-              child: Text(strings.cancel),
-            ),
-            FilledButton(
-              onPressed: () {
-                final name = nameController.text.trim();
-                if (name.isEmpty) return;
-
-                final newPlant = Plant(
-                  id: 'plant-${DateTime.now().millisecondsSinceEpoch}',
-                  name: name,
-                  scientificName: 'Plant ${widget.plants.length + 1}',
-                  category: categoryController.text.trim().isEmpty
-                      ? strings.indoorPlantDefault
-                      : categoryController.text.trim(),
-                  description: strings.newPlantDescription,
-                  careLevel: strings.easyCareLevel,
-                  waterNeed: waterNeedController.text.trim().isEmpty
-                      ? strings.waterNeedDefault
-                      : waterNeedController.text.trim(),
-                  sunlight: strings.indirectSunlight,
-                  imageAsset: '🌿',
-                  imageUrl:
-                      'https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?auto=format&fit=crop&w=900&q=80',
-                  tags: ['new', 'personal'],
-                );
-
-                widget.onAddPlant(newPlant);
-                Navigator.pop(dialogContext);
-              },
-              child: Text(strings.add),
-            ),
-          ],
-        );
-      },
+  void _showMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
     );
+  }
+
+  Future<void> _openAddPlant() async {
+    final strings = AppLocalizations.of(context);
+
+    final plant = await Navigator.push<Plant>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => AddPlantScreen(existingNames: _plantNames),
+      ),
+    );
+    if (plant == null || !mounted) return;
+
+    widget.onAddPlant(plant);
+    _showMessage(strings.plantAdded);
+  }
+
+  void _deletePlant(Plant plant) {
+    final strings = AppLocalizations.of(context);
+
+    widget.onDeletePlant(plant.id);
+    if (_selectedPlantId == plant.id) {
+      setState(() => _selectedPlantId = null);
+    }
+    _showMessage(strings.plantDeleted);
   }
 
   @override
@@ -132,7 +97,8 @@ class _MyPlantsScreenState extends State<MyPlantsScreen> {
                   style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w800),
                 ),
                 IconButton(
-                  onPressed: () => _showAddPlantDialog(context),
+                  onPressed: _openAddPlant,
+                  tooltip: strings.addPlantTitle,
                   icon: const Icon(Icons.add_circle_outline, size: 32),
                 ),
               ],
@@ -156,9 +122,15 @@ class _MyPlantsScreenState extends State<MyPlantsScreen> {
             const SizedBox(height: 14),
             Expanded(
               child: filteredPlants.isEmpty
-                  ? Center(
-                      child: Text(strings.noGardenMatch),
-                    )
+                  ? (widget.plants.isEmpty
+                      ? EmptyState(
+                          icon: Icons.local_florist_outlined,
+                          title: strings.emptyGardenTitle,
+                          message: strings.emptyGardenMessage,
+                        )
+                      : Center(
+                          child: Text(strings.noGardenMatch),
+                        ))
                   : ListView.separated(
                       itemCount: filteredPlants.length,
                       separatorBuilder: (_, _) => const SizedBox(height: 14),
@@ -171,13 +143,16 @@ class _MyPlantsScreenState extends State<MyPlantsScreen> {
                             alignment: Alignment.centerRight,
                             padding: const EdgeInsets.only(right: 20),
                             decoration: BoxDecoration(
-                              color: Colors.red.shade100,
+                              color: AppColors.danger.withAlpha(38),
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            child: const Icon(Icons.delete_outline, color: Colors.red),
+                            child: const Icon(
+                              Icons.delete_outline,
+                              color: AppColors.danger,
+                            ),
                           ),
                           direction: DismissDirection.endToStart,
-                          onDismissed: (_) => widget.onDeletePlant(plant.id),
+                          onDismissed: (_) => _deletePlant(plant),
                           child: Material(
                             color: Colors.transparent,
                             child: InkWell(
@@ -192,7 +167,7 @@ class _MyPlantsScreenState extends State<MyPlantsScreen> {
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(20),
                                   border: Border.all(
-                                    color: isSelected ? const Color(0xFF2F6A4F) : Colors.transparent,
+                                    color: isSelected ? AppColors.primary : Colors.transparent,
                                     width: 2,
                                   ),
                                 ),
@@ -200,39 +175,7 @@ class _MyPlantsScreenState extends State<MyPlantsScreen> {
                                   children: [
                                     ClipRRect(
                                       borderRadius: BorderRadius.circular(16),
-                                      child: plant.imageUrl.isNotEmpty
-                                          ? Image.network(
-                                              plant.imageUrl,
-                                              width: 72,
-                                              height: 72,
-                                              fit: BoxFit.cover,
-                                              errorBuilder: (context, error, stackTrace) => Container(
-                                                width: 72,
-                                                height: 72,
-                                                decoration: const BoxDecoration(
-                                                  color: Color(0xFFE2F4E4),
-                                                ),
-                                                child: Center(
-                                                  child: Text(
-                                                    plant.imageAsset,
-                                                    style: const TextStyle(fontSize: 30),
-                                                  ),
-                                                ),
-                                              ),
-                                            )
-                                          : Container(
-                                              width: 72,
-                                              height: 72,
-                                              decoration: const BoxDecoration(
-                                                color: Color(0xFFE2F4E4),
-                                              ),
-                                              child: Center(
-                                                child: Text(
-                                                  plant.imageAsset,
-                                                  style: const TextStyle(fontSize: 30),
-                                                ),
-                                              ),
-                                            ),
+                                      child: _PlantThumbnail(plant: plant),
                                     ),
                                     const SizedBox(width: 14),
                                     Expanded(
@@ -241,6 +184,8 @@ class _MyPlantsScreenState extends State<MyPlantsScreen> {
                                         children: [
                                           Text(
                                             plant.name,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
                                             style: const TextStyle(
                                               fontSize: 18,
                                               fontWeight: FontWeight.w700,
@@ -250,7 +195,7 @@ class _MyPlantsScreenState extends State<MyPlantsScreen> {
                                           Text(
                                             plant.category,
                                             style: const TextStyle(
-                                              color: Color(0xFF5F6F62),
+                                              color: AppColors.textSecondary,
                                             ),
                                           ),
                                           const SizedBox(height: 8),
@@ -262,9 +207,13 @@ class _MyPlantsScreenState extends State<MyPlantsScreen> {
                                                 color: Color(0xFF4BA0C8),
                                               ),
                                               const SizedBox(width: 6),
-                                              Text(
-                                                plant.waterNeed,
-                                                style: const TextStyle(fontSize: 12),
+                                              Expanded(
+                                                child: Text(
+                                                  plant.waterNeed,
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: const TextStyle(fontSize: 12),
+                                                ),
                                               ),
                                             ],
                                           ),
@@ -273,7 +222,7 @@ class _MyPlantsScreenState extends State<MyPlantsScreen> {
                                     ),
                                     const Icon(
                                       Icons.chevron_right,
-                                      color: Color(0xFF5F6F62),
+                                      color: AppColors.textSecondary,
                                     ),
                                   ],
                                 ),
@@ -287,6 +236,39 @@ class _MyPlantsScreenState extends State<MyPlantsScreen> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _PlantThumbnail extends StatelessWidget {
+  const _PlantThumbnail({required this.plant});
+
+  final Plant plant;
+
+  Widget _placeholder() {
+    return Container(
+      width: 72,
+      height: 72,
+      color: AppColors.soft,
+      child: Center(
+        child: Text(
+          plant.imageAsset,
+          style: const TextStyle(fontSize: 30),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (plant.imageUrl.isEmpty) return _placeholder();
+
+    return Image.network(
+      plant.imageUrl,
+      width: 72,
+      height: 72,
+      fit: BoxFit.cover,
+      errorBuilder: (context, error, stackTrace) => _placeholder(),
     );
   }
 }
