@@ -50,6 +50,33 @@ class AppLocalizations {
       'save': 'Lưu',
       'add': 'Thêm',
       'plantName': 'Tên cây',
+      'editPlant': 'Sửa thông tin cây',
+      'scientificName': 'Tên khoa học',
+      'plantIcon': 'Biểu tượng',
+      'imageUrlOptional': 'Đường dẫn ảnh (không bắt buộc)',
+      'plantNameRequired': 'Vui lòng nhập tên cây',
+      'plantNameTooShort': 'Tên cây tối thiểu 2 ký tự',
+      'plantNameDuplicate': 'Tên cây này đã có trong vườn',
+      'waterNeedRequired': 'Vui lòng nhập nhu cầu nước',
+      'invalidImageUrl': 'Đường dẫn ảnh phải bắt đầu bằng http hoặc https',
+      'categoryIndoor': 'Trong nhà',
+      'categoryOutdoor': 'Ngoài trời',
+      'categorySucculent': 'Xương rồng',
+      'careLevelEasy': 'Dễ',
+      'careLevelModerate': 'Trung bình',
+      'careLevelHard': 'Khó',
+      'sunlightIndirect': 'Ánh sáng gián tiếp',
+      'sunlightSoft': 'Ánh sáng mềm',
+      'sunlightPartial': 'Nắng 4-6 giờ',
+      'sunlightDirect': 'Nắng trực tiếp',
+      'plantAdded': 'Đã thêm cây vào vườn',
+      'plantUpdated': 'Đã cập nhật thông tin cây',
+      'plantDeleted': 'Đã xóa cây',
+      'deletePlant': 'Xóa cây',
+      'deletePlantQuestion': 'Xóa cây?',
+      'deletePlantMessage': 'Cây \"{plant}\" sẽ bị xóa khỏi vườn.',
+      'emptyGardenTitle': 'Vườn chưa có cây nào',
+      'emptyGardenMessage': 'Bấm nút + để thêm cây đầu tiên của bạn.',
       'plantType': 'Loại cây',
       'waterNeed': 'Nhu cầu nước',
       'searchGarden': 'Tìm cây trong vườn',
@@ -192,6 +219,33 @@ class AppLocalizations {
       'save': 'Save',
       'add': 'Add',
       'plantName': 'Plant name',
+      'editPlant': 'Edit plant',
+      'scientificName': 'Scientific name',
+      'plantIcon': 'Icon',
+      'imageUrlOptional': 'Image URL (optional)',
+      'plantNameRequired': 'Please enter a plant name',
+      'plantNameTooShort': 'Plant name must be at least 2 characters',
+      'plantNameDuplicate': 'This plant name is already in your garden',
+      'waterNeedRequired': 'Please enter the water need',
+      'invalidImageUrl': 'Image URL must start with http or https',
+      'categoryIndoor': 'Indoor',
+      'categoryOutdoor': 'Outdoor',
+      'categorySucculent': 'Succulent',
+      'careLevelEasy': 'Easy',
+      'careLevelModerate': 'Moderate',
+      'careLevelHard': 'Hard',
+      'sunlightIndirect': 'Indirect light',
+      'sunlightSoft': 'Soft light',
+      'sunlightPartial': '4-6 hours of sun',
+      'sunlightDirect': 'Direct sun',
+      'plantAdded': 'Plant added to your garden',
+      'plantUpdated': 'Plant updated',
+      'plantDeleted': 'Plant deleted',
+      'deletePlant': 'Delete plant',
+      'deletePlantQuestion': 'Delete plant?',
+      'deletePlantMessage': '\"{plant}\" will be removed from your garden.',
+      'emptyGardenTitle': 'Your garden is empty',
+      'emptyGardenMessage': 'Tap + to add your first plant.',
       'plantType': 'Plant type',
       'waterNeed': 'Water need',
       'searchGarden': 'Search plants in the garden',
@@ -335,6 +389,35 @@ class AppLocalizations {
   String get save => _val('save');
   String get add => _val('add');
   String get plantName => _val('plantName');
+  String get editPlant => _val('editPlant');
+  String get scientificName => _val('scientificName');
+  String get plantIcon => _val('plantIcon');
+  String get imageUrlOptional => _val('imageUrlOptional');
+  String get plantNameRequired => _val('plantNameRequired');
+  String get plantNameTooShort => _val('plantNameTooShort');
+  String get plantNameDuplicate => _val('plantNameDuplicate');
+  String get waterNeedRequired => _val('waterNeedRequired');
+  String get invalidImageUrl => _val('invalidImageUrl');
+  String get categoryIndoor => _val('categoryIndoor');
+  String get categoryOutdoor => _val('categoryOutdoor');
+  String get categorySucculent => _val('categorySucculent');
+  String get careLevelEasy => _val('careLevelEasy');
+  String get careLevelModerate => _val('careLevelModerate');
+  String get careLevelHard => _val('careLevelHard');
+  String get sunlightIndirect => _val('sunlightIndirect');
+  String get sunlightSoft => _val('sunlightSoft');
+  String get sunlightPartial => _val('sunlightPartial');
+  String get sunlightDirect => _val('sunlightDirect');
+  String get plantAdded => _val('plantAdded');
+  String get plantUpdated => _val('plantUpdated');
+  String get plantDeleted => _val('plantDeleted');
+  String get deletePlant => _val('deletePlant');
+  String get deletePlantQuestion => _val('deletePlantQuestion');
+  String deletePlantMessage(String plant) {
+    return _val('deletePlantMessage').replaceAll('{plant}', plant);
+  }
+  String get emptyGardenTitle => _val('emptyGardenTitle');
+  String get emptyGardenMessage => _val('emptyGardenMessage');
   String get plantType => _val('plantType');
   String get waterNeed => _val('waterNeed');
   String get searchGarden => _val('searchGarden');
