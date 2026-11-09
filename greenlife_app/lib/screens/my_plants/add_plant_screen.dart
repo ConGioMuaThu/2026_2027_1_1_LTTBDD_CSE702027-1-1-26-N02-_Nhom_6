@@ -3,6 +3,7 @@ import 'package:greenlife_app/l10n/app_localizations.dart';
 import 'package:greenlife_app/models/plant.dart';
 import 'package:greenlife_app/utils/app_colors.dart';
 import 'package:greenlife_app/utils/app_constants.dart';
+import 'package:greenlife_app/utils/validators.dart';
 
 const List<String> _plantIcons = [
   '🌿',
@@ -85,8 +86,80 @@ class _AddPlantScreenState extends State<AddPlantScreen> {
     super.dispose();
   }
 
+  bool get _isDirty {
+    final plant = widget.initialPlant;
+    final name = _nameController.text.trim();
+    final scientific = _scientificController.text.trim();
+    final description = _descriptionController.text.trim();
+    final imageUrl = _imageUrlController.text.trim();
+
+    if (plant == null) {
+      return name.isNotEmpty ||
+          scientific.isNotEmpty ||
+          description.isNotEmpty ||
+          imageUrl.isNotEmpty;
+    }
+
+    return name != plant.name ||
+        scientific != plant.scientificName ||
+        description != plant.description ||
+        imageUrl != plant.imageUrl ||
+        _waterController.text.trim() != plant.waterNeed ||
+        _icon != plant.imageAsset ||
+        _category != plant.category ||
+        _careLevel != plant.careLevel ||
+        _sunlight != plant.sunlight;
+  }
+
+  Set<String> get _takenNames {
+    final own = widget.initialPlant?.name.trim().toLowerCase();
+    return {
+      for (final name in widget.existingNames)
+        if (name.trim().toLowerCase() != own) name.trim().toLowerCase(),
+    };
+  }
+
+  String? _validateName(String? value, AppLocalizations strings) {
+    final error = Validators.text(
+      emptyMessage: strings.plantNameRequired,
+      min: AppConstants.plantNameMinLength,
+      tooShortMessage: strings.plantNameTooShort,
+    )(value);
+    if (error != null) return error;
+
+    return _takenNames.contains(value!.trim().toLowerCase())
+        ? strings.plantNameDuplicate
+        : null;
+  }
+
+  Future<bool> _confirmDiscard() async {
+    final strings = AppLocalizations.of(context);
+
+    final discard = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(strings.discardChangesQuestion),
+        content: Text(strings.discardChangesMessage),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: Text(strings.keepEditing),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            style: TextButton.styleFrom(foregroundColor: AppColors.danger),
+            child: Text(strings.discardAction),
+          ),
+        ],
+      ),
+    );
+
+    return discard == true;
+  }
+
   void _submit() {
     FocusScope.of(context).unfocus();
+    if (!_formKey.currentState!.validate()) return;
 
     final strings = AppLocalizations.of(context);
     final description = _descriptionController.text.trim();
@@ -146,7 +219,7 @@ class _AddPlantScreenState extends State<AddPlantScreen> {
     );
     final icons = _options(_plantIcons, _icon);
 
-    return Scaffold(
+    final scaffold = Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -165,6 +238,7 @@ class _AddPlantScreenState extends State<AddPlantScreen> {
       body: SafeArea(
         child: Form(
           key: _formKey,
+          onChanged: () => setState(() {}),
           child: ListView(
             padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
@@ -201,6 +275,7 @@ class _AddPlantScreenState extends State<AddPlantScreen> {
                   strings.plantName,
                   Icons.local_florist_outlined,
                 ),
+                validator: (value) => _validateName(value, strings),
               ),
               const SizedBox(height: 12),
               _SectionLabel(strings.scientificName),
@@ -250,6 +325,8 @@ class _AddPlantScreenState extends State<AddPlantScreen> {
                   strings.waterNeed,
                   Icons.water_drop_outlined,
                 ),
+                validator: (value) =>
+                    Validators.requiredField(value, strings.waterNeedRequired),
               ),
               const SizedBox(height: 12),
               _SectionLabel(strings.descriptionLabel),
@@ -275,13 +352,15 @@ class _AddPlantScreenState extends State<AddPlantScreen> {
                   strings.imageUrlOptional,
                   Icons.image_outlined,
                 ),
+                validator: (value) =>
+                    Validators.optionalUrl(value, strings.invalidImageUrl),
               ),
               const SizedBox(height: 24),
               Row(
                 children: [
                   Expanded(
                     child: OutlinedButton(
-                      onPressed: () => Navigator.pop(context),
+                      onPressed: () => Navigator.maybePop(context),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: AppColors.primary,
                         side: const BorderSide(color: AppColors.primary),
@@ -316,6 +395,16 @@ class _AddPlantScreenState extends State<AddPlantScreen> {
           ),
         ),
       ),
+    );
+
+    return PopScope(
+      canPop: !_isDirty,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        final discard = await _confirmDiscard();
+        if (discard && mounted) Navigator.pop(context);
+      },
+      child: scaffold,
     );
   }
 
