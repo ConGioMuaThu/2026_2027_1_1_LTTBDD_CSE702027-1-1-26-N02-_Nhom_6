@@ -110,6 +110,7 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
             plants: _plants.plants,
             onAddPlant: _plants.add,
             onDeletePlant: _plants.remove,
+            onUpdatePlant: _updatePlant,
           ),
           CareScreen(
             tasks: _care.tasks,
