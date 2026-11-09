@@ -1,93 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:greenlife_app/models/care_task.dart';
 import 'package:greenlife_app/models/growth_note.dart';
-import 'package:greenlife_app/models/plant.dart';
-import 'package:greenlife_app/models/plant_category.dart';
-
-List<PlantCategory> plantCategoriesFor(Locale locale) {
-  final isEnglish = locale.languageCode == 'en';
-
-  return [
-    PlantCategory(id: 'all', name: isEnglish ? 'All' : 'Tất cả', icon: '🌿'),
-    PlantCategory(id: 'indoor', name: isEnglish ? 'Indoor' : 'Trong nhà', icon: '🏠'),
-    PlantCategory(id: 'outdoor', name: isEnglish ? 'Outdoor' : 'Ngoài trời', icon: '🌤️'),
-    PlantCategory(id: 'succulent', name: isEnglish ? 'Succulent' : 'Xương rồng', icon: '🌵'),
-    PlantCategory(id: 'flower', name: isEnglish ? 'Flower' : 'Hoa', icon: '🌼'),
-  ];
-}
-
-List<Plant> samplePlantsFor(Locale locale) {
-  final isEnglish = locale.languageCode == 'en';
-
-  return [
-    Plant(
-      id: 'plant-1',
-      name: isEnglish ? 'Pothos' : 'Trầu bà',
-      scientificName: 'Epipremnum aureum',
-      category: isEnglish ? 'Indoor' : 'Trong nhà',
-      description: isEnglish
-          ? 'Easy-care climbing plant perfect for living and work spaces.'
-          : 'Cây thân leo dễ chăm sóc, thích hợp cho không gian sống và làm việc.',
-      careLevel: isEnglish ? 'Easy' : 'Dễ',
-      waterNeed: isEnglish ? '2-3 times/week' : '2-3 lần/tuần',
-      sunlight: isEnglish ? 'Indirect light' : 'Ánh sáng gián tiếp',
-      imageAsset: '🌿',
-      imageUrl:
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTU9LqG7eM6uHTSyZ4vDjji5fnzOKM-mRRoP7XFrqzkmWN2CAO_Wd2zwNus&s=10',
-      isFavorite: true,
-      tags: isEnglish ? ['airy', 'odor removal', 'revitalizing'] : ['thoáng', 'khử mùi', 'trẻ hóa'],
-    ),
-    Plant(
-      id: 'plant-2',
-      name: isEnglish ? 'Rose' : 'Hoa hồng',
-      scientificName: 'Rosa hybrida',
-      category: isEnglish ? 'Outdoor' : 'Ngoài trời',
-      description: isEnglish
-          ? 'Vibrant blossoms that bring charm to balconies and small gardens.'
-          : 'Hoa nở rực rỡ, mang lại vẻ đẹp cho ban công và vườn nhỏ.',
-      careLevel: isEnglish ? 'Moderate' : 'Trung bình',
-      waterNeed: isEnglish ? '3-4 times/week' : '3-4 lần/tuần',
-      sunlight: isEnglish ? '4-6 hours of sun' : 'Nắng 4-6 giờ',
-      imageAsset: '🌹',
-      imageUrl:
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-tkmIUiq52skDWCnjjZbJxf6R78DvX5-5utL2PUWzgHDQBWGBMbIe6nc_&s=10',
-      tags: isEnglish ? ['fragrant', 'sunny', 'colorful'] : ['quả', 'nắng', 'sắc màu'],
-    ),
-    Plant(
-      id: 'plant-3',
-      name: isEnglish ? 'Echeveria' : 'Sen đá',
-      scientificName: 'Echeveria',
-      category: isEnglish ? 'Succulent' : 'Xương rồng',
-      description: isEnglish
-          ? 'Thrives in dry conditions and is ideal for desks and compact spaces.'
-          : 'Thích môi trường khô ráo và rất phù hợp cho bàn làm việc.',
-      careLevel: isEnglish ? 'Easy' : 'Dễ',
-      waterNeed: isEnglish ? '1-2 times/month' : '1-2 lần/tháng',
-      sunlight: isEnglish ? 'Direct sun' : 'Nắng trực tiếp',
-      imageAsset: '🌵',
-      imageUrl:
-          'https://cdn.eva.vn/upload/3-2022/images/2022-07-15/image13-1657867526-681-width1080height1007.jpg',
-      tags: isEnglish ? ['cool', 'low water', 'desk plant'] : ['mát', 'ít nước', 'bàn làm việc'],
-    ),
-    Plant(
-      id: 'plant-4',
-      name: isEnglish ? 'Snake plant' : 'Lưỡi hổ',
-      scientificName: 'Sansevieria trifasciata',
-      category: isEnglish ? 'Indoor' : 'Trong nhà',
-      description: isEnglish
-          ? 'Drought-tolerant and perfect for adding calm, fresh green to compact spaces.'
-          : 'Cây chịu hạn tốt, giúp không gian thêm xanh và thanh bình.',
-      careLevel: isEnglish ? 'Easy' : 'Dễ',
-      waterNeed: isEnglish ? 'Every 2 weeks' : 'Mỗi 2 tuần',
-      sunlight: isEnglish ? 'Soft light' : 'Ánh sáng mềm',
-      imageAsset: '🌱',
-      imageUrl:
-          'https://monhasfarm.com/wp-content/uploads/2025/03/8cb4490a502648609bd49542e68eafe8tplv-o3syd03w52-origin-jpeg-600x600.jpeg',
-      isFavorite: true,
-      tags: isEnglish ? ['resilient', 'small spaces'] : ['bền bỉ', 'không gian nhỏ'],
-    ),
-  ];
-}
+export 'package:greenlife_app/data/care_tips_data.dart';
+export 'package:greenlife_app/data/plant_data.dart';
 
 List<CareTask> sampleTasksFor(Locale locale) {
   final isEnglish = locale.languageCode == 'en';
@@ -160,35 +75,10 @@ List<GrowthNote> sampleNotesFor(Locale locale) {
   ];
 }
 
-List<Map<String, String>> greenTipsFor(Locale locale) {
-  final isEnglish = locale.languageCode == 'en';
-
-  return [
-    {
-      'title': isEnglish ? 'Water correctly' : 'Tưới nước đúng cách',
-      'content': isEnglish
-          ? 'Check soil moisture before watering to prevent root rot. Water evenly and avoid prolonged waterlogging.'
-          : 'Để tránh úng rễ, hãy kiểm tra độ ẩm đất trước khi tưới. Nước nên được hấp thu đều và không ngập lâu.',
-    },
-    {
-      'title': isEnglish ? 'Choose suitable soil' : 'Chọn đất phù hợp',
-      'content': isEnglish
-          ? 'Use loose, well-draining soil with good aeration and organic compost to keep plants healthy.'
-          : 'Hỗn hợp đất tơi xốp, thoát nước tốt và có thể bổ sung phân hữu cơ để cây phát triển khỏe mạnh.',
-    },
-    {
-      'title': isEnglish ? 'Indoor nutrition' : 'Dinh dưỡng trong nhà',
-      'content': isEnglish
-          ? 'Place indoor plants in indirect light and keep them away from fans, heaters, and direct drafts.'
-          : 'Cây trong nhà nên được đặt nơi có ánh sáng gián tiếp và tránh xa quạt gió, máy sưởi trực tiếp.',
-    },
-  ];
-}
-
 List<Map<String, String>> projectTeamFor(Locale locale) {
   final isEnglish = locale.languageCode == 'en';
 
-   return [
+  return [
     {
       'name': 'Trịnh Xuân Hồng Phong',
       'role': 'Leader / Product Owner',
@@ -204,7 +94,7 @@ List<Map<String, String>> projectTeamFor(Locale locale) {
       'specialty': isEnglish
           ? 'Roadmap planning, feature prioritization, stakeholder communication'
           : 'Lập kế hoạch lộ trình, ưu tiên tính năng, giao tiếp với bên liên quan',
-      'contact': 'phong@gmai.com',
+      'contact': 'phong@gmail.com',
     },
     {
       'name': 'Nguyễn Huy Kiên',
