@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:greenlife_app/l10n/app_localizations.dart';
+import 'package:greenlife_app/models/plant.dart';
 import 'package:greenlife_app/providers/care_provider.dart';
 import 'package:greenlife_app/providers/growth_provider.dart';
 import 'package:greenlife_app/providers/plant_provider.dart';
@@ -50,6 +51,16 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
       _plants.updateLocale(locale);
       _growth.updateLocale(locale);
     });
+  }
+
+  void _updatePlant(Plant plant) {
+    final previous = _plants.findById(plant.id);
+    _plants.update(plant);
+
+    if (previous != null && previous.name != plant.name) {
+      _care.renamePlant(previous.name, plant.name);
+      _growth.renamePlant(previous.name, plant.name);
+    }
   }
 
   @override
