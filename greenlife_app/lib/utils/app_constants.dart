@@ -7,6 +7,11 @@ class AppConstants {
   static const int noteSummaryMinLength = 10;
   static const int noteSummaryMaxLength = 300;
 
+  static const int plantNameMinLength = 2;
+  static const int plantNameMaxLength = 40;
+  static const int scientificNameMaxLength = 60;
+  static const int plantDescriptionMaxLength = 300;
+
   static const int noteHistoryYears = 5;
   static const int taskMaxDaysAhead = 365;
 

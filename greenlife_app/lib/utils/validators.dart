@@ -14,6 +14,17 @@ class Validators {
     return text.length < min ? message : null;
   }
 
+  static String? optionalUrl(String? value, String message) {
+    final text = value?.trim() ?? '';
+    if (text.isEmpty) return null;
+
+    final uri = Uri.tryParse(text);
+    final valid = uri != null &&
+        (uri.scheme == 'http' || uri.scheme == 'https') &&
+        uri.host.isNotEmpty;
+    return valid ? null : message;
+  }
+
   static String? selection<T>(T? value, String message) {
     return value == null ? message : null;
   }
