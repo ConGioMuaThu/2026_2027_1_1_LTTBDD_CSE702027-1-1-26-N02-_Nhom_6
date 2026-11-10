@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:collection';
 import 'package:flutter/widgets.dart';
 import 'package:greenlife_app/models/care_task.dart';
@@ -28,14 +29,12 @@ class CareProvider extends ChangeNotifier {
 
   Future<void> load() async {
     _loading = true;
-    var restored = false;
 
     try {
       final saved = await _repository.loadTasks();
       if (_disposed) return;
       if (saved != null) {
         _tasks = _repository.localize(saved, _locale);
-        restored = true;
       }
     } finally {
       _loading = false;
@@ -43,6 +42,7 @@ class CareProvider extends ChangeNotifier {
     }
 
     if (_disposed) return;
+    unawaited(_rescheduleAll());
     notifyListeners();
   }
 

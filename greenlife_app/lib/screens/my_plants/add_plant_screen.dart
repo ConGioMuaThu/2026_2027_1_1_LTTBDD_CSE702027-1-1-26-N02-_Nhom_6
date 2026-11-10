@@ -554,8 +554,14 @@ class _AddPlantScreenState extends State<AddPlantScreen> {
       canPop: !_isDirty,
       onPopInvokedWithResult: (didPop, result) async {
         if (didPop) return;
+        final navigator = Navigator.of(context);
         final discard = await _confirmDiscard();
-        if (discard && mounted) Navigator.pop(context);
+
+        if (!mounted) return;
+
+        if (discard) {
+          navigator.pop();
+        }
       },
       child: scaffold,
     );
