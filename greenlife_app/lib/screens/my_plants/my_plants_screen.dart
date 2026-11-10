@@ -6,6 +6,7 @@ import 'package:greenlife_app/screens/my_plants/edit_plant_screen.dart';
 import 'package:greenlife_app/utils/app_colors.dart';
 import 'package:greenlife_app/widgets/detail_sheet.dart';
 import 'package:greenlife_app/widgets/empty_state.dart';
+import 'package:greenlife_app/widgets/plant_image.dart';
 
 enum _PlantAction { edit, delete }
 
@@ -355,12 +356,11 @@ class _PlantThumbnail extends StatelessWidget {
   Widget build(BuildContext context) {
     if (plant.imageUrl.isEmpty) return _placeholder();
 
-    return Image.network(
+    return plantImage(
       plant.imageUrl,
       width: 72,
       height: 72,
-      fit: BoxFit.cover,
-      errorBuilder: (context, error, stackTrace) => _placeholder(),
+      placeholder: _placeholder,
     );
   }
 }
