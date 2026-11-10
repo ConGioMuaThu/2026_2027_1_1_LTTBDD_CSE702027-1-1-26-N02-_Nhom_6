@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:greenlife_app/config/app_config.dart';
 import 'package:greenlife_app/config/theme.dart';
 import 'package:greenlife_app/data/sample_data.dart';
 import 'package:greenlife_app/l10n/app_localizations.dart';
@@ -26,7 +27,7 @@ class HomeScreen extends StatefulWidget {
     this.plants = const [],
     this.tasks = const [],
     this.notes = const [],
-    this.locale = const Locale('vi'),
+    this.locale = AppConfig.defaultLocale,
     this.onLocaleChanged,
     this.onToggleTask,
     this.onViewCareSchedule,

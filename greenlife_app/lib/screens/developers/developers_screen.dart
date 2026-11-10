@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:greenlife_app/config/app_config.dart';
 import 'package:greenlife_app/data/sample_data.dart';
 import 'package:greenlife_app/l10n/app_localizations.dart';
 import 'package:greenlife_app/widgets/detail_sheet.dart';
@@ -59,7 +60,7 @@ class _DevelopersScreenState extends State<DevelopersScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'GreenLife',
+                    AppConfig.appName,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 26,

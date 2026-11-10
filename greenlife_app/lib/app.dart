@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:greenlife_app/config/app_config.dart';
 import 'package:greenlife_app/config/theme.dart';
 import 'package:greenlife_app/l10n/app_localizations.dart';
 import 'package:greenlife_app/screens/main_screen.dart';
@@ -7,7 +8,7 @@ import 'package:greenlife_app/screens/splash_screen.dart';
 import 'package:greenlife_app/services/localization_service.dart';
 
 class GreenLifeApp extends StatefulWidget {
-  const GreenLifeApp({super.key, this.initialLocale = const Locale('vi')});
+  const GreenLifeApp({super.key, this.initialLocale = AppConfig.defaultLocale});
 
   final Locale initialLocale;
 
@@ -30,8 +31,8 @@ class _GreenLifeAppState extends State<GreenLifeApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'GreenLife',
-      debugShowCheckedModeBanner: false,
+      title: AppConfig.appName,
+      debugShowCheckedModeBanner: AppConfig.showDebugBanner,
       theme: AppTheme.lightTheme,
       locale: _locale,
       supportedLocales: AppLocalizations.supportedLocales,
