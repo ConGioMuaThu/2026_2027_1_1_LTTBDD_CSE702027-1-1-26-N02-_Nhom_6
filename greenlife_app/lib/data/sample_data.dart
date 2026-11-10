@@ -1,42 +1,72 @@
 import 'package:flutter/material.dart';
 import 'package:greenlife_app/models/care_task.dart';
 import 'package:greenlife_app/models/growth_note.dart';
+import 'package:greenlife_app/utils/date_utils.dart';
 export 'package:greenlife_app/data/care_tips_data.dart';
 export 'package:greenlife_app/data/plant_data.dart';
 
 List<CareTask> sampleTasksFor(Locale locale) {
   final isEnglish = locale.languageCode == 'en';
+  final now = DateTime.now();
+
+  DateTime atDay(int daysFromToday, int hour, int minute) {
+    final date = DateTime(now.year, now.month, now.day)
+        .add(Duration(days: daysFromToday));
+    return DateTime(date.year, date.month, date.day, hour, minute);
+  }
+
+  CareTask task({
+    required String id,
+    required String title,
+    required String plantName,
+    required String type,
+    required DateTime dueAt,
+    bool isCompleted = false,
+  }) {
+    return CareTask(
+      id: id,
+      title: title,
+      plantName: plantName,
+      type: type,
+      dueAt: dueAt,
+      dueDate: AppDateUtils.formatDueDate(
+        dueAt,
+        isEnglish: isEnglish,
+        now: now,
+      ),
+      isCompleted: isCompleted,
+    );
+  }
 
   return [
-    CareTask(
+    task(
       id: 'task-1',
       title: isEnglish ? 'Watering' : 'Tưới nước',
       plantName: isEnglish ? 'Pothos' : 'Trầu bà',
       type: 'watering',
-      dueDate: isEnglish ? 'Today, 08:00' : 'Hôm nay, 08:00',
-      isCompleted: false,
+      dueAt: atDay(0, 8, 0),
     ),
-    CareTask(
+    task(
       id: 'task-2',
       title: isEnglish ? 'Fertilize' : 'Bón phân',
       plantName: isEnglish ? 'Rose' : 'Hoa hồng',
       type: 'fertilize',
-      dueDate: isEnglish ? 'Tomorrow, 15:30' : 'Ngày mai, 15:30',
+      dueAt: atDay(1, 15, 30),
     ),
-    CareTask(
+    task(
       id: 'task-3',
       title: isEnglish ? 'Check leaves' : 'Kiểm tra lá',
       plantName: isEnglish ? 'Snake plant' : 'Lưỡi hổ',
       type: 'inspection',
-      dueDate: isEnglish ? 'Wednesday, 10:00' : 'Thứ Tư, 10:00',
+      dueAt: atDay(2, 10, 0),
       isCompleted: true,
     ),
-    CareTask(
+    task(
       id: 'task-4',
       title: isEnglish ? 'Prune stems' : 'Tỉa cành',
       plantName: isEnglish ? 'Echeveria' : 'Sen đá',
       type: 'prune',
-      dueDate: isEnglish ? 'Thursday, 17:00' : 'Thứ Năm, 17:00',
+      dueAt: atDay(3, 17, 0),
     ),
   ];
 }

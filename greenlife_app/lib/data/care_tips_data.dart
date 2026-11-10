@@ -60,5 +60,47 @@ List<Map<String, String>> greenTipsFor(Locale locale) {
           ? 'Group plants together or mist lightly in dry rooms, but avoid leaving leaves wet overnight.'
           : 'Đặt cây gần nhau hoặc phun sương nhẹ khi phòng khô, tránh để lá ướt qua đêm.',
     },
+    {
+      'image': 'assets/images/tips/tip-9.png',
+      'title': isEnglish ? 'Reuse rice-washing water' : 'Tái sử dụng nước vo gạo',
+      'content': isEnglish
+          ? 'Let plain rice-washing water settle and use it occasionally for plants. Avoid salted or seasoned water.'
+          : 'Để nước vo gạo lắng rồi dùng tưới cây thỉnh thoảng. Không dùng nước có muối hoặc gia vị.',
+    },
+    {
+      'image': 'assets/images/tips/tip-10.png',
+      'title': isEnglish ? 'Make gentle compost' : 'Tận dụng vỏ trứng và bã cà phê',
+      'content': isEnglish
+          ? 'Crush clean, dried eggshells and add small amounts of used coffee grounds to compost. Do not overuse them.'
+          : 'Rửa sạch, phơi khô rồi nghiền nhỏ vỏ trứng; trộn một lượng vừa phải bã cà phê vào phân ủ, tránh bón quá nhiều.',
+    },
+    {
+      'image': 'assets/images/tips/tip-11.png',
+      'title': isEnglish ? 'Water in the morning' : 'Tưới cây vào buổi sáng',
+      'content': isEnglish
+          ? 'Water in the cooler morning hours so plants can absorb moisture before the heat of the day.'
+          : 'Tưới vào lúc sáng mát để cây kịp hấp thu nước trước khi trời nóng, hạn chế nước bốc hơi nhanh.',
+    },
+    {
+      'image': 'assets/images/tips/tip-12.png',
+      'title': isEnglish ? 'Reduce single-use plastic' : 'Hạn chế nhựa dùng một lần',
+      'content': isEnglish
+          ? 'Choose reusable bags, bottles, and durable pots to reduce plastic waste in everyday life.'
+          : 'Ưu tiên túi vải, bình nước dùng lại và chậu bền thay cho đồ nhựa dùng một lần để giảm rác thải.',
+    },
+    {
+      'image': 'assets/images/tips/tip-13.png',
+      'title': isEnglish ? 'Grow air-friendly plants' : 'Trồng cây xanh trong nhà',
+      'content': isEnglish
+          ? 'Choose suitable indoor plants and care for them well to bring more greenery into your living space.'
+          : 'Chọn các loại cây phù hợp với điều kiện trong nhà và chăm sóc đúng cách để không gian sống thêm xanh.',
+    },
+    {
+      'image': 'assets/images/tips/tip-14.png',
+      'title': isEnglish ? 'Sort and recycle waste' : 'Phân loại và tái chế rác',
+      'content': isEnglish
+          ? 'Separate recyclable materials such as paper, glass, and plastic so they can be processed properly.'
+          : 'Phân loại giấy, thủy tinh và nhựa có thể tái chế để chúng được xử lý đúng cách, giảm lượng rác thải.',
+    },
   ];
 }

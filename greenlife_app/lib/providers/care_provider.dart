@@ -44,7 +44,6 @@ class CareProvider extends ChangeNotifier {
 
     if (_disposed) return;
     notifyListeners();
-    if (restored) await _rescheduleAll();
   }
 
   void updateLocale(Locale locale) {
