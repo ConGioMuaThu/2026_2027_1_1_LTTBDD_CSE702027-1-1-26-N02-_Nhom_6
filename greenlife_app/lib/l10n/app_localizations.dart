@@ -143,6 +143,9 @@ class AppLocalizations {
       'tipsTitlePage': 'Mẹo sống xanh',
       'searchTipsHint': 'Tìm mẹo chăm sóc',
       'noTipsMatch': 'Không có mẹo nào phù hợp.',
+      'tipsCategoryAll': 'Tất cả',
+      'tipsCategoryCare': 'Chăm sóc',
+      'tipsCategoryGreenLiving': 'Sống xanh',
       'growthJournalTitle': 'Nhật ký phát triển',
       'searchNotesHint': 'Tìm ghi chú hoặc cây',
       'noNotesMatch': 'Không có ghi chú phù hợp.',
@@ -327,6 +330,9 @@ class AppLocalizations {
       'tipsTitlePage': 'Green living tips',
       'searchTipsHint': 'Search care tips',
       'noTipsMatch': 'No matching tips found.',
+      'tipsCategoryAll': 'All',
+      'tipsCategoryCare': 'Plant care',
+      'tipsCategoryGreenLiving': 'Green living',
       'growthJournalTitle': 'Growth journal',
       'searchNotesHint': 'Search notes or plants',
       'noNotesMatch': 'No matching notes found.',
@@ -514,6 +520,9 @@ class AppLocalizations {
   String get tipsTitlePage => _val('tipsTitlePage');
   String get searchTipsHint => _val('searchTipsHint');
   String get noTipsMatch => _val('noTipsMatch');
+  String get tipsCategoryAll => _val('tipsCategoryAll');
+  String get tipsCategoryCare => _val('tipsCategoryCare');
+  String get tipsCategoryGreenLiving => _val('tipsCategoryGreenLiving');
   String get growthJournalTitle => _val('growthJournalTitle');
   String get searchNotesHint => _val('searchNotesHint');
   String get noNotesMatch => _val('noNotesMatch');
