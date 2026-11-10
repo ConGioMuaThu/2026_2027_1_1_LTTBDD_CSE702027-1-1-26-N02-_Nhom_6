@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:greenlife_app/config/app_config.dart';
 import 'package:timezone/data/latest_all.dart' as tz_data;
 import 'package:timezone/timezone.dart' as tz;
 
@@ -8,9 +9,9 @@ class NotificationService {
 
   static final NotificationService instance = NotificationService._();
 
-  static const String _channelId = 'care_reminders';
-  static const String _channelName = 'Care reminders';
-  static const String _channelDescription = 'Reminders for plant care tasks';
+  static const String _channelId = AppConfig.reminderChannelId;
+  static const String _channelName = AppConfig.reminderChannelName;
+  static const String _channelDescription = AppConfig.reminderChannelDescription;
 
   final FlutterLocalNotificationsPlugin _plugin =
       FlutterLocalNotificationsPlugin();

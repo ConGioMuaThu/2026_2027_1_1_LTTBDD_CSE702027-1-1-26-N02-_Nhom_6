@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:greenlife_app/config/app_config.dart';
 import 'package:greenlife_app/models/care_task.dart';
 import 'package:greenlife_app/models/growth_note.dart';
 import 'package:greenlife_app/models/plant.dart';
@@ -9,10 +10,10 @@ class StorageService {
 
   static final StorageService instance = StorageService._();
 
-  static const String _tasksKey = 'care_tasks';
-  static const String _plantsKey = 'plants';
-  static const String _notesKey = 'growth_notes';
-  static const String _localeKey = 'locale_code';
+  static const String _tasksKey = AppConfig.tasksStorageKey;
+  static const String _plantsKey = AppConfig.plantsStorageKey;
+  static const String _notesKey = AppConfig.notesStorageKey;
+  static const String _localeKey = AppConfig.localeStorageKey;
 
   late final SharedPreferencesAsync _prefs = SharedPreferencesAsync();
 

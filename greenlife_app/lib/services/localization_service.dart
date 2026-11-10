@@ -1,5 +1,5 @@
 import 'dart:ui';
-
+import 'package:greenlife_app/config/app_config.dart';
 import 'package:greenlife_app/l10n/app_localizations.dart';
 import 'package:greenlife_app/services/storage_service.dart';
 
@@ -10,7 +10,7 @@ class LocalizationService {
 
   static const Locale vietnamese = Locale('vi');
   static const Locale english = Locale('en');
-  static const Locale defaultLocale = vietnamese;
+  static const Locale defaultLocale = AppConfig.defaultLocale;
 
   bool isSupported(Locale locale) {
     return AppLocalizations.supportedLocales.any(
