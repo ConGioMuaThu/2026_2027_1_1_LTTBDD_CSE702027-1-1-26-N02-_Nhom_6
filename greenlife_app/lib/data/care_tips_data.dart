@@ -5,6 +5,7 @@ List<Map<String, String>> greenTipsFor(Locale locale) {
 
   return [
     {
+      'category': 'care',
       'image': 'assets/images/tips/tip-1.png',
       'title': isEnglish ? 'Water correctly' : 'Tưới nước đúng cách',
       'content': isEnglish
@@ -12,6 +13,7 @@ List<Map<String, String>> greenTipsFor(Locale locale) {
           : 'Để tránh úng rễ, hãy kiểm tra độ ẩm đất trước khi tưới. Nước nên được hấp thu đều và không ngập lâu.',
     },
     {
+      'category': 'care',
       'image': 'assets/images/tips/tip-2.png',
       'title': isEnglish ? 'Choose suitable soil' : 'Chọn đất phù hợp',
       'content': isEnglish
@@ -19,6 +21,7 @@ List<Map<String, String>> greenTipsFor(Locale locale) {
           : 'Hỗn hợp đất tơi xốp, thoát nước tốt và có thể bổ sung phân hữu cơ để cây phát triển khỏe mạnh.',
     },
     {
+      'category': 'care',
       'image': 'assets/images/tips/tip-3.png',
       'title': isEnglish ? 'Light for indoor plants' : 'Ánh sáng cho cây trong nhà',
       'content': isEnglish
@@ -26,6 +29,7 @@ List<Map<String, String>> greenTipsFor(Locale locale) {
           : 'Cây trong nhà nên được đặt nơi có ánh sáng gián tiếp và tránh xa quạt gió, máy sưởi trực tiếp.',
     },
     {
+      'category': 'care',
       'image': 'assets/images/tips/tip-4.png',
       'title': isEnglish ? 'Feed in moderation' : 'Bón phân vừa phải',
       'content': isEnglish
@@ -33,6 +37,7 @@ List<Map<String, String>> greenTipsFor(Locale locale) {
           : 'Bón phân nhẹ trong mùa sinh trưởng và giảm lại khi cây chậm lớn.',
     },
     {
+      'category': 'care',
       'image': 'assets/images/tips/tip-5.png',
       'title': isEnglish ? 'Repot when roots feel crowded' : 'Thay chậu khi rễ chật',
       'content': isEnglish
@@ -40,6 +45,7 @@ List<Map<String, String>> greenTipsFor(Locale locale) {
           : 'Chuyển sang chậu lớn hơn một chút khi rễ quấn đáy chậu hoặc chui ra lỗ thoát nước.',
     },
     {
+      'category': 'care',
       'image': 'assets/images/tips/tip-6.png',
       'title': isEnglish ? 'Spot pests early' : 'Phát hiện sâu bệnh sớm',
       'content': isEnglish
@@ -47,6 +53,7 @@ List<Map<String, String>> greenTipsFor(Locale locale) {
           : 'Kiểm tra mặt dưới lá mỗi tuần. Lau sạch sâu bệnh sớm hoặc dùng nước xà phòng loãng.',
     },
     {
+      'category': 'care',
       'image': 'assets/images/tips/tip-7.png',
       'title': isEnglish ? 'Prune regularly' : 'Tỉa cành định kỳ',
       'content': isEnglish
@@ -54,6 +61,7 @@ List<Map<String, String>> greenTipsFor(Locale locale) {
           : 'Cắt bỏ lá vàng, lá khô để cây dồn sức cho phần khỏe mạnh.',
     },
     {
+      'category': 'care',
       'image': 'assets/images/tips/tip-8.png',
       'title': isEnglish ? 'Keep humidity balanced' : 'Giữ độ ẩm cân bằng',
       'content': isEnglish
@@ -61,6 +69,7 @@ List<Map<String, String>> greenTipsFor(Locale locale) {
           : 'Đặt cây gần nhau hoặc phun sương nhẹ khi phòng khô, tránh để lá ướt qua đêm.',
     },
     {
+      'category': 'green',
       'image': 'assets/images/tips/tip-9.png',
       'title': isEnglish ? 'Reuse rice-washing water' : 'Tái sử dụng nước vo gạo',
       'content': isEnglish
@@ -68,6 +77,7 @@ List<Map<String, String>> greenTipsFor(Locale locale) {
           : 'Để nước vo gạo lắng rồi dùng tưới cây thỉnh thoảng. Không dùng nước có muối hoặc gia vị.',
     },
     {
+      'category': 'green',
       'image': 'assets/images/tips/tip-10.png',
       'title': isEnglish ? 'Make gentle compost' : 'Tận dụng vỏ trứng và bã cà phê',
       'content': isEnglish
@@ -75,6 +85,7 @@ List<Map<String, String>> greenTipsFor(Locale locale) {
           : 'Rửa sạch, phơi khô rồi nghiền nhỏ vỏ trứng; trộn một lượng vừa phải bã cà phê vào phân ủ, tránh bón quá nhiều.',
     },
     {
+      'category': 'care',
       'image': 'assets/images/tips/tip-11.png',
       'title': isEnglish ? 'Water in the morning' : 'Tưới cây vào buổi sáng',
       'content': isEnglish
@@ -82,6 +93,7 @@ List<Map<String, String>> greenTipsFor(Locale locale) {
           : 'Tưới vào lúc sáng mát để cây kịp hấp thu nước trước khi trời nóng, hạn chế nước bốc hơi nhanh.',
     },
     {
+      'category': 'green',
       'image': 'assets/images/tips/tip-12.png',
       'title': isEnglish ? 'Reduce single-use plastic' : 'Hạn chế nhựa dùng một lần',
       'content': isEnglish
@@ -89,6 +101,7 @@ List<Map<String, String>> greenTipsFor(Locale locale) {
           : 'Ưu tiên túi vải, bình nước dùng lại và chậu bền thay cho đồ nhựa dùng một lần để giảm rác thải.',
     },
     {
+      'category': 'green',
       'image': 'assets/images/tips/tip-13.png',
       'title': isEnglish ? 'Grow air-friendly plants' : 'Trồng cây xanh trong nhà',
       'content': isEnglish
@@ -96,6 +109,7 @@ List<Map<String, String>> greenTipsFor(Locale locale) {
           : 'Chọn các loại cây phù hợp với điều kiện trong nhà và chăm sóc đúng cách để không gian sống thêm xanh.',
     },
     {
+      'category': 'green',
       'image': 'assets/images/tips/tip-14.png',
       'title': isEnglish ? 'Sort and recycle waste' : 'Phân loại và tái chế rác',
       'content': isEnglish

@@ -14,6 +14,7 @@ class TipsScreen extends StatefulWidget {
 
 class _TipsScreenState extends State<TipsScreen> {
   final TextEditingController _searchController = TextEditingController();
+  String _selectedCategory = 'all';
 
   @override
   void dispose() {
@@ -24,13 +25,24 @@ class _TipsScreenState extends State<TipsScreen> {
   List<Map<String, String>> get _filteredTips {
     final query = _searchController.text.trim().toLowerCase();
     final source = greenTipsFor(Localizations.localeOf(context));
-    if (query.isEmpty) {
-      return source;
-    }
     return source.where((tip) {
-      return (tip['title'] ?? '').toLowerCase().contains(query) ||
+      final matchesCategory = _selectedCategory == 'all' ||
+          tip['category'] == _selectedCategory;
+      final matchesQuery = query.isEmpty ||
+          (tip['title'] ?? '').toLowerCase().contains(query) ||
           (tip['content'] ?? '').toLowerCase().contains(query);
+      return matchesCategory && matchesQuery;
     }).toList();
+  }
+
+  Widget _categoryChip(String value, String label) {
+    return FilterChip(
+      label: Text(label),
+      selected: _selectedCategory == value,
+      onSelected: (_) => setState(() => _selectedCategory = value),
+      selectedColor: const Color(0xFFD7EEDD),
+      checkmarkColor: const Color(0xFF2F6A4F),
+    );
   }
 
   @override
@@ -53,6 +65,19 @@ class _TipsScreenState extends State<TipsScreen> {
               controller: _searchController,
               hintText: strings.searchTipsHint,
               onChanged: (_) => setState(() {}),
+            ),
+            const SizedBox(height: 12),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  _categoryChip('all', strings.tipsCategoryAll),
+                  const SizedBox(width: 8),
+                  _categoryChip('care', strings.tipsCategoryCare),
+                  const SizedBox(width: 8),
+                  _categoryChip('green', strings.tipsCategoryGreenLiving),
+                ],
+              ),
             ),
             const SizedBox(height: 14),
             Expanded(
