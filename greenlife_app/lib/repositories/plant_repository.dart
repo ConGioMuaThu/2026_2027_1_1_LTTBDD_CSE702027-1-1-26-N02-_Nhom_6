@@ -31,7 +31,14 @@ class PlantRepository {
     return plants.map((plant) => plant.name).toList();
   }
 
-  Plant copyWith(Plant plant, {String? name, bool? isFavorite}) {
+  Plant copyWith(
+    Plant plant, {
+    String? name,
+    bool? isFavorite,
+    bool? inGarden,
+    String? plantedDate,
+    String? careNotes,
+  }) {
     return Plant(
       id: plant.id,
       name: name ?? plant.name,
@@ -44,6 +51,9 @@ class PlantRepository {
       imageAsset: plant.imageAsset,
       imageUrl: plant.imageUrl,
       isFavorite: isFavorite ?? plant.isFavorite,
+      inGarden: inGarden ?? plant.inGarden,
+      plantedDate: plantedDate ?? plant.plantedDate,
+      careNotes: careNotes ?? plant.careNotes,
       tags: plant.tags,
     );
   }
@@ -76,7 +86,13 @@ class PlantRepository {
     return [
       for (final plant in source)
         fresh.containsKey(plant.id) && isUntouchedSample(plant)
-            ? copyWith(fresh[plant.id]!, isFavorite: plant.isFavorite)
+            ? copyWith(
+                fresh[plant.id]!,
+                isFavorite: plant.isFavorite,
+                inGarden: plant.inGarden,
+                plantedDate: plant.plantedDate,
+                careNotes: plant.careNotes,
+              )
             : plant,
     ];
   }

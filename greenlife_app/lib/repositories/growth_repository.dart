@@ -38,13 +38,15 @@ class GrowthRepository {
       title: note.title,
       date: note.date,
       summary: note.summary,
+      imagePath: note.imagePath,
     );
   }
 
   bool isUntouchedSample(GrowthNote note) {
     for (final locale in AppLocalizations.supportedLocales) {
       for (final sample in sampleNotesFor(locale)) {
-        if (sample.id == note.id &&
+        if (note.imagePath.isEmpty &&
+            sample.id == note.id &&
             sample.title == note.title &&
             sample.summary == note.summary &&
             sample.plantName == note.plantName &&

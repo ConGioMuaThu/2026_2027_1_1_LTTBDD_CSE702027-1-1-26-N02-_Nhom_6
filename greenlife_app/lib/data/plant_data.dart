@@ -35,6 +35,7 @@ List<Plant> samplePlantsFor(Locale locale) {
       sunlight: isEnglish ? 'Indirect light' : 'Ánh sáng gián tiếp',
       imageAsset: '🌿',
       imageUrl: 'assets/images/plants/plant-1.jpg',
+      inGarden: true,
       isFavorite: true,
       tags: isEnglish ? ['airy', 'odor removal', 'revitalizing'] : ['thoáng', 'khử mùi', 'trẻ hóa'],
     ),
@@ -51,6 +52,7 @@ List<Plant> samplePlantsFor(Locale locale) {
       sunlight: isEnglish ? '4-6 hours of sun' : 'Nắng 4-6 giờ',
       imageAsset: '🌹',
       imageUrl: 'assets/images/plants/plant-2.jpg',
+      inGarden: true,
       tags: isEnglish ? ['fragrant', 'sunny', 'colorful'] : ['thơm', 'nắng', 'sắc màu'],
     ),
     Plant(
@@ -66,6 +68,7 @@ List<Plant> samplePlantsFor(Locale locale) {
       sunlight: isEnglish ? 'Direct sun' : 'Nắng trực tiếp',
       imageAsset: '🌵',
       imageUrl: 'assets/images/plants/plant-3.jpg',
+      inGarden: true,
       tags: isEnglish ? ['cool', 'low water', 'desk plant'] : ['mát', 'ít nước', 'bàn làm việc'],
     ),
     Plant(
@@ -81,6 +84,7 @@ List<Plant> samplePlantsFor(Locale locale) {
       sunlight: isEnglish ? 'Soft light' : 'Ánh sáng mềm',
       imageAsset: '🌱',
       imageUrl: 'assets/images/plants/plant-4.jpg',
+      inGarden: true,
       isFavorite: true,
       tags: isEnglish ? ['resilient', 'small spaces'] : ['bền bỉ', 'không gian nhỏ'],
     ),

@@ -4,6 +4,7 @@ class GrowthNote {
   final String title;
   final String date;
   final String summary;
+  final String imagePath;
 
   const GrowthNote({
     required this.id,
@@ -11,5 +12,6 @@ class GrowthNote {
     required this.title,
     required this.date,
     required this.summary,
+    this.imagePath = '',
   });
 }

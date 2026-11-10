@@ -3,6 +3,7 @@ import 'package:greenlife_app/config/app_routes.dart';
 import 'package:greenlife_app/l10n/app_localizations.dart';
 import 'package:greenlife_app/models/growth_note.dart';
 import 'package:greenlife_app/utils/app_colors.dart';
+import 'package:greenlife_app/widgets/plant_image.dart';
 
 class NoteDetailScreen extends StatefulWidget {
   const NoteDetailScreen({
@@ -167,6 +168,18 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                 ],
               ),
             ),
+            if (_note.imagePath.isNotEmpty) ...[
+              const SizedBox(height: 16),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: plantImage(
+                  _note.imagePath,
+                  width: double.infinity,
+                  height: 220,
+                  placeholder: () => const SizedBox.shrink(),
+                ),
+              ),
+            ],
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

@@ -6,6 +6,7 @@ import 'package:greenlife_app/l10n/app_localizations.dart';
 import 'package:greenlife_app/models/care_task.dart';
 import 'package:greenlife_app/models/growth_note.dart';
 import 'package:greenlife_app/models/plant.dart';
+import 'package:greenlife_app/repositories/care_repository.dart';
 import 'package:greenlife_app/screens/care/add_task_screen.dart' show taskTypeInfoOf;
 import 'package:greenlife_app/widgets/detail_sheet.dart';
 import 'package:greenlife_app/widgets/growth_note_card.dart';
@@ -70,7 +71,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   List<CareTask> get _filteredTasks {
     final query = _searchController.text.trim().toLowerCase();
-    final tasks = widget.tasks.where((task) => !task.isCompleted).toList();
+    final tasks = CareRepository.sortByDue(
+      widget.tasks.where((task) => !task.isCompleted).toList(),
+    );
     if (query.isEmpty) {
       return tasks.take(3).toList();
     }
@@ -229,7 +232,7 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 StatCard(
                   label: strings.plantSummary,
-                  value: '${widget.plants.length}',
+                  value: '${widget.plants.where((p) => p.inGarden).length}',
                   icon: Icons.eco,
                   color: AppTheme.primary,
                 ),

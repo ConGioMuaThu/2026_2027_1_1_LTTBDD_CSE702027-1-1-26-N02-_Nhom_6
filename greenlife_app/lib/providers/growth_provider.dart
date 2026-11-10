@@ -81,6 +81,17 @@ class GrowthProvider extends ChangeNotifier {
     });
   }
 
+  void removeByPlant(String plantName) {
+    _run(() {
+      final before = _notes.length;
+      _notes.removeWhere((n) => n.plantName == plantName);
+      if (_notes.length == before) return;
+
+      _persist();
+      notifyListeners();
+    });
+  }
+
   void remove(String id) {
     _run(() {
       _notes.removeWhere((n) => n.id == id);

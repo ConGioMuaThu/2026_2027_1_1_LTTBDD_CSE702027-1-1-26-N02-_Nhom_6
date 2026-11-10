@@ -10,6 +10,9 @@ class Plant {
   final String imageAsset;
   final String imageUrl;
   final bool isFavorite;
+  final bool inGarden;
+  final String plantedDate;
+  final String careNotes;
   final List<String> tags;
 
   const Plant({
@@ -24,6 +27,11 @@ class Plant {
     required this.imageAsset,
     this.imageUrl = '',
     this.isFavorite = false,
+    this.inGarden = false,
+    this.plantedDate = '',
+    this.careNotes = '',
     required this.tags,
   });
+
+  bool get isCatalog => RegExp(r'^plant-\d$').hasMatch(id);
 }

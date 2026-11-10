@@ -124,6 +124,35 @@ class CareProvider extends ChangeNotifier {
     });
   }
 
+  void update(CareTask task) {
+    _run(() {
+      final index = _tasks.indexWhere((t) => t.id == task.id);
+      if (index == -1) return;
+
+      _tasks[index] = task;
+      _persist();
+      notifyListeners();
+
+      _notifications.cancelTaskReminder(task.id);
+      _scheduleReminder(task);
+    });
+  }
+
+  void removeByPlant(String plantName) {
+    _run(() {
+      final removed = _tasks.where((t) => t.plantName == plantName).toList();
+      if (removed.isEmpty) return;
+
+      _tasks.removeWhere((t) => t.plantName == plantName);
+      _persist();
+      notifyListeners();
+
+      for (final task in removed) {
+        _notifications.cancelTaskReminder(task.id);
+      }
+    });
+  }
+
   void remove(String id) {
     _run(() {
       _tasks.removeWhere((t) => t.id == id);

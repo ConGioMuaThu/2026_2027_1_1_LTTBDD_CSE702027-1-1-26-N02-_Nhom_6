@@ -47,6 +47,21 @@ class AppLocalizations {
       'myGarden': 'Vườn cây của tôi',
       'addPlant': 'Thêm cây mới',
       'cancel': 'Hủy',
+      'categoryFlower': 'Hoa',
+      'plantedDate': 'Ngày trồng',
+      'plantedDateHint': 'Chọn ngày trồng (không bắt buộc)',
+      'careNotes': 'Ghi chú chăm sóc',
+      'careNotesHint': 'Ví dụ: đặt gần cửa sổ, tưới vào buổi sáng...',
+      'photoLabel': 'Ảnh',
+      'pickFromGallery': 'Chọn từ thư viện',
+      'takePhoto': 'Chụp ảnh',
+      'removePhoto': 'Xóa ảnh',
+      'addToGarden': 'Thêm vào vườn',
+      'addedToGarden': 'Đã thêm vào vườn của bạn',
+      'inMyGarden': 'Đã có trong vườn',
+      'editTask': 'Sửa nhiệm vụ',
+      'taskUpdated': 'Đã cập nhật nhiệm vụ',
+      'overdue': 'Quá hạn',
       'save': 'Lưu',
       'add': 'Thêm',
       'plantName': 'Tên cây',
@@ -74,7 +89,7 @@ class AppLocalizations {
       'plantDeleted': 'Đã xóa cây',
       'deletePlant': 'Xóa cây',
       'deletePlantQuestion': 'Xóa cây?',
-      'deletePlantMessage': 'Cây \"{plant}\" sẽ bị xóa khỏi vườn.',
+      'deletePlantMessage': 'Cây "{plant}" sẽ bị xóa khỏi vườn. Các nhiệm vụ và nhật ký của cây này cũng sẽ bị xóa.',
       'emptyGardenTitle': 'Vườn chưa có cây nào',
       'emptyGardenMessage': 'Bấm nút + để thêm cây đầu tiên của bạn.',
       'plantType': 'Loại cây',
@@ -216,6 +231,21 @@ class AppLocalizations {
       'myGarden': 'My garden',
       'addPlant': 'Add new plant',
       'cancel': 'Cancel',
+      'categoryFlower': 'Flower',
+      'plantedDate': 'Planting date',
+      'plantedDateHint': 'Pick a planting date (optional)',
+      'careNotes': 'Care notes',
+      'careNotesHint': 'e.g. keep near a window, water in the morning...',
+      'photoLabel': 'Photo',
+      'pickFromGallery': 'Choose from gallery',
+      'takePhoto': 'Take photo',
+      'removePhoto': 'Remove photo',
+      'addToGarden': 'Add to my garden',
+      'addedToGarden': 'Added to your garden',
+      'inMyGarden': 'Already in your garden',
+      'editTask': 'Edit task',
+      'taskUpdated': 'Task updated',
+      'overdue': 'Overdue',
       'save': 'Save',
       'add': 'Add',
       'plantName': 'Plant name',
@@ -243,7 +273,7 @@ class AppLocalizations {
       'plantDeleted': 'Plant deleted',
       'deletePlant': 'Delete plant',
       'deletePlantQuestion': 'Delete plant?',
-      'deletePlantMessage': '\"{plant}\" will be removed from your garden.',
+      'deletePlantMessage': '"{plant}" will be removed from your garden. Its care tasks and journal notes will be deleted too.',
       'emptyGardenTitle': 'Your garden is empty',
       'emptyGardenMessage': 'Tap + to add your first plant.',
       'plantType': 'Plant type',
@@ -386,6 +416,21 @@ class AppLocalizations {
   String get myGarden => _val('myGarden');
   String get addPlant => _val('addPlant');
   String get cancel => _val('cancel');
+  String get categoryFlower => _val('categoryFlower');
+  String get plantedDate => _val('plantedDate');
+  String get plantedDateHint => _val('plantedDateHint');
+  String get careNotes => _val('careNotes');
+  String get careNotesHint => _val('careNotesHint');
+  String get photoLabel => _val('photoLabel');
+  String get pickFromGallery => _val('pickFromGallery');
+  String get takePhoto => _val('takePhoto');
+  String get removePhoto => _val('removePhoto');
+  String get addToGarden => _val('addToGarden');
+  String get addedToGarden => _val('addedToGarden');
+  String get inMyGarden => _val('inMyGarden');
+  String get editTask => _val('editTask');
+  String get taskUpdated => _val('taskUpdated');
+  String get overdue => _val('overdue');
   String get save => _val('save');
   String get add => _val('add');
   String get plantName => _val('plantName');

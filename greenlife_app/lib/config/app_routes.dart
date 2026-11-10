@@ -49,6 +49,8 @@ class AppRoutes {
     VoidCallback? onToggleFavorite,
     void Function(CareTask task)? onAddTask,
     List<String>? plantNames,
+    bool isInGarden = false,
+    VoidCallback? onAddToGarden,
   }) {
     return _page(
       (_) => PlantDetailScreen(
@@ -56,6 +58,8 @@ class AppRoutes {
         onToggleFavorite: onToggleFavorite,
         onAddTask: onAddTask,
         plantNames: plantNames,
+        isInGarden: isInGarden,
+        onAddToGarden: onAddToGarden,
       ),
     );
   }
@@ -63,11 +67,13 @@ class AppRoutes {
   static Route<CareTask> addTask({
     List<String>? plantNames,
     String? initialPlantName,
+    CareTask? initialTask,
   }) {
     return _page(
       (_) => AddTaskScreen(
         plantNames: plantNames,
         initialPlantName: initialPlantName,
+        initialTask: initialTask,
       ),
     );
   }
@@ -76,12 +82,16 @@ class AppRoutes {
     required CareTask task,
     required VoidCallback onToggle,
     VoidCallback? onDelete,
+    void Function(CareTask task)? onUpdate,
+    List<String>? plantNames,
   }) {
     return _page(
       (_) => TaskDetailScreen(
         task: task,
         onToggle: onToggle,
         onDelete: onDelete,
+        onUpdate: onUpdate,
+        plantNames: plantNames,
       ),
     );
   }

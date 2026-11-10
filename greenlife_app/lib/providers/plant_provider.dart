@@ -24,6 +24,10 @@ class PlantProvider extends ChangeNotifier {
 
   List<String> get plantNames => _repository.plantNames(_plants);
 
+  List<Plant> get gardenPlants => _plants.where((p) => p.inGarden).toList();
+
+  List<String> get gardenNames => _repository.plantNames(gardenPlants);
+
   Plant? findById(String id) => _repository.findById(_plants, id);
 
   Future<void> load() async {
@@ -67,6 +71,38 @@ class PlantProvider extends ChangeNotifier {
   void add(Plant plant) {
     _run(() {
       _plants.insert(0, plant);
+      _persist();
+      notifyListeners();
+    });
+  }
+
+  void addToGarden(String id) {
+    _run(() {
+      final index = _plants.indexWhere((p) => p.id == id);
+      if (index == -1 || _plants[index].inGarden) return;
+
+      _plants[index] = _repository.copyWith(_plants[index], inGarden: true);
+      _persist();
+      notifyListeners();
+    });
+  }
+
+  void removeFromGarden(String id) {
+    _run(() {
+      final index = _plants.indexWhere((p) => p.id == id);
+      if (index == -1) return;
+
+      final plant = _plants[index];
+      if (plant.isCatalog) {
+        _plants[index] = _repository.copyWith(
+          plant,
+          inGarden: false,
+          plantedDate: '',
+          careNotes: '',
+        );
+      } else {
+        _plants.removeAt(index);
+      }
       _persist();
       notifyListeners();
     });

@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:greenlife_app/data/sample_data.dart';
 import 'package:greenlife_app/l10n/app_localizations.dart';
 import 'package:greenlife_app/models/growth_note.dart';
+import 'package:greenlife_app/services/image_service.dart';
 import 'package:greenlife_app/utils/app_colors.dart';
 import 'package:greenlife_app/utils/app_constants.dart';
 import 'package:greenlife_app/utils/date_utils.dart';
 import 'package:greenlife_app/utils/validators.dart';
+import 'package:greenlife_app/widgets/plant_image.dart';
 
 class AddNoteScreen extends StatefulWidget {
   const AddNoteScreen({
@@ -34,6 +36,8 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
   late DateTime _date;
 
   String? _plantName;
+  String? _image;
+  bool _pickingImage = false;
   bool _initialized = false;
 
   @override
@@ -45,9 +49,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
     final locale = Localizations.localeOf(context);
     final provided = widget.plantNames;
     _plantOptions = List<String>.from(
-      (provided != null && provided.isNotEmpty)
-          ? provided
-          : samplePlantsFor(locale).map((p) => p.name),
+      provided ?? samplePlantsFor(locale).map((p) => p.name),
     );
 
     final editing = widget.initialNote;
@@ -64,6 +66,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
       _titleController.text = editing.title;
       _summaryController.text = editing.summary;
       _date = AppDateUtils.parseDate(editing.date) ?? _date;
+      _image = editing.imagePath.isEmpty ? null : editing.imagePath;
     }
   }
 
@@ -72,6 +75,84 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
     _titleController.dispose();
     _summaryController.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickImage({required bool camera}) async {
+    if (_pickingImage) return;
+    setState(() => _pickingImage = true);
+
+    final reference = camera
+        ? await ImageService.instance.takeAndStore()
+        : await ImageService.instance.pickAndStore();
+
+    if (!mounted) return;
+    setState(() {
+      _pickingImage = false;
+      if (reference != null) _image = reference;
+    });
+  }
+
+  Widget _buildPhotoSection(AppLocalizations strings) {
+    final image = _image;
+
+    if (image != null) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: plantImage(
+              image,
+              width: double.infinity,
+              height: 170,
+              placeholder: () => Container(
+                height: 170,
+                color: AppColors.soft,
+                alignment: Alignment.center,
+                child: const Icon(Icons.image_outlined, size: 48),
+              ),
+            ),
+          ),
+          TextButton.icon(
+            onPressed: () => setState(() => _image = null),
+            icon: const Icon(Icons.delete_outline),
+            label: Text(strings.removePhoto),
+            style: TextButton.styleFrom(foregroundColor: AppColors.danger),
+          ),
+        ],
+      );
+    }
+
+    final style = OutlinedButton.styleFrom(
+      foregroundColor: AppColors.primary,
+      side: const BorderSide(color: AppColors.primary),
+      padding: const EdgeInsets.symmetric(vertical: 14),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+    );
+
+    return Row(
+      children: [
+        Expanded(
+          child: OutlinedButton.icon(
+            onPressed: _pickingImage ? null : () => _pickImage(camera: false),
+            icon: const Icon(Icons.photo_library_outlined),
+            label: Text(strings.pickFromGallery),
+            style: style,
+          ),
+        ),
+        if (ImageService.instance.canUseCamera) ...[
+          const SizedBox(width: 12),
+          Expanded(
+            child: OutlinedButton.icon(
+              onPressed: _pickingImage ? null : () => _pickImage(camera: true),
+              icon: const Icon(Icons.photo_camera_outlined),
+              label: Text(strings.takePhoto),
+              style: style,
+            ),
+          ),
+        ],
+      ],
+    );
   }
 
   Future<void> _pickDate() async {
@@ -94,11 +175,14 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
     final note = widget.initialNote;
     final title = _titleController.text.trim();
     final summary = _summaryController.text.trim();
-    if (note == null) return title.isNotEmpty || summary.isNotEmpty;
+    if (note == null) {
+      return title.isNotEmpty || summary.isNotEmpty || _image != null;
+    }
     return title != note.title ||
         summary != note.summary ||
         _plantName != note.plantName ||
-        AppDateUtils.formatDate(_date) != note.date;
+        AppDateUtils.formatDate(_date) != note.date ||
+        (_image ?? '') != note.imagePath;
   }
 
   Future<bool> _confirmDiscard() async {
@@ -137,6 +221,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
       title: _titleController.text.trim(),
       date: AppDateUtils.formatDate(_date),
       summary: _summaryController.text.trim(),
+      imagePath: _image ?? '',
     );
 
     Navigator.pop(context, note);
@@ -230,6 +315,9 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                   tooShortMessage: strings.noteContentTooShort,
                 ),
               ),
+              const SizedBox(height: 16),
+              _SectionLabel(strings.photoLabel),
+              _buildPhotoSection(strings),
               const SizedBox(height: 16),
               Row(
                 children: [

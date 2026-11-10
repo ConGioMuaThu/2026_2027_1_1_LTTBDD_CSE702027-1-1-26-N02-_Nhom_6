@@ -63,6 +63,15 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     }
   }
 
+  void _removeFromGarden(String plantId) {
+    final plant = _plants.findById(plantId);
+    if (plant == null) return;
+
+    _care.removeByPlant(plant.name);
+    _growth.removeByPlant(plant.name);
+    _plants.removeFromGarden(plantId);
+  }
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) _care.refreshLabels();
@@ -105,11 +114,13 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
             plants: _plants.plants,
             onToggleFavorite: _plants.toggleFavorite,
             onAddTask: _care.add,
+            onAddToGarden: _plants.addToGarden,
           ),
           MyPlantsScreen(
-            plants: _plants.plants,
+            plants: _plants.gardenPlants,
+            existingNames: _plants.plantNames,
             onAddPlant: _plants.add,
-            onDeletePlant: _plants.remove,
+            onDeletePlant: _removeFromGarden,
             onUpdatePlant: _updatePlant,
           ),
           CareScreen(
@@ -117,14 +128,15 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
             onToggleTask: _care.toggle,
             onAddTask: _care.add,
             onDeleteTask: _care.remove,
-            plantNames: _plants.plantNames,
+            onUpdateTask: _care.update,
+            plantNames: _plants.gardenNames,
           ),
           GrowthJournalScreen(
             notes: _growth.notes,
             onAddNote: _growth.add,
             onDeleteNote: _growth.remove,
             onUpdateNote: _growth.update,
-            plantNames: _plants.plantNames,
+            plantNames: _plants.gardenNames,
           ),
           const TipsScreen(),
           const DevelopersScreen(),

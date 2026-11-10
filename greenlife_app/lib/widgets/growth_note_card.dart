@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:greenlife_app/models/growth_note.dart';
+import 'package:greenlife_app/widgets/plant_image.dart';
 
 class GrowthNoteCard extends StatelessWidget {
   final GrowthNote note;
@@ -28,6 +29,18 @@ class GrowthNoteCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          if (note.imagePath.isNotEmpty) ...[
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: plantImage(
+                note.imagePath,
+                width: double.infinity,
+                height: 140,
+                placeholder: () => const SizedBox.shrink(),
+              ),
+            ),
+            const SizedBox(height: 12),
+          ],
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

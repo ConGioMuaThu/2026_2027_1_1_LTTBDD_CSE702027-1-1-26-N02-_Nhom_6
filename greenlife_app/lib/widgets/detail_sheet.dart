@@ -248,6 +248,8 @@ Future<void> showPlantDetailSheet(BuildContext context, Plant plant) {
               _SheetRow(label: strings.careLevel, value: plant.careLevel),
               _SheetRow(label: strings.water, value: plant.waterNeed),
               _SheetRow(label: strings.sunlight, value: plant.sunlight),
+              if (plant.plantedDate.isNotEmpty)
+                _SheetRow(label: strings.plantedDate, value: plant.plantedDate),
               const SizedBox(height: 8),
               Text(
                 plant.description,
@@ -257,6 +259,26 @@ Future<void> showPlantDetailSheet(BuildContext context, Plant plant) {
                   color: Color(0xFF425246),
                 ),
               ),
+              if (plant.careNotes.isNotEmpty) ...[
+                const SizedBox(height: 14),
+                Text(
+                  strings.careNotes,
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w800,
+                    color: _textColor,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  plant.careNotes,
+                  style: const TextStyle(
+                    fontSize: 15,
+                    height: 1.6,
+                    color: Color(0xFF425246),
+                  ),
+                ),
+              ],
             ],
           ),
         ),
@@ -402,6 +424,18 @@ Future<void> showGrowthNoteDetailSheet(BuildContext context, GrowthNote note) {
                 ],
               ),
               const SizedBox(height: 16),
+              if (note.imagePath.isNotEmpty) ...[
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: plantImage(
+                    note.imagePath,
+                    width: double.infinity,
+                    height: 180,
+                    placeholder: () => const SizedBox.shrink(),
+                  ),
+                ),
+                const SizedBox(height: 12),
+              ],
               _SheetRow(label: strings.plant, value: note.plantName),
               _SheetRow(
                 label: strings.noteDate,
