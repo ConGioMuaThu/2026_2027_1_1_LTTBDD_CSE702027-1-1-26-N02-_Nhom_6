@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:greenlife_app/config/app_routes.dart';
 import 'package:greenlife_app/data/sample_data.dart';
 import 'package:greenlife_app/l10n/app_localizations.dart';
 import 'package:greenlife_app/models/care_task.dart';
 import 'package:greenlife_app/models/plant.dart';
-import 'package:greenlife_app/screens/plant_library/plant_detail_screen.dart';
-import 'package:greenlife_app/widgets/plant_card.dart';
 import 'package:greenlife_app/widgets/empty_state.dart';
+import 'package:greenlife_app/widgets/plant_card.dart';
 import 'package:greenlife_app/widgets/search_bar.dart';
 
 class PlantLibraryScreen extends StatefulWidget {
@@ -148,17 +148,15 @@ class _PlantLibraryScreenState extends State<PlantLibraryScreen> {
                             setState(() => _selectedPlantId = plant.id);
                             Navigator.push(
                               context,
-                              MaterialPageRoute(
-                                builder: (_) => PlantDetailScreen(
-                                  plant: plant,
-                                  onToggleFavorite: widget.onToggleFavorite == null
-                                      ? null
-                                      : () => widget.onToggleFavorite!(plant.id),
-                                  onAddTask: widget.onAddTask,
-                                  plantNames: widget.plants.isEmpty
-                                      ? null
-                                      : widget.plants.map((p) => p.name).toList(),
-                                ),
+                              AppRoutes.plantDetail(
+                                plant: plant,
+                                onToggleFavorite: widget.onToggleFavorite == null
+                                    ? null
+                                    : () => widget.onToggleFavorite!(plant.id),
+                                onAddTask: widget.onAddTask,
+                                plantNames: widget.plants.isEmpty
+                                    ? null
+                                    : widget.plants.map((p) => p.name).toList(),
                               ),
                             );
                           },

@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:greenlife_app/config/app_routes.dart';
 import 'package:greenlife_app/l10n/app_localizations.dart';
 import 'package:greenlife_app/utils/app_constants.dart';
 
@@ -31,26 +32,7 @@ class _GreenLifeSplashState extends State<GreenLifeSplash>
     Future.delayed(AppConstants.splashDuration, () {
       if (!mounted) return;
       Navigator.of(context).pushReplacement(
-        PageRouteBuilder(
-          pageBuilder: (_, animation, _) {
-            final curvedAnimation = CurvedAnimation(
-              parent: animation,
-              curve: Curves.easeInOutCubic,
-            );
-
-            return FadeTransition(
-              opacity: curvedAnimation,
-              child: ScaleTransition(
-                scale: Tween<double>(begin: 0.96, end: 1.0).chain(
-                  CurveTween(curve: Curves.easeOutCubic),
-                ).animate(curvedAnimation),
-                child: widget.home,
-              ),
-            );
-          },
-          transitionDuration: AppConstants.splashTransitionDuration,
-          reverseTransitionDuration: AppConstants.splashReverseTransitionDuration,
-        ),
+        AppRoutes.fadeScale(widget.home),
       );
     });
   }

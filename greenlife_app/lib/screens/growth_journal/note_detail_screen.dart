@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:greenlife_app/config/app_routes.dart';
 import 'package:greenlife_app/l10n/app_localizations.dart';
 import 'package:greenlife_app/models/growth_note.dart';
-import 'package:greenlife_app/screens/growth_journal/add_note_screen.dart';
 import 'package:greenlife_app/utils/app_colors.dart';
 
 class NoteDetailScreen extends StatefulWidget {
@@ -28,12 +28,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
   Future<void> _edit() async {
     final updated = await Navigator.push<GrowthNote>(
       context,
-      MaterialPageRoute(
-        builder: (_) => AddNoteScreen(
-          plantNames: widget.plantNames,
-          initialNote: _note,
-        ),
-      ),
+      AppRoutes.addNote(plantNames: widget.plantNames, initialNote: _note),
     );
     if (updated == null || !mounted) return;
 

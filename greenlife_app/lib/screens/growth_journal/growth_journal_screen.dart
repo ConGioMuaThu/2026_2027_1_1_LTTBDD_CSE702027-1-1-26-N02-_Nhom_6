@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:greenlife_app/config/app_routes.dart';
 import 'package:greenlife_app/l10n/app_localizations.dart';
 import 'package:greenlife_app/models/growth_note.dart';
-import 'package:greenlife_app/screens/growth_journal/add_note_screen.dart';
-import 'package:greenlife_app/screens/growth_journal/note_detail_screen.dart';
 import 'package:greenlife_app/utils/app_colors.dart';
 import 'package:greenlife_app/widgets/empty_state.dart';
 import 'package:greenlife_app/widgets/growth_note_card.dart';
@@ -52,9 +51,7 @@ class _GrowthJournalScreenState extends State<GrowthJournalScreen> {
   Future<void> _openAddNote() async {
     final newNote = await Navigator.push<GrowthNote>(
       context,
-      MaterialPageRoute(
-        builder: (_) => AddNoteScreen(plantNames: widget.plantNames),
-      ),
+      AppRoutes.addNote(plantNames: widget.plantNames),
     );
     if (newNote == null || !mounted) return;
 
@@ -71,26 +68,24 @@ class _GrowthJournalScreenState extends State<GrowthJournalScreen> {
     setState(() => _selectedNoteId = note.id);
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (_) => NoteDetailScreen(
-          note: note,
-          onDelete: widget.onDeleteNote == null
-              ? null
-              : () {
-                  widget.onDeleteNote!(note.id);
-                  if (mounted) setState(() => _selectedNoteId = null);
-                  messenger.showSnackBar(
-                    SnackBar(content: Text(strings.noteDeleted)),
-                  );
-                },
-          onUpdate: widget.onUpdateNote == null
-              ? null
-              : (updated) {
-                  widget.onUpdateNote!(updated);
-                  if (mounted) setState(() {});
-                },
-          plantNames: widget.plantNames,
-        ),
+      AppRoutes.noteDetail(
+        note: note,
+        onDelete: widget.onDeleteNote == null
+            ? null
+            : () {
+                widget.onDeleteNote!(note.id);
+                if (mounted) setState(() => _selectedNoteId = null);
+                messenger.showSnackBar(
+                  SnackBar(content: Text(strings.noteDeleted)),
+                );
+              },
+        onUpdate: widget.onUpdateNote == null
+            ? null
+            : (updated) {
+                widget.onUpdateNote!(updated);
+                if (mounted) setState(() {});
+              },
+        plantNames: widget.plantNames,
       ),
     );
   }

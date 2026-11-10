@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:greenlife_app/config/app_routes.dart';
 import 'package:greenlife_app/l10n/app_localizations.dart';
 import 'package:greenlife_app/models/care_task.dart';
 import 'package:greenlife_app/screens/care/add_task_screen.dart';
-import 'package:greenlife_app/screens/care/task_detail_screen.dart';
 import 'package:greenlife_app/utils/app_colors.dart';
 import 'package:greenlife_app/widgets/empty_state.dart';
 import 'package:greenlife_app/widgets/search_bar.dart';
@@ -55,9 +55,7 @@ class _CareScreenState extends State<CareScreen> {
   Future<void> _openAddTask() async {
     final newTask = await Navigator.push<CareTask>(
       context,
-      MaterialPageRoute(
-        builder: (_) => AddTaskScreen(plantNames: widget.plantNames),
-      ),
+      AppRoutes.addTask(plantNames: widget.plantNames),
     );
     if (newTask != null) {
       widget.onAddTask?.call(newTask);
@@ -184,25 +182,23 @@ class _CareScreenState extends State<CareScreen> {
                               setState(() => _selectedTaskId = task.id);
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(
-                                  builder: (_) => TaskDetailScreen(
-                                    task: task,
-                                    onToggle: () {
-                                      widget.onToggleTask(task.id);
-                                      setState(() {});
-                                    },
-                                    onDelete: widget.onDeleteTask == null
-                                        ? null
-                                        : () {
-                                            widget.onDeleteTask!(task.id);
-                                            setState(() {});
-                                            ScaffoldMessenger.of(context).showSnackBar(
-                                              SnackBar(
-                                                content: Text(strings.taskDeleted),
-                                              ),
-                                            );
-                                          },
-                                  ),
+                                AppRoutes.taskDetail(
+                                  task: task,
+                                  onToggle: () {
+                                    widget.onToggleTask(task.id);
+                                    setState(() {});
+                                  },
+                                  onDelete: widget.onDeleteTask == null
+                                      ? null
+                                      : () {
+                                          widget.onDeleteTask!(task.id);
+                                          setState(() {});
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(
+                                              content: Text(strings.taskDeleted),
+                                            ),
+                                          );
+                                        },
                                 ),
                               );
                             },
