@@ -63,6 +63,10 @@ class _GreenLifeSplashState extends State<GreenLifeSplash>
             duration: const Duration(milliseconds: 500),
             curve: Curves.easeOutCubic,
             decoration: BoxDecoration(
+              image: const DecorationImage(
+                image: AssetImage('assets/images/backgrounds/splash_bg.png'),
+                fit: BoxFit.cover,
+              ),
               gradient: LinearGradient(
                 colors: [
                   const Color(0xFFF3F7F0),
