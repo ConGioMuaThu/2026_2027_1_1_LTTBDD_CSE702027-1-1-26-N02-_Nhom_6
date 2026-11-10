@@ -175,6 +175,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
+                image: const DecorationImage(
+                  image: AssetImage('assets/images/backgrounds/home_header_bg.png'),
+                  fit: BoxFit.cover,
+                ),
                 borderRadius: BorderRadius.circular(26),
               ),
               child: Row(
