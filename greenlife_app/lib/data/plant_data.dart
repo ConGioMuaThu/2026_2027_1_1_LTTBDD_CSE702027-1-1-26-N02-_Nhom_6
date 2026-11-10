@@ -34,8 +34,7 @@ List<Plant> samplePlantsFor(Locale locale) {
       waterNeed: isEnglish ? '2-3 times/week' : '2-3 lần/tuần',
       sunlight: isEnglish ? 'Indirect light' : 'Ánh sáng gián tiếp',
       imageAsset: '🌿',
-      imageUrl:
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTU9LqG7eM6uHTSyZ4vDjji5fnzOKM-mRRoP7XFrqzkmWN2CAO_Wd2zwNus&s=10',
+      imageUrl: 'assets/images/plants/plant-1.jpg',
       isFavorite: true,
       tags: isEnglish ? ['airy', 'odor removal', 'revitalizing'] : ['thoáng', 'khử mùi', 'trẻ hóa'],
     ),
@@ -51,8 +50,7 @@ List<Plant> samplePlantsFor(Locale locale) {
       waterNeed: isEnglish ? '3-4 times/week' : '3-4 lần/tuần',
       sunlight: isEnglish ? '4-6 hours of sun' : 'Nắng 4-6 giờ',
       imageAsset: '🌹',
-      imageUrl:
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-tkmIUiq52skDWCnjjZbJxf6R78DvX5-5utL2PUWzgHDQBWGBMbIe6nc_&s=10',
+      imageUrl: 'assets/images/plants/plant-2.jpg',
       tags: isEnglish ? ['fragrant', 'sunny', 'colorful'] : ['thơm', 'nắng', 'sắc màu'],
     ),
     Plant(
@@ -67,8 +65,7 @@ List<Plant> samplePlantsFor(Locale locale) {
       waterNeed: isEnglish ? '1-2 times/month' : '1-2 lần/tháng',
       sunlight: isEnglish ? 'Direct sun' : 'Nắng trực tiếp',
       imageAsset: '🌵',
-      imageUrl:
-          'https://cdn.eva.vn/upload/3-2022/images/2022-07-15/image13-1657867526-681-width1080height1007.jpg',
+      imageUrl: 'assets/images/plants/plant-3.jpg',
       tags: isEnglish ? ['cool', 'low water', 'desk plant'] : ['mát', 'ít nước', 'bàn làm việc'],
     ),
     Plant(
@@ -83,8 +80,7 @@ List<Plant> samplePlantsFor(Locale locale) {
       waterNeed: isEnglish ? 'Every 2 weeks' : 'Mỗi 2 tuần',
       sunlight: isEnglish ? 'Soft light' : 'Ánh sáng mềm',
       imageAsset: '🌱',
-      imageUrl:
-          'https://monhasfarm.com/wp-content/uploads/2025/03/8cb4490a502648609bd49542e68eafe8tplv-o3syd03w52-origin-jpeg-600x600.jpeg',
+      imageUrl: 'assets/images/plants/plant-4.jpg',
       isFavorite: true,
       tags: isEnglish ? ['resilient', 'small spaces'] : ['bền bỉ', 'không gian nhỏ'],
     ),
@@ -100,7 +96,7 @@ List<Plant> samplePlantsFor(Locale locale) {
       waterNeed: isEnglish ? '1-2 times/week' : '1-2 lần/tuần',
       sunlight: isEnglish ? 'Full sun' : 'Nắng nhiều',
       imageAsset: '💜',
-      imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNkZGIhL-F2ZUOxYEEmKeZJrrsiEtVOe3W9RE6tGGcAg&s=10',
+      imageUrl: 'assets/images/plants/plant-5.jpg',
       tags: isEnglish ? ['fragrant', 'purple', 'sunny'] : ['thơm', 'màu tím', 'nắng'],
     ),
     Plant(
@@ -115,7 +111,7 @@ List<Plant> samplePlantsFor(Locale locale) {
       waterNeed: isEnglish ? 'Once a week' : 'Mỗi tuần một lần',
       sunlight: isEnglish ? 'Bright indirect light' : 'Ánh sáng gián tiếp mạnh',
       imageAsset: '🌸',
-      imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSa5J-k_-OTWEZMuxSohg24SvaeOk09jBJ5PHBeBqgESA&s=10',
+      imageUrl: 'assets/images/plants/plant-6.jpg',
       tags: isEnglish ? ['elegant', 'long-lasting', 'indoor'] : ['thanh lịch', 'bền lâu', 'trong nhà'],
     ),
     Plant(
@@ -130,7 +126,7 @@ List<Plant> samplePlantsFor(Locale locale) {
       waterNeed: isEnglish ? '3-4 times/week' : '3-4 lần/tuần',
       sunlight: isEnglish ? '6 hours of sun' : 'Nắng 6 giờ',
       imageAsset: '🌿',
-      imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_3QtxwGGcwewQXmiXKy6s4YHLY5FMre5zvYEOU0HhNQ&s=10',
+      imageUrl: 'assets/images/plants/plant-7.jpg',
       tags: isEnglish ? ['edible', 'aromatic', 'fast-growing'] : ['ăn được', 'thơm', 'mọc nhanh'],
     ),
     Plant(
@@ -145,7 +141,7 @@ List<Plant> samplePlantsFor(Locale locale) {
       waterNeed: isEnglish ? 'Every 2 days' : 'Mỗi 2 ngày',
       sunlight: isEnglish ? 'Partial sun' : 'Nắng một phần',
       imageAsset: '🍃',
-      imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8YLdiGFhAVrQjnKH6xiBkT02URauqJbCw0lmnu7EScQ&s=10',
+      imageUrl: 'assets/images/plants/plant-8.jpg',
       tags: isEnglish ? ['refreshing', 'edible', 'spreads'] : ['mát', 'ăn được', 'lan nhanh'],
     ),
     Plant(
@@ -160,7 +156,7 @@ List<Plant> samplePlantsFor(Locale locale) {
       waterNeed: isEnglish ? '1-2 times/month' : '1-2 lần/tháng',
       sunlight: isEnglish ? 'Direct sun' : 'Nắng trực tiếp',
       imageAsset: '🌵',
-      imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRuhYqK0M7mhan8UZJYfs9wFaQRYJuLEZaWMaQpCXIySg&s=10',
+      imageUrl: 'assets/images/plants/plant-9.png',
       tags: isEnglish ? ['low water', 'decorative', 'sun lover'] : ['ít nước', 'trang trí', 'ưa nắng'],
     ),
   ];
