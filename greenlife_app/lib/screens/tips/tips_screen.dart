@@ -69,7 +69,7 @@ class _TipsScreenState extends State<TipsScreen> {
                             onTap: () => showTipDetailSheet(context, tip),
                             borderRadius: BorderRadius.circular(20),
                             child: Container(
-                              padding: const EdgeInsets.all(18),
+                              clipBehavior: Clip.antiAlias,
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(20),
@@ -77,6 +77,20 @@ class _TipsScreenState extends State<TipsScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
+                                  if ((tip['image'] ?? '').isNotEmpty)
+                                    Image.asset(
+                                      tip['image']!,
+                                      height: 140,
+                                      width: double.infinity,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (context, error, stackTrace) =>
+                                          const SizedBox.shrink(),
+                                    ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(18),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
                                   Row(
                                     children: [
                                       Container(
@@ -108,6 +122,9 @@ class _TipsScreenState extends State<TipsScreen> {
                                     style: const TextStyle(
                                       height: 1.6,
                                       color: Color(0xFF425246),
+                                    ),
+                                  ),
+                                      ],
                                     ),
                                   ),
                                 ],
