@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:greenlife_app/config/app_routes.dart';
 import 'package:greenlife_app/l10n/app_localizations.dart';
 import 'package:greenlife_app/models/care_task.dart';
+import 'package:greenlife_app/repositories/care_repository.dart';
 import 'package:greenlife_app/screens/care/add_task_screen.dart';
 import 'package:greenlife_app/utils/app_colors.dart';
+import 'package:greenlife_app/utils/date_utils.dart';
 import 'package:greenlife_app/widgets/empty_state.dart';
 import 'package:greenlife_app/widgets/search_bar.dart';
 
@@ -12,6 +14,7 @@ class CareScreen extends StatefulWidget {
   final void Function(String taskId) onToggleTask;
   final void Function(CareTask task)? onAddTask;
   final void Function(String taskId)? onDeleteTask;
+  final void Function(CareTask task)? onUpdateTask;
   final List<String>? plantNames;
 
   const CareScreen({
@@ -20,6 +23,7 @@ class CareScreen extends StatefulWidget {
     required this.onToggleTask,
     this.onAddTask,
     this.onDeleteTask,
+    this.onUpdateTask,
     this.plantNames,
   });
 
@@ -39,10 +43,11 @@ class _CareScreenState extends State<CareScreen> {
 
   List<CareTask> get _filteredTasks {
     final query = _searchController.text.trim().toLowerCase();
+    final sorted = CareRepository.sortByDue(widget.tasks);
     if (query.isEmpty) {
-      return widget.tasks;
+      return sorted;
     }
-    return widget.tasks.where((task) {
+    return sorted.where((task) {
       final typeInfo = taskTypeInfoOf(task.type);
       return task.title.toLowerCase().contains(query) ||
           task.plantName.toLowerCase().contains(query) ||
@@ -111,12 +116,12 @@ class _CareScreenState extends State<CareScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          strings.thisWeekLabel,
+                          strings.pendingStatus,
                           style: const TextStyle(color: AppColors.textSecondary),
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          '$totalTasks ${strings.tasksCount}',
+                          '${totalTasks - completedTasks} ${strings.tasksCount}',
                           style: const TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.w800,
@@ -170,9 +175,15 @@ class _CareScreenState extends State<CareScreen> {
                       separatorBuilder: (_, _) => const SizedBox(height: 12),
                       itemBuilder: (context, index) {
                         final task = filteredTasks[index];
+                        final dueAt = task.dueAt;
+                        final overdue = !task.isCompleted &&
+                            dueAt != null &&
+                            AppDateUtils.isOverdue(dueAt);
                         final color = task.isCompleted
                             ? AppColors.taskDone
-                            : AppColors.taskPending;
+                            : overdue
+                                ? AppColors.danger
+                                : AppColors.taskPending;
                         final isSelected = _selectedTaskId == task.id;
 
                         return Material(
@@ -184,6 +195,18 @@ class _CareScreenState extends State<CareScreen> {
                                 context,
                                 AppRoutes.taskDetail(
                                   task: task,
+                                  plantNames: widget.plantNames,
+                                  onUpdate: widget.onUpdateTask == null
+                                      ? null
+                                      : (updated) {
+                                          widget.onUpdateTask!(updated);
+                                          setState(() {});
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(
+                                              content: Text(strings.taskUpdated),
+                                            ),
+                                          );
+                                        },
                                   onToggle: () {
                                     widget.onToggleTask(task.id);
                                     setState(() {});
@@ -223,7 +246,11 @@ class _CareScreenState extends State<CareScreen> {
                                       borderRadius: BorderRadius.circular(12),
                                     ),
                                     child: Icon(
-                                      task.isCompleted ? Icons.check : Icons.notifications_active,
+                                      task.isCompleted
+                                          ? Icons.check
+                                          : overdue
+                                              ? Icons.warning_amber_rounded
+                                              : Icons.notifications_active,
                                       color: color,
                                     ),
                                   ),
@@ -245,6 +272,21 @@ class _CareScreenState extends State<CareScreen> {
                                           style: const TextStyle(
                                             fontSize: 12,
                                             color: AppColors.textSecondary,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 2),
+                                        Text(
+                                          overdue
+                                              ? '${task.dueDate} • ${strings.overdue}'
+                                              : task.dueDate,
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: overdue
+                                                ? FontWeight.w700
+                                                : FontWeight.w500,
+                                            color: overdue
+                                                ? AppColors.danger
+                                                : AppColors.textSecondary,
                                           ),
                                         ),
                                       ],

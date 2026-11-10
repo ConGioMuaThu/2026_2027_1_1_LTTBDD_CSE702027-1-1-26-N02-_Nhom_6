@@ -74,10 +74,12 @@ class AddTaskScreen extends StatefulWidget {
     super.key,
     this.plantNames,
     this.initialPlantName,
+    this.initialTask,
   });
 
   final List<String>? plantNames;
   final String? initialPlantName;
+  final CareTask? initialTask;
 
   @override
   State<AddTaskScreen> createState() => _AddTaskScreenState();
@@ -109,7 +111,8 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       widget.plantNames ?? samplePlantsFor(locale).map((p) => p.name),
     );
 
-    final initial = widget.initialPlantName;
+    final editing = widget.initialTask;
+    final initial = editing?.plantName ?? widget.initialPlantName;
     if (initial != null && !_plantOptions.contains(initial)) {
       _plantOptions.insert(0, initial);
     }
@@ -118,6 +121,19 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     final start = DateTime.now().add(const Duration(hours: 1));
     _date = AppDateUtils.dateOnly(start);
     _time = TimeOfDay(hour: start.hour, minute: 0);
+
+    if (editing != null) {
+      _type = editing.type;
+      _autoTitle = taskTypeInfoOf(_type).label(_isEnglish);
+      _titleController.text = editing.title;
+
+      final dueAt = editing.dueAt;
+      if (dueAt != null) {
+        _date = AppDateUtils.dateOnly(dueAt);
+        _time = TimeOfDay(hour: dueAt.hour, minute: dueAt.minute);
+      }
+      return;
+    }
 
     _autoTitle = taskTypeInfoOf(_type).label(_isEnglish);
     _titleController.text = _autoTitle;
@@ -183,7 +199,8 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       _time.minute,
     );
 
-    if (dueAt.isBefore(DateTime.now())) {
+    final editing = widget.initialTask;
+    if (dueAt.isBefore(DateTime.now()) && editing?.dueAt != dueAt) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(AppLocalizations.of(context).dueTimeInPast),
@@ -193,11 +210,12 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     }
 
     final task = CareTask(
-      id: 'task-${DateTime.now().millisecondsSinceEpoch}',
+      id: editing?.id ?? 'task-${DateTime.now().millisecondsSinceEpoch}',
       title: _titleController.text.trim(),
       plantName: _plantName!,
       type: _type,
       dueDate: AppDateUtils.formatDueDate(dueAt, isEnglish: _isEnglish),
+      isCompleted: editing?.isCompleted ?? false,
       dueAt: dueAt,
     );
 
@@ -217,7 +235,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         scrolledUnderElevation: 0,
         iconTheme: const IconThemeData(color: AppColors.text),
         title: Text(
-          strings.addTaskTitle,
+          widget.initialTask == null ? strings.addTaskTitle : strings.editTask,
           style: const TextStyle(
             color: AppColors.text,
             fontSize: 24,

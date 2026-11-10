@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:greenlife_app/l10n/app_localizations.dart';
 import 'package:greenlife_app/models/care_task.dart';
-import 'package:greenlife_app/screens/care/add_task_screen.dart' show taskTypeInfoOf;
+import 'package:greenlife_app/screens/care/add_task_screen.dart';
 import 'package:greenlife_app/utils/app_colors.dart';
 
 class TaskDetailScreen extends StatelessWidget {
@@ -10,11 +10,31 @@ class TaskDetailScreen extends StatelessWidget {
     required this.task,
     required this.onToggle,
     this.onDelete,
+    this.onUpdate,
+    this.plantNames,
   });
 
   final CareTask task;
   final VoidCallback onToggle;
   final VoidCallback? onDelete;
+  final void Function(CareTask task)? onUpdate;
+  final List<String>? plantNames;
+
+  Future<void> _edit(BuildContext context) async {
+    final updated = await Navigator.push<CareTask>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => AddTaskScreen(
+          plantNames: plantNames,
+          initialTask: task,
+        ),
+      ),
+    );
+
+    if (updated == null || !context.mounted) return;
+    onUpdate!(updated);
+    Navigator.pop(context);
+  }
 
   Future<void> _confirmDelete(BuildContext context) async {
     final strings = AppLocalizations.of(context);
@@ -60,6 +80,14 @@ class TaskDetailScreen extends StatelessWidget {
         elevation: 0,
         scrolledUnderElevation: 0,
         iconTheme: const IconThemeData(color: AppColors.text),
+        actions: [
+          if (onUpdate != null)
+            IconButton(
+              onPressed: () => _edit(context),
+              tooltip: strings.editTask,
+              icon: const Icon(Icons.edit_outlined),
+            ),
+        ],
         title: Text(
           strings.taskDetailsTitle,
           style: const TextStyle(
