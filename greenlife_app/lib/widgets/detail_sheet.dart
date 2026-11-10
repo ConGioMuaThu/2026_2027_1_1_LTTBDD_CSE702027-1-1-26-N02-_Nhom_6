@@ -4,6 +4,7 @@ import 'package:greenlife_app/models/care_task.dart';
 import 'package:greenlife_app/models/growth_note.dart';
 import 'package:greenlife_app/models/plant.dart';
 import 'package:greenlife_app/screens/care/add_task_screen.dart' show taskTypeInfoOf;
+import 'package:greenlife_app/widgets/plant_image.dart';
 
 const Color _primary = Color(0xFF2F6A4F);
 const Color _soft = Color(0xFFE2F4E4);
@@ -294,6 +295,20 @@ Future<void> showTipDetailSheet(
                 ),
               ),
               const SizedBox(height: 16),
+              if ((tip['image'] ?? '').isNotEmpty) ...[
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Image.asset(
+                    tip['image']!,
+                    height: 150,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) =>
+                        const SizedBox.shrink(),
+                  ),
+                ),
+                const SizedBox(height: 16),
+              ],
               Row(
                 children: [
                   Container(
@@ -430,12 +445,11 @@ class _PlantThumb extends StatelessWidget {
       borderRadius: BorderRadius.circular(16),
       child: plant.imageUrl.isEmpty
           ? _placeholder()
-          : Image.network(
+          : plantImage(
               plant.imageUrl,
               width: 64,
               height: 64,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => _placeholder(),
+              placeholder: _placeholder,
             ),
     );
   }
