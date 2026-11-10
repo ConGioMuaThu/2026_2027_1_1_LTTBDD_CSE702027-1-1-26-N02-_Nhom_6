@@ -13,6 +13,7 @@ import 'package:greenlife_app/widgets/growth_note_card.dart';
 import 'package:greenlife_app/widgets/plant_card.dart';
 import 'package:greenlife_app/widgets/search_bar.dart';
 import 'package:greenlife_app/widgets/stat_card.dart';
+import 'package:greenlife_app/utils/date_utils.dart';
 
 class HomeScreen extends StatefulWidget {
   final List<Plant> plants;
@@ -71,19 +72,21 @@ class _HomeScreenState extends State<HomeScreen> {
 
   List<CareTask> get _filteredTasks {
     final query = _searchController.text.trim().toLowerCase();
+    final today = AppDateUtils.today();
     final tasks = CareRepository.sortByDue(
-      widget.tasks.where((task) => !task.isCompleted).toList(),
+      widget.tasks.where((task) {
+        if (task.isCompleted) return false;
+        final dueAt = task.dueAt ?? AppDateUtils.parseDate(task.dueDate);
+        return dueAt != null && AppDateUtils.isSameDay(dueAt, today);
+      }).toList(),
     );
-    if (query.isEmpty) {
-      return tasks.take(3).toList();
-    }
-    return tasks
-        .where((task) =>
-            task.title.toLowerCase().contains(query) ||
-            task.plantName.toLowerCase().contains(query) ||
-            task.type.toLowerCase().contains(query))
-        .take(3)
-        .toList();
+
+    if (query.isEmpty) return tasks;
+    return tasks.where((task) =>
+      task.title.toLowerCase().contains(query) ||
+      task.plantName.toLowerCase().contains(query) ||
+      task.type.toLowerCase().contains(query),
+    ).toList();
   }
 
   List<Map<String, String>> get _filteredTips {
