@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:greenlife_app/l10n/app_localizations.dart';
 import 'package:greenlife_app/models/plant.dart';
+import 'package:greenlife_app/services/image_service.dart';
 import 'package:greenlife_app/utils/app_colors.dart';
 import 'package:greenlife_app/utils/app_constants.dart';
+import 'package:greenlife_app/utils/date_utils.dart';
 import 'package:greenlife_app/utils/validators.dart';
+import 'package:greenlife_app/widgets/plant_image.dart';
 
 const List<String> _plantIcons = [
   '🌿',
@@ -38,12 +41,16 @@ class _AddPlantScreenState extends State<AddPlantScreen> {
   final _waterController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _imageUrlController = TextEditingController();
+  final _careNotesController = TextEditingController();
 
   late String _icon;
   late String _category;
   late String _careLevel;
   late String _sunlight;
   bool _initialized = false;
+  DateTime? _plantedDate;
+  String? _localImage;
+  bool _pickingImage = false;
 
   bool get _isEditing => widget.initialPlant != null;
 
@@ -73,8 +80,16 @@ class _AddPlantScreenState extends State<AddPlantScreen> {
     _scientificController.text = plant.scientificName;
     _waterController.text = plant.waterNeed;
     _descriptionController.text = plant.description;
-    _imageUrlController.text = plant.imageUrl;
+    _careNotesController.text = plant.careNotes;
+    _plantedDate = AppDateUtils.parseDate(plant.plantedDate);
+    if (plant.imageUrl.startsWith('http')) {
+      _imageUrlController.text = plant.imageUrl;
+    } else if (plant.imageUrl.isNotEmpty) {
+      _localImage = plant.imageUrl;
+    }
   }
+
+  String get _currentImage => _localImage ?? _imageUrlController.text.trim();
 
   @override
   void dispose() {
@@ -83,6 +98,7 @@ class _AddPlantScreenState extends State<AddPlantScreen> {
     _waterController.dispose();
     _descriptionController.dispose();
     _imageUrlController.dispose();
+    _careNotesController.dispose();
     super.dispose();
   }
 
@@ -91,19 +107,26 @@ class _AddPlantScreenState extends State<AddPlantScreen> {
     final name = _nameController.text.trim();
     final scientific = _scientificController.text.trim();
     final description = _descriptionController.text.trim();
-    final imageUrl = _imageUrlController.text.trim();
+    final imageUrl = _currentImage;
+    final notes = _careNotesController.text.trim();
+    final planted =
+        _plantedDate == null ? '' : AppDateUtils.formatDate(_plantedDate!);
 
     if (plant == null) {
       return name.isNotEmpty ||
           scientific.isNotEmpty ||
           description.isNotEmpty ||
-          imageUrl.isNotEmpty;
+          imageUrl.isNotEmpty ||
+          notes.isNotEmpty ||
+          planted.isNotEmpty;
     }
 
     return name != plant.name ||
         scientific != plant.scientificName ||
         description != plant.description ||
         imageUrl != plant.imageUrl ||
+        notes != plant.careNotes ||
+        planted != plant.plantedDate ||
         _waterController.text.trim() != plant.waterNeed ||
         _icon != plant.imageAsset ||
         _category != plant.category ||
@@ -175,13 +198,112 @@ class _AddPlantScreenState extends State<AddPlantScreen> {
       waterNeed: _waterController.text.trim(),
       sunlight: _sunlight,
       imageAsset: _icon,
-      imageUrl: _imageUrlController.text.trim(),
+      imageUrl: _currentImage,
       isFavorite: previous?.isFavorite ?? false,
+      inGarden: previous?.inGarden ?? true,
+      plantedDate:
+          _plantedDate == null ? '' : AppDateUtils.formatDate(_plantedDate!),
+      careNotes: _careNotesController.text.trim(),
       tags: previous?.tags ?? const [],
     );
 
     Navigator.pop(context, plant);
   }
+
+  Future<void> _pickPlantedDate() async {
+    final today = AppDateUtils.today();
+
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _plantedDate ?? today,
+      firstDate: DateTime(today.year - 30),
+      lastDate: today,
+    );
+
+    if (picked != null && mounted) {
+      setState(() => _plantedDate = picked);
+    }
+  }
+
+  Future<void> _pickImage({required bool camera}) async {
+    if (_pickingImage) return;
+    setState(() => _pickingImage = true);
+
+    final reference = camera
+        ? await ImageService.instance.takeAndStore()
+        : await ImageService.instance.pickAndStore();
+
+    if (!mounted) return;
+    setState(() {
+      _pickingImage = false;
+      if (reference != null) _localImage = reference;
+    });
+  }
+
+  Widget _buildPhotoSection(AppLocalizations strings) {
+    final local = _localImage;
+
+    if (local != null) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: plantImage(
+              local,
+              width: double.infinity,
+              height: 170,
+              placeholder: () => Container(
+                height: 170,
+                color: AppColors.soft,
+                alignment: Alignment.center,
+                child: Text(_icon, style: const TextStyle(fontSize: 56)),
+              ),
+            ),
+          ),
+          TextButton.icon(
+            onPressed: () => setState(() => _localImage = null),
+            icon: const Icon(Icons.delete_outline),
+            label: Text(strings.removePhoto),
+            style: TextButton.styleFrom(foregroundColor: AppColors.danger),
+          ),
+        ],
+      );
+    }
+
+    return Row(
+      children: [
+        Expanded(
+          child: OutlinedButton.icon(
+            onPressed: _pickingImage ? null : () => _pickImage(camera: false),
+            icon: const Icon(Icons.photo_library_outlined),
+            label: Text(strings.pickFromGallery),
+            style: _photoButtonStyle,
+          ),
+        ),
+        if (ImageService.instance.canUseCamera) ...[
+          const SizedBox(width: 12),
+          Expanded(
+            child: OutlinedButton.icon(
+              onPressed: _pickingImage ? null : () => _pickImage(camera: true),
+              icon: const Icon(Icons.photo_camera_outlined),
+              label: Text(strings.takePhoto),
+              style: _photoButtonStyle,
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  ButtonStyle get _photoButtonStyle => OutlinedButton.styleFrom(
+        foregroundColor: AppColors.primary,
+        side: const BorderSide(color: AppColors.primary),
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+      );
 
   List<String> _options(List<String> base, String current) {
     if (current.isEmpty || base.contains(current)) return base;
@@ -197,6 +319,7 @@ class _AddPlantScreenState extends State<AddPlantScreen> {
         strings.categoryIndoor,
         strings.categoryOutdoor,
         strings.categorySucculent,
+        strings.categoryFlower,
       ],
       _category,
     );
@@ -343,18 +466,48 @@ class _AddPlantScreenState extends State<AddPlantScreen> {
                 ).copyWith(alignLabelWithHint: true),
               ),
               const SizedBox(height: 12),
-              _SectionLabel(strings.imageUrlOptional),
-              TextFormField(
-                controller: _imageUrlController,
-                keyboardType: TextInputType.url,
-                textInputAction: TextInputAction.done,
-                decoration: _inputDecoration(
-                  strings.imageUrlOptional,
-                  Icons.image_outlined,
-                ),
-                validator: (value) =>
-                    Validators.optionalUrl(value, strings.invalidImageUrl),
+              _SectionLabel(strings.plantedDate),
+              _DateField(
+                label: strings.plantedDateHint,
+                value: _plantedDate == null
+                    ? ''
+                    : AppDateUtils.formatDate(_plantedDate!),
+                onTap: _pickPlantedDate,
+                onClear: _plantedDate == null
+                    ? null
+                    : () => setState(() => _plantedDate = null),
               ),
+              const SizedBox(height: 12),
+              _SectionLabel(strings.careNotes),
+              TextFormField(
+                controller: _careNotesController,
+                minLines: 2,
+                maxLines: 5,
+                maxLength: AppConstants.plantDescriptionMaxLength,
+                keyboardType: TextInputType.multiline,
+                textCapitalization: TextCapitalization.sentences,
+                decoration: _inputDecoration(
+                  strings.careNotesHint,
+                  Icons.sticky_note_2_outlined,
+                ).copyWith(alignLabelWithHint: true),
+              ),
+              const SizedBox(height: 12),
+              _SectionLabel(strings.photoLabel),
+              _buildPhotoSection(strings),
+              if (_localImage == null) ...[
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: _imageUrlController,
+                  keyboardType: TextInputType.url,
+                  textInputAction: TextInputAction.done,
+                  decoration: _inputDecoration(
+                    strings.imageUrlOptional,
+                    Icons.image_outlined,
+                  ),
+                  validator: (value) =>
+                      Validators.optionalUrl(value, strings.invalidImageUrl),
+                ),
+              ],
               const SizedBox(height: 24),
               Row(
                 children: [
@@ -429,6 +582,47 @@ class _AddPlantScreenState extends State<AddPlantScreen> {
       onChanged: (selected) {
         if (selected != null) onChanged(selected);
       },
+    );
+  }
+}
+
+class _DateField extends StatelessWidget {
+  const _DateField({
+    required this.label,
+    required this.value,
+    required this.onTap,
+    this.onClear,
+  });
+
+  final String label;
+  final String value;
+  final VoidCallback onTap;
+  final VoidCallback? onClear;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(16),
+      onTap: onTap,
+      child: InputDecorator(
+        decoration: _inputDecoration(label, Icons.event_outlined).copyWith(
+          suffixIcon: onClear == null
+              ? null
+              : IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: onClear,
+                ),
+        ),
+        isEmpty: value.isEmpty,
+        child: Text(
+          value,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: AppColors.text,
+          ),
+        ),
+      ),
     );
   }
 }

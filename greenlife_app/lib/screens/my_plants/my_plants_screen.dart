@@ -16,12 +16,16 @@ class MyPlantsScreen extends StatefulWidget {
   final void Function(String plantId) onDeletePlant;
   final void Function(Plant plant)? onUpdatePlant;
 
+  /// Tên của TẤT CẢ cây (kể cả thư viện) để kiểm tra trùng tên.
+  final List<String>? existingNames;
+
   const MyPlantsScreen({
     super.key,
     required this.plants,
     required this.onAddPlant,
     required this.onDeletePlant,
     this.onUpdatePlant,
+    this.existingNames,
   });
 
   @override
@@ -38,7 +42,8 @@ class _MyPlantsScreenState extends State<MyPlantsScreen> {
     super.dispose();
   }
 
-  List<String> get _plantNames => widget.plants.map((p) => p.name).toList();
+  List<String> get _plantNames =>
+      widget.existingNames ?? widget.plants.map((p) => p.name).toList();
 
   List<Plant> get _filteredPlants {
     final query = _searchController.text.trim().toLowerCase();
