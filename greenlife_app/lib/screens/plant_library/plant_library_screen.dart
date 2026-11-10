@@ -12,12 +12,14 @@ class PlantLibraryScreen extends StatefulWidget {
   final List<Plant> plants;
   final void Function(String plantId)? onToggleFavorite;
   final void Function(CareTask task)? onAddTask;
+  final void Function(String plantId)? onAddToGarden;
 
   const PlantLibraryScreen({
     super.key,
     this.plants = const [],
     this.onToggleFavorite,
     this.onAddTask,
+    this.onAddToGarden,
   });
 
   @override
@@ -154,9 +156,14 @@ class _PlantLibraryScreenState extends State<PlantLibraryScreen> {
                                     ? null
                                     : () => widget.onToggleFavorite!(plant.id),
                                 onAddTask: widget.onAddTask,
-                                plantNames: widget.plants.isEmpty
+                                plantNames: widget.plants
+                                    .where((p) => p.inGarden)
+                                    .map((p) => p.name)
+                                    .toList(),
+                                isInGarden: plant.inGarden,
+                                onAddToGarden: widget.onAddToGarden == null
                                     ? null
-                                    : widget.plants.map((p) => p.name).toList(),
+                                    : () => widget.onAddToGarden!(plant.id),
                               ),
                             );
                           },

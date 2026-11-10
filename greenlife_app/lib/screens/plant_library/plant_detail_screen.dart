@@ -19,12 +19,16 @@ class PlantDetailScreen extends StatefulWidget {
     this.onToggleFavorite,
     this.onAddTask,
     this.plantNames,
+    this.isInGarden = false,
+    this.onAddToGarden,
   });
 
   final Plant plant;
   final VoidCallback? onToggleFavorite;
   final void Function(CareTask task)? onAddTask;
   final List<String>? plantNames;
+  final bool isInGarden;
+  final VoidCallback? onAddToGarden;
 
   @override
   State<PlantDetailScreen> createState() => _PlantDetailScreenState();
@@ -32,10 +36,19 @@ class PlantDetailScreen extends StatefulWidget {
 
 class _PlantDetailScreenState extends State<PlantDetailScreen> {
   late bool _isFavorite = widget.plant.isFavorite;
+  late bool _inGarden = widget.isInGarden;
 
   void _toggleFavorite() {
     setState(() => _isFavorite = !_isFavorite);
     widget.onToggleFavorite?.call();
+  }
+
+  void _addToGarden() {
+    widget.onAddToGarden?.call();
+    setState(() => _inGarden = true);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(AppLocalizations.of(context).addedToGarden)),
+    );
   }
 
   Future<void> _openAddTask() async {
@@ -169,6 +182,26 @@ class _PlantDetailScreenState extends State<PlantDetailScreen> {
                       color: Color(0xFF425246),
                     ),
                   ),
+                  if (plant.plantedDate.isNotEmpty) ...[
+                    const SizedBox(height: 20),
+                    _SectionTitle(strings.plantedDate),
+                    Text(
+                      plant.plantedDate,
+                      style: const TextStyle(fontSize: 15, color: _textColor),
+                    ),
+                  ],
+                  if (plant.careNotes.isNotEmpty) ...[
+                    const SizedBox(height: 20),
+                    _SectionTitle(strings.careNotes),
+                    Text(
+                      plant.careNotes,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        height: 1.6,
+                        color: Color(0xFF425246),
+                      ),
+                    ),
+                  ],
                   if (plant.tags.isNotEmpty) ...[
                     const SizedBox(height: 20),
                     _SectionTitle(strings.highlightsLabel),
@@ -195,11 +228,55 @@ class _PlantDetailScreenState extends State<PlantDetailScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: widget.onAddTask == null
-          ? null
-          : SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
+      bottomNavigationBar: _buildBottomBar(strings),
+    );
+  }
+
+  Widget? _buildBottomBar(AppLocalizations strings) {
+    final canAddToGarden = widget.onAddToGarden != null;
+    final canAddTask = widget.onAddTask != null;
+    if (!canAddToGarden && !canAddTask) return null;
+
+    final shape = RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(16),
+    );
+    const padding = EdgeInsets.symmetric(vertical: 14);
+
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (canAddToGarden)
+              SizedBox(
+                width: double.infinity,
+                child: _inGarden
+                    ? OutlinedButton.icon(
+                        onPressed: null,
+                        icon: const Icon(Icons.check_circle_outline),
+                        label: Text(strings.inMyGarden),
+                        style: OutlinedButton.styleFrom(
+                          padding: padding,
+                          shape: shape,
+                        ),
+                      )
+                    : FilledButton.icon(
+                        onPressed: _addToGarden,
+                        icon: const Icon(Icons.yard_outlined),
+                        label: Text(strings.addToGarden),
+                        style: FilledButton.styleFrom(
+                          backgroundColor: _primary,
+                          foregroundColor: Colors.white,
+                          padding: padding,
+                          shape: shape,
+                        ),
+                      ),
+              ),
+            if (canAddToGarden && canAddTask) const SizedBox(height: 8),
+            if (canAddTask)
+              SizedBox(
+                width: double.infinity,
                 child: FilledButton.icon(
                   onPressed: _openAddTask,
                   icon: const Icon(Icons.event_available_outlined),
@@ -207,14 +284,14 @@ class _PlantDetailScreenState extends State<PlantDetailScreen> {
                   style: FilledButton.styleFrom(
                     backgroundColor: _primary,
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
+                    padding: padding,
+                    shape: shape,
                   ),
                 ),
               ),
-            ),
+          ],
+        ),
+      ),
     );
   }
 }
