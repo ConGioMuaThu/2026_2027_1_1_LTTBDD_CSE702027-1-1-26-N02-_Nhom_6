@@ -3,6 +3,7 @@ import 'package:greenlife_app/l10n/app_localizations.dart';
 import 'package:greenlife_app/models/care_task.dart';
 import 'package:greenlife_app/models/plant.dart';
 import 'package:greenlife_app/screens/care/add_task_screen.dart';
+import 'package:greenlife_app/widgets/plant_image.dart';
 
 const Color _primary = Color(0xFF2F6A4F);
 const Color _soft = Color(0xFFE2F4E4);
@@ -235,15 +236,11 @@ class _PlantImage extends StatelessWidget {
   Widget build(BuildContext context) {
     if (plant.imageUrl.isEmpty) return _placeholder();
 
-    return Image.network(
+    return plantImage(
       plant.imageUrl,
       width: double.infinity,
       height: double.infinity,
-      fit: BoxFit.cover,
-      loadingBuilder: (context, child, progress) {
-        return progress == null ? child : _placeholder();
-      },
-      errorBuilder: (context, error, stackTrace) => _placeholder(),
+      placeholder: _placeholder,
     );
   }
 }
