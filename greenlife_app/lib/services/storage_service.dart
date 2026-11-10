@@ -129,6 +129,9 @@ class StorageService {
       'imageAsset': plant.imageAsset,
       'imageUrl': plant.imageUrl,
       'isFavorite': plant.isFavorite,
+      'inGarden': plant.inGarden,
+      'plantedDate': plant.plantedDate,
+      'careNotes': plant.careNotes,
       'tags': plant.tags,
     };
   }
@@ -147,8 +150,18 @@ class StorageService {
       imageAsset: map['imageAsset'] as String? ?? '',
       imageUrl: map['imageUrl'] as String? ?? '',
       isFavorite: map['isFavorite'] as bool? ?? false,
+      inGarden:
+          map['inGarden'] as bool? ?? _legacyInGarden(map['id'] as String? ?? ''),
+      plantedDate: map['plantedDate'] as String? ?? '',
+      careNotes: map['careNotes'] as String? ?? '',
       tags: rawTags is List ? rawTags.whereType<String>().toList() : <String>[],
     );
+  }
+
+  bool _legacyInGarden(String id) {
+    final isCatalog = RegExp(r'^plant-\d$').hasMatch(id);
+    if (!isCatalog) return true;
+    return const {'plant-1', 'plant-2', 'plant-3', 'plant-4'}.contains(id);
   }
 
   Map<String, Object?> _noteToMap(GrowthNote note) {
@@ -158,6 +171,7 @@ class StorageService {
       'title': note.title,
       'date': note.date,
       'summary': note.summary,
+      'imagePath': note.imagePath,
     };
   }
 
@@ -168,6 +182,7 @@ class StorageService {
       title: map['title'] as String? ?? '',
       date: map['date'] as String? ?? '',
       summary: map['summary'] as String? ?? '',
+      imagePath: map['imagePath'] as String? ?? '',
     );
   }
 }
