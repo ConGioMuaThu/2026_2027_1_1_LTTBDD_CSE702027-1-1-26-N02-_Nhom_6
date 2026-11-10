@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:greenlife_app/models/plant.dart';
+import 'package:greenlife_app/widgets/plant_image.dart';
 
 const Color _primary = Color(0xFF2F6A4F);
 const Color _soft = Color(0xFFE2F4E4);
@@ -30,15 +31,11 @@ class PlantCard extends StatelessWidget {
   Widget _buildImage() {
     if (plant.imageUrl.isEmpty) return _placeholder();
 
-    return Image.network(
+    return plantImage(
       plant.imageUrl,
       width: double.infinity,
       height: double.infinity,
-      fit: BoxFit.cover,
-      loadingBuilder: (context, child, progress) {
-        return progress == null ? child : _placeholder();
-      },
-      errorBuilder: (context, error, stackTrace) => _placeholder(),
+      placeholder: _placeholder,
     );
   }
 
