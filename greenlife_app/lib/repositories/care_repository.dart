@@ -75,6 +75,49 @@ class CareRepository {
       dueDate: dueDate ?? task.dueDate,
       isCompleted: isCompleted ?? task.isCompleted,
       dueAt: task.dueAt,
+      recurrence: task.recurrence,
+    );
+  }
+
+  CareTask? nextOccurrence(CareTask task, Locale locale) {
+    final current = task.dueAt;
+    if (current == null || task.recurrence == CareTaskRecurrence.none) {
+      return null;
+    }
+
+    late DateTime nextDate;
+    switch (task.recurrence) {
+      case CareTaskRecurrence.none:
+        return null;
+      case CareTaskRecurrence.daily:
+        nextDate = current.add(const Duration(days: 1));
+        break;
+      case CareTaskRecurrence.everyThreeDays:
+        nextDate = current.add(const Duration(days: 3));
+        break;
+      case CareTaskRecurrence.weekly:
+        nextDate = current.add(const Duration(days: 7));
+        break;
+      case CareTaskRecurrence.monthly:
+        final year = current.month == 12 ? current.year + 1 : current.year;
+        final month = current.month == 12 ? 1 : current.month + 1;
+        final lastDay = DateTime(year, month + 1, 0).day;
+        nextDate = DateTime(
+          year, month, current.day > lastDay ? lastDay : current.day,
+          current.hour, current.minute,
+        );
+        break;
+    }
+
+    final isEnglish = locale.languageCode == 'en';
+    return CareTask(
+      id: '${task.id}-next-${nextDate.millisecondsSinceEpoch}',
+      title: task.title,
+      plantName: task.plantName,
+      type: task.type,
+      dueAt: nextDate,
+      dueDate: AppDateUtils.formatDueDate(nextDate, isEnglish: isEnglish),
+      recurrence: task.recurrence,
     );
   }
 

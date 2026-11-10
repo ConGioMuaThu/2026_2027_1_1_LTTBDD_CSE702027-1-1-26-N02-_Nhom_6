@@ -1,3 +1,5 @@
+enum CareTaskRecurrence { none, daily, everyThreeDays, weekly, monthly }
+
 class CareTask {
   final String id;
   final String title;
@@ -6,6 +8,7 @@ class CareTask {
   final String dueDate;
   final bool isCompleted;
   final DateTime? dueAt;
+  final CareTaskRecurrence recurrence;
 
   const CareTask({
     required this.id,
@@ -15,5 +18,6 @@ class CareTask {
     required this.dueDate,
     this.isCompleted = false,
     this.dueAt,
+    this.recurrence = CareTaskRecurrence.none,
   });
 }

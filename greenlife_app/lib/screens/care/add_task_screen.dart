@@ -96,6 +96,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
 
   String _type = kTaskTypes.first.id;
   String? _plantName;
+  CareTaskRecurrence _recurrence = CareTaskRecurrence.none;
   bool _initialized = false;
 
   bool get _isEnglish => Localizations.localeOf(context).languageCode == 'en';
@@ -124,6 +125,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
 
     if (editing != null) {
       _type = editing.type;
+      _recurrence = editing.recurrence;
       _autoTitle = taskTypeInfoOf(_type).label(_isEnglish);
       _titleController.text = editing.title;
 
@@ -217,6 +219,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       dueDate: AppDateUtils.formatDueDate(dueAt, isEnglish: _isEnglish),
       isCompleted: editing?.isCompleted ?? false,
       dueAt: dueAt,
+      recurrence: _recurrence,
     );
 
     Navigator.pop(context, task);
@@ -312,6 +315,40 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                     ),
                   ),
                 ],
+              ),
+              const SizedBox(height: 20),
+              _SectionLabel(isEnglish ? 'Repeat' : 'Lặp lại'),
+              DropdownButtonFormField<CareTaskRecurrence>(
+                initialValue: _recurrence,
+                decoration: _inputDecoration(
+                  isEnglish ? 'Repeat frequency' : 'Chu kỳ lặp lại',
+                  Icons.repeat,
+                ),
+                items: [
+                  DropdownMenuItem(
+                    value: CareTaskRecurrence.none,
+                    child: Text(isEnglish ? 'Never' : 'Không lặp lại'),
+                  ),
+                  DropdownMenuItem(
+                    value: CareTaskRecurrence.daily,
+                    child: Text(isEnglish ? 'Every day' : 'Mỗi ngày'),
+                  ),
+                  DropdownMenuItem(
+                    value: CareTaskRecurrence.everyThreeDays,
+                    child: Text(isEnglish ? 'Every 3 days' : 'Mỗi 3 ngày'),
+                  ),
+                  DropdownMenuItem(
+                    value: CareTaskRecurrence.weekly,
+                    child: Text(isEnglish ? 'Every week' : 'Mỗi tuần'),
+                  ),
+                  DropdownMenuItem(
+                    value: CareTaskRecurrence.monthly,
+                    child: Text(isEnglish ? 'Every month' : 'Mỗi tháng'),
+                  ),
+                ],
+                onChanged: (value) {
+                  if (value != null) setState(() => _recurrence = value);
+                },
               ),
               const SizedBox(height: 28),
               Row(

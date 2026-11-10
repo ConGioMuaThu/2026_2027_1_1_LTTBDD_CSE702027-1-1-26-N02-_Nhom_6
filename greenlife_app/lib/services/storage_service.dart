@@ -101,6 +101,7 @@ class StorageService {
       'dueDate': task.dueDate,
       'isCompleted': task.isCompleted,
       'dueAt': task.dueAt?.toIso8601String(),
+      'recurrence': task.recurrence.name,
     };
   }
 
@@ -113,6 +114,10 @@ class StorageService {
       dueDate: map['dueDate'] as String? ?? '',
       isCompleted: map['isCompleted'] as bool? ?? false,
       dueAt: DateTime.tryParse(map['dueAt'] as String? ?? ''),
+      recurrence: CareTaskRecurrence.values.firstWhere(
+        (value) => value.name == map['recurrence'],
+        orElse: () => CareTaskRecurrence.none,
+      ),
     );
   }
 

@@ -86,6 +86,13 @@ class CareProvider extends ChangeNotifier {
 
       if (updated.isCompleted) {
         _notifications.cancelTaskReminder(updated.id);
+        final nextTask = _repository.nextOccurrence(updated, _locale);
+        if (nextTask != null && !_tasks.any((task) => task.id == nextTask.id)) {
+          _tasks.insert(0, nextTask);
+          _persist();
+          notifyListeners();
+          _scheduleReminder(nextTask);
+        }
       } else {
         _scheduleReminder(updated);
       }
