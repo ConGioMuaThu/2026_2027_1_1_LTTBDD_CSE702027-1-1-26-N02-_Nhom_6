@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:greenlife_app/config/app_routes.dart';
 import 'package:greenlife_app/l10n/app_localizations.dart';
 import 'package:greenlife_app/models/plant.dart';
 import 'package:greenlife_app/providers/care_provider.dart';
@@ -27,7 +28,7 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
-  int _index = 0;
+  int _index = AppTabs.home;
   late final CareProvider _care = CareProvider(locale: widget.locale);
   late final PlantProvider _plants = PlantProvider(locale: widget.locale);
   late final GrowthProvider _growth = GrowthProvider(locale: widget.locale);
@@ -108,7 +109,7 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
             locale: Localizations.localeOf(context),
             onLocaleChanged: widget.onLocaleChanged,
             onToggleTask: _care.toggle,
-            onViewCareSchedule: () => setState(() => _index = 3),
+            onViewCareSchedule: () => setState(() => _index = AppTabs.care),
           ),
           PlantLibraryScreen(
             plants: _plants.plants,
