@@ -5,6 +5,7 @@ import 'package:greenlife_app/models/growth_note.dart';
 import 'package:greenlife_app/utils/app_colors.dart';
 import 'package:greenlife_app/widgets/empty_state.dart';
 import 'package:greenlife_app/widgets/growth_note_card.dart';
+import 'package:greenlife_app/widgets/search_bar.dart';
 
 class GrowthJournalScreen extends StatefulWidget {
   final List<GrowthNote> notes;
@@ -108,20 +109,10 @@ class _GrowthJournalScreenState extends State<GrowthJournalScreen> {
                   style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w800),
                 ),
                 const SizedBox(height: 12),
-                TextField(
+                CustomSearchBar(
                   controller: _searchController,
+                  hintText: strings.searchNotesHint,
                   onChanged: (_) => setState(() {}),
-                  decoration: InputDecoration(
-                    hintText: strings.searchNotesHint,
-                    prefixIcon: const Icon(Icons.search),
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide.none,
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 14),
-                  ),
                 ),
                 const SizedBox(height: 14),
                 Expanded(

@@ -7,6 +7,7 @@ import 'package:greenlife_app/utils/app_colors.dart';
 import 'package:greenlife_app/widgets/detail_sheet.dart';
 import 'package:greenlife_app/widgets/empty_state.dart';
 import 'package:greenlife_app/widgets/plant_image.dart';
+import 'package:greenlife_app/widgets/search_bar.dart';
 
 enum _PlantAction { edit, delete }
 
@@ -168,20 +169,10 @@ class _MyPlantsScreenState extends State<MyPlantsScreen> {
               ],
             ),
             const SizedBox(height: 14),
-            TextField(
+            CustomSearchBar(
               controller: _searchController,
+              hintText: strings.searchGarden,
               onChanged: (_) => setState(() {}),
-              decoration: InputDecoration(
-                hintText: strings.searchGarden,
-                prefixIcon: const Icon(Icons.search),
-                filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16),
-                  borderSide: BorderSide.none,
-                ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 14),
-              ),
             ),
             const SizedBox(height: 14),
             Expanded(
