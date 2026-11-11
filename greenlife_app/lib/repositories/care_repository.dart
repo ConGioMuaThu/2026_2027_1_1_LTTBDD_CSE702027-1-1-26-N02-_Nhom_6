@@ -124,12 +124,10 @@ class CareRepository {
   bool isUntouchedSample(CareTask task) {
     for (final locale in AppLocalizations.supportedLocales) {
       for (final sample in sampleTasksFor(locale)) {
-        if (task.dueAt == null &&
-            sample.id == task.id &&
+        if (sample.id == task.id &&
             sample.title == task.title &&
             sample.plantName == task.plantName &&
-            sample.type == task.type &&
-            sample.dueDate == task.dueDate) {
+            sample.type == task.type) {
           return true;
         }
       }
@@ -143,20 +141,31 @@ class CareRepository {
       for (final task in sampleTasksFor(locale)) task.id: task,
     };
 
+    CareTask relabel(CareTask task) {
+      final dueAt = task.dueAt;
+      return dueAt == null
+          ? task
+          : copyWith(
+              task,
+              dueDate: AppDateUtils.formatDueDate(dueAt, isEnglish: isEnglish),
+            );
+    }
+
     return [
       for (final task in source)
         if (samples.containsKey(task.id) && isUntouchedSample(task))
-          copyWith(samples[task.id]!, isCompleted: task.isCompleted)
-        else if (task.dueAt != null)
-          copyWith(
-            task,
-            dueDate: AppDateUtils.formatDueDate(
-              task.dueAt!,
-              isEnglish: isEnglish,
-            ),
-          )
+          relabel(CareTask(
+            id: task.id,
+            title: samples[task.id]!.title,
+            plantName: samples[task.id]!.plantName,
+            type: task.type,
+            dueDate: task.dueDate,
+            isCompleted: task.isCompleted,
+            dueAt: task.dueAt,
+            recurrence: task.recurrence,
+          ))
         else
-          task,
+          relabel(task),
     ];
   }
 }
