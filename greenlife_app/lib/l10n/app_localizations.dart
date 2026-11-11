@@ -21,6 +21,27 @@ class AppLocalizations {
   static const Map<String, Map<String, String>> _values = {
     'vi': {
       'greeting': 'Chào bạn,',
+      'repeatLabel': 'Lặp lại',
+      'repeatFrequency': 'Chu kỳ lặp lại',
+      'repeatNever': 'Không lặp lại',
+      'repeatDaily': 'Mỗi ngày',
+      'repeatEveryThreeDays': 'Mỗi 3 ngày',
+      'repeatWeekly': 'Mỗi tuần',
+      'repeatMonthly': 'Mỗi tháng',
+      'taskTypeWatering': 'Tưới nước',
+      'taskTypeFertilize': 'Bón phân',
+      'taskTypeInspection': 'Kiểm tra lá',
+      'taskTypePrune': 'Tỉa cành',
+      'taskTypeOther': 'Khác',
+      'dueToday': 'Hôm nay',
+      'dueTomorrow': 'Ngày mai',
+      'weekday1': 'Thứ Hai',
+      'weekday2': 'Thứ Ba',
+      'weekday3': 'Thứ Tư',
+      'weekday4': 'Thứ Năm',
+      'weekday5': 'Thứ Sáu',
+      'weekday6': 'Thứ Bảy',
+      'weekday7': 'Chủ Nhật',
       'appName': 'GreenLife',
       'searchHint': 'Tìm cây, nhiệm vụ hoặc mẹo',
       'plantCareAssistant': 'Plant Care Assistant',
@@ -181,6 +202,27 @@ class AppLocalizations {
     },
     'en': {
       'greeting': 'Hello,',
+      'repeatLabel': 'Repeat',
+      'repeatFrequency': 'Repeat frequency',
+      'repeatNever': 'Never',
+      'repeatDaily': 'Every day',
+      'repeatEveryThreeDays': 'Every 3 days',
+      'repeatWeekly': 'Every week',
+      'repeatMonthly': 'Every month',
+      'taskTypeWatering': 'Watering',
+      'taskTypeFertilize': 'Fertilize',
+      'taskTypeInspection': 'Check leaves',
+      'taskTypePrune': 'Prune stems',
+      'taskTypeOther': 'Other',
+      'dueToday': 'Today',
+      'dueTomorrow': 'Tomorrow',
+      'weekday1': 'Monday',
+      'weekday2': 'Tuesday',
+      'weekday3': 'Wednesday',
+      'weekday4': 'Thursday',
+      'weekday5': 'Friday',
+      'weekday6': 'Saturday',
+      'weekday7': 'Sunday',
       'appName': 'GreenLife',
       'searchHint': 'Search plants, tasks or tips',
       'plantCareAssistant': 'Plant Care Assistant',
@@ -340,6 +382,33 @@ class AppLocalizations {
       'deleteNoteMessage': '"{note}" for {plant} will be removed.',
     },
   };
+
+  String get repeatLabel => _val('repeatLabel');
+  String get repeatFrequency => _val('repeatFrequency');
+  String get repeatNever => _val('repeatNever');
+  String get repeatDaily => _val('repeatDaily');
+  String get repeatEveryThreeDays => _val('repeatEveryThreeDays');
+  String get repeatWeekly => _val('repeatWeekly');
+  String get repeatMonthly => _val('repeatMonthly');
+  String get dueToday => _val('dueToday');
+  String get dueTomorrow => _val('dueTomorrow');
+
+  String weekdayName(int weekday) => _val('weekday$weekday');
+
+  String taskTypeLabel(String typeId) {
+    switch (typeId) {
+      case 'watering':
+        return _val('taskTypeWatering');
+      case 'fertilize':
+        return _val('taskTypeFertilize');
+      case 'inspection':
+        return _val('taskTypeInspection');
+      case 'prune':
+        return _val('taskTypePrune');
+      default:
+        return _val('taskTypeOther');
+    }
+  }
 
   String get greeting => _val('greeting');
   String get appName => _val('appName');

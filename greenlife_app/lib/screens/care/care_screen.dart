@@ -3,7 +3,6 @@ import 'package:greenlife_app/config/app_routes.dart';
 import 'package:greenlife_app/l10n/app_localizations.dart';
 import 'package:greenlife_app/models/care_task.dart';
 import 'package:greenlife_app/repositories/care_repository.dart';
-import 'package:greenlife_app/screens/care/add_task_screen.dart';
 import 'package:greenlife_app/utils/app_colors.dart';
 import 'package:greenlife_app/utils/date_utils.dart';
 import 'package:greenlife_app/widgets/empty_state.dart';
@@ -48,12 +47,12 @@ class _CareScreenState extends State<CareScreen> {
       return sorted;
     }
     return sorted.where((task) {
-      final typeInfo = taskTypeInfoOf(task.type);
+      final typeLabels = AppLocalizations.supportedLocales
+          .map((locale) => AppLocalizations(locale).taskTypeLabel(task.type));
       return task.title.toLowerCase().contains(query) ||
           task.plantName.toLowerCase().contains(query) ||
           task.type.toLowerCase().contains(query) ||
-          typeInfo.labelVi.toLowerCase().contains(query) ||
-          typeInfo.labelEn.toLowerCase().contains(query);
+          typeLabels.any((label) => label.toLowerCase().contains(query));
     }).toList();
   }
 
@@ -70,7 +69,6 @@ class _CareScreenState extends State<CareScreen> {
   @override
   Widget build(BuildContext context) {
     final strings = AppLocalizations.of(context);
-    final isEnglish = Localizations.localeOf(context).languageCode == 'en';
     final totalTasks = widget.tasks.length;
     final completedTasks = widget.tasks.where((task) => task.isCompleted).length;
     final filteredTasks = _filteredTasks;
@@ -268,7 +266,7 @@ class _CareScreenState extends State<CareScreen> {
                                         ),
                                         const SizedBox(height: 4),
                                         Text(
-                                          '${task.plantName} • ${taskTypeInfoOf(task.type).label(isEnglish)}',
+                                          '${task.plantName} • ${strings.taskTypeLabel(task.type)}',
                                           style: const TextStyle(
                                             fontSize: 12,
                                             color: AppColors.textSecondary,

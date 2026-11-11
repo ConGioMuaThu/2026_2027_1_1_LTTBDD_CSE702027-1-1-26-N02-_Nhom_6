@@ -17,7 +17,6 @@ Future<void> showTaskDetailSheet(
   VoidCallback? onToggle,
 }) {
   final strings = AppLocalizations.of(context);
-  final isEnglish = Localizations.localeOf(context).languageCode == 'en';
   final typeInfo = taskTypeInfoOf(task.type);
   final statusText =
       task.isCompleted ? strings.completedStatus : strings.pendingStatus;
@@ -76,7 +75,7 @@ Future<void> showTaskDetailSheet(
               _SheetRow(label: strings.plant, value: task.plantName),
               _SheetRow(
                 label: strings.taskType,
-                value: typeInfo.label(isEnglish),
+                value: strings.taskTypeLabel(task.type),
               ),
               _SheetRow(label: strings.dueDate, value: task.dueDate),
               _SheetRow(label: strings.status, value: statusText),

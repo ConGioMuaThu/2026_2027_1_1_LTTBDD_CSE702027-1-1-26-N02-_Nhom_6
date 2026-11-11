@@ -12,17 +12,11 @@ class TaskTypeInfo {
     required this.id,
     required this.icon,
     required this.color,
-    required this.labelVi,
-    required this.labelEn,
   });
 
   final String id;
   final IconData icon;
   final Color color;
-  final String labelVi;
-  final String labelEn;
-
-  String label(bool isEnglish) => isEnglish ? labelEn : labelVi;
 }
 
 const List<TaskTypeInfo> kTaskTypes = [
@@ -30,29 +24,21 @@ const List<TaskTypeInfo> kTaskTypes = [
     id: 'watering',
     icon: Icons.water_drop_outlined,
     color: Color(0xFF4A90C2),
-    labelVi: 'Tưới nước',
-    labelEn: 'Watering',
   ),
   TaskTypeInfo(
     id: 'fertilize',
     icon: Icons.eco_outlined,
     color: Color(0xFF74B97D),
-    labelVi: 'Bón phân',
-    labelEn: 'Fertilize',
   ),
   TaskTypeInfo(
     id: 'inspection',
     icon: Icons.search,
     color: Color(0xFFEAB349),
-    labelVi: 'Kiểm tra lá',
-    labelEn: 'Check leaves',
   ),
   TaskTypeInfo(
     id: 'prune',
     icon: Icons.content_cut,
     color: Color(0xFFE46D5F),
-    labelVi: 'Tỉa cành',
-    labelEn: 'Prune stems',
   ),
 ];
 
@@ -63,8 +49,6 @@ TaskTypeInfo taskTypeInfoOf(String id) {
       id: 'other',
       icon: Icons.task_alt,
       color: AppColors.textSecondary,
-      labelVi: 'Khác',
-      labelEn: 'Other',
     ),
   );
 }
@@ -99,7 +83,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   CareTaskRecurrence _recurrence = CareTaskRecurrence.none;
   bool _initialized = false;
 
-  bool get _isEnglish => Localizations.localeOf(context).languageCode == 'en';
+  AppLocalizations get _strings => AppLocalizations.of(context);
 
   @override
   void didChangeDependencies() {
@@ -126,7 +110,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     if (editing != null) {
       _type = editing.type;
       _recurrence = editing.recurrence;
-      _autoTitle = taskTypeInfoOf(_type).label(_isEnglish);
+      _autoTitle = _strings.taskTypeLabel(_type);
       _titleController.text = editing.title;
 
       final dueAt = editing.dueAt;
@@ -137,7 +121,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       return;
     }
 
-    _autoTitle = taskTypeInfoOf(_type).label(_isEnglish);
+    _autoTitle = _strings.taskTypeLabel(_type);
     _titleController.text = _autoTitle;
   }
 
@@ -151,7 +135,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     setState(() {
       final current = _titleController.text.trim();
       if (current.isEmpty || current == _autoTitle) {
-        _autoTitle = info.label(_isEnglish);
+        _autoTitle = _strings.taskTypeLabel(info.id);
         _titleController.text = _autoTitle;
       }
       _type = info.id;
@@ -216,7 +200,10 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       title: _titleController.text.trim(),
       plantName: _plantName!,
       type: _type,
-      dueDate: AppDateUtils.formatDueDate(dueAt, isEnglish: _isEnglish),
+      dueDate: AppDateUtils.formatDueDate(
+        dueAt,
+        isEnglish: Localizations.localeOf(context).languageCode == 'en',
+      ),
       isCompleted: editing?.isCompleted ?? false,
       dueAt: dueAt,
       recurrence: _recurrence,
@@ -228,7 +215,6 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   @override
   Widget build(BuildContext context) {
     final strings = AppLocalizations.of(context);
-    final isEnglish = _isEnglish;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -257,7 +243,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                 spacing: 8,
                 runSpacing: 8,
                 children: [
-                  for (final info in kTaskTypes) _buildTypeChip(info, isEnglish),
+                  for (final info in kTaskTypes) _buildTypeChip(info, strings),
                 ],
               ),
               const SizedBox(height: 20),
@@ -317,33 +303,33 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                 ],
               ),
               const SizedBox(height: 20),
-              _SectionLabel(isEnglish ? 'Repeat' : 'Lặp lại'),
+              _SectionLabel(strings.repeatLabel),
               DropdownButtonFormField<CareTaskRecurrence>(
                 initialValue: _recurrence,
                 decoration: _inputDecoration(
-                  isEnglish ? 'Repeat frequency' : 'Chu kỳ lặp lại',
+                  strings.repeatFrequency,
                   Icons.repeat,
                 ),
                 items: [
                   DropdownMenuItem(
                     value: CareTaskRecurrence.none,
-                    child: Text(isEnglish ? 'Never' : 'Không lặp lại'),
+                    child: Text(strings.repeatNever),
                   ),
                   DropdownMenuItem(
                     value: CareTaskRecurrence.daily,
-                    child: Text(isEnglish ? 'Every day' : 'Mỗi ngày'),
+                    child: Text(strings.repeatDaily),
                   ),
                   DropdownMenuItem(
                     value: CareTaskRecurrence.everyThreeDays,
-                    child: Text(isEnglish ? 'Every 3 days' : 'Mỗi 3 ngày'),
+                    child: Text(strings.repeatEveryThreeDays),
                   ),
                   DropdownMenuItem(
                     value: CareTaskRecurrence.weekly,
-                    child: Text(isEnglish ? 'Every week' : 'Mỗi tuần'),
+                    child: Text(strings.repeatWeekly),
                   ),
                   DropdownMenuItem(
                     value: CareTaskRecurrence.monthly,
-                    child: Text(isEnglish ? 'Every month' : 'Mỗi tháng'),
+                    child: Text(strings.repeatMonthly),
                   ),
                 ],
                 onChanged: (value) {
@@ -393,7 +379,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     );
   }
 
-  Widget _buildTypeChip(TaskTypeInfo info, bool isEnglish) {
+  Widget _buildTypeChip(TaskTypeInfo info, AppLocalizations strings) {
     final selected = _type == info.id;
 
     return ChoiceChip(
@@ -406,7 +392,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         size: 18,
         color: selected ? Colors.white : info.color,
       ),
-      label: Text(info.label(isEnglish)),
+      label: Text(strings.taskTypeLabel(info.id)),
       labelStyle: TextStyle(
         color: selected ? Colors.white : AppColors.text,
         fontWeight: FontWeight.w600,

@@ -67,7 +67,6 @@ class TaskDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final strings = AppLocalizations.of(context);
-    final isEnglish = Localizations.localeOf(context).languageCode == 'en';
     final typeInfo = taskTypeInfoOf(task.type);
     final statusColor = task.isCompleted ? AppColors.taskDone : AppColors.taskPending;
     final statusText =
@@ -183,7 +182,7 @@ class TaskDetailScreen extends StatelessWidget {
                   _InfoRow(
                     icon: typeInfo.icon,
                     label: strings.taskType,
-                    value: typeInfo.label(isEnglish),
+                    value: strings.taskTypeLabel(task.type),
                   ),
                   const Divider(height: 1),
                   _InfoRow(

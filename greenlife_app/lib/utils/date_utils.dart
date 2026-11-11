@@ -1,29 +1,11 @@
 import 'package:flutter/material.dart' show TimeOfDay;
+import 'package:flutter/widgets.dart' show Locale;
+import 'package:greenlife_app/l10n/app_localizations.dart';
 
 class AppDateUtils {
   AppDateUtils._();
 
   static final DateTime epoch = DateTime.fromMillisecondsSinceEpoch(0);
-
-  static const List<String> _weekdaysVi = [
-    'Thứ Hai',
-    'Thứ Ba',
-    'Thứ Tư',
-    'Thứ Năm',
-    'Thứ Sáu',
-    'Thứ Bảy',
-    'Chủ Nhật',
-  ];
-
-  static const List<String> _weekdaysEn = [
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-    'Sunday',
-  ];
 
   static String twoDigits(int value) => value.toString().padLeft(2, '0');
 
@@ -82,13 +64,13 @@ class AppDateUtils {
   }) {
     final diffDays = daysBetween(now ?? DateTime.now(), dueAt);
     final time = formatClock(dueAt);
+    final strings = AppLocalizations(Locale(isEnglish ? 'en' : 'vi'));
 
-    if (diffDays == 0) return '${isEnglish ? 'Today' : 'Hôm nay'}, $time';
-    if (diffDays == 1) return '${isEnglish ? 'Tomorrow' : 'Ngày mai'}, $time';
+    if (diffDays == 0) return '${strings.dueToday}, $time';
+    if (diffDays == 1) return '${strings.dueTomorrow}, $time';
 
     if (diffDays > 1 && diffDays < 7) {
-      final names = isEnglish ? _weekdaysEn : _weekdaysVi;
-      return '${names[dueAt.weekday - 1]}, $time';
+      return '${strings.weekdayName(dueAt.weekday)}, $time';
     }
 
     return '${formatDate(dueAt)}, $time';
