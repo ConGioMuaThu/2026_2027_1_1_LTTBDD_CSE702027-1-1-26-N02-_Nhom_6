@@ -33,5 +33,17 @@ class Plant {
     required this.tags,
   });
 
-  bool get isCatalog => RegExp(r'^plant-\d$').hasMatch(id);
+  static const Set<String> catalogIds = {
+    'plant-1',
+    'plant-2',
+    'plant-3',
+    'plant-4',
+    'plant-5',
+    'plant-6',
+    'plant-7',
+    'plant-8',
+    'plant-9',
+  };
+
+  bool get isCatalog => catalogIds.contains(id);
 }

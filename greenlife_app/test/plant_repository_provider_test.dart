@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:greenlife_app/data/sample_data.dart';
 import 'package:greenlife_app/models/plant.dart';
 import 'package:greenlife_app/providers/plant_provider.dart';
 import 'package:greenlife_app/repositories/plant_repository.dart';
@@ -43,6 +44,39 @@ void main() {
       expect(renamed.name, 'Cây mới');
       expect(renamed.id, plant.id);
       expect(renamed.scientificName, plant.scientificName);
+    });
+  });
+
+  group('Plant catalog detection', () {
+    test('catalogIds matches the ids in samplePlantsFor', () {
+      for (final locale in const [Locale('vi'), Locale('en')]) {
+        final ids = samplePlantsFor(locale).map((p) => p.id).toSet();
+        expect(ids, Plant.catalogIds);
+      }
+    });
+
+    test('isCatalog is true for every catalog plant', () {
+      for (final plant in samplePlantsFor(const Locale('vi'))) {
+        expect(plant.isCatalog, isTrue, reason: plant.id);
+      }
+    });
+
+    test('isCatalog is false for user plants, including plant-10', () {
+      expect(_testPlant(id: 'plant-10').isCatalog, isFalse);
+      expect(_testPlant(id: 'plant-1731000000000').isCatalog, isFalse);
+      expect(_testPlant(id: 'custom-plant').isCatalog, isFalse);
+    });
+
+    test('removeFromGarden keeps a catalog plant but deletes a user plant', () {
+      final provider = PlantProvider(locale: const Locale('vi'));
+      addTearDown(provider.dispose);
+
+      provider.removeFromGarden('plant-1');
+      expect(provider.findById('plant-1')?.inGarden, isFalse);
+
+      provider.add(_testPlant(id: 'plant-10'));
+      provider.removeFromGarden('plant-10');
+      expect(provider.findById('plant-10'), isNull);
     });
   });
 

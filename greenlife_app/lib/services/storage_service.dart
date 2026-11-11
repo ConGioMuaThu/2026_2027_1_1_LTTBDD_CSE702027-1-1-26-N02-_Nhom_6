@@ -164,8 +164,7 @@ class StorageService {
   }
 
   bool _legacyInGarden(String id) {
-    final isCatalog = RegExp(r'^plant-\d$').hasMatch(id);
-    if (!isCatalog) return true;
+    if (!Plant.catalogIds.contains(id)) return true;
     return const {'plant-1', 'plant-2', 'plant-3', 'plant-4'}.contains(id);
   }
 
