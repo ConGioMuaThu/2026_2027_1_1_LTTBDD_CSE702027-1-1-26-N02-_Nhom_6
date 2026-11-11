@@ -36,16 +36,7 @@ class AppLocalizations {
       'care': 'Chăm sóc',
       'journal': 'Nhật ký',
       'tips': 'Mẹo',
-      'about': 'Giới thiệu',
       'teamInfo': 'Thông tin nhóm',
-      'teamDescription': 'Trợ lý chăm sóc cây xanh thông minh',
-      'searchMembers': 'Tìm thành viên',
-      'noMembersFound': 'Không tìm thấy thành viên nào.',
-      'treeLibrary': 'Thư viện cây xanh',
-      'searchTrees': 'Tìm cây theo tên hoặc mô tả',
-      'noTreesFound': 'Không tìm thấy cây nào phù hợp.',
-      'myGarden': 'Vườn cây của tôi',
-      'addPlant': 'Thêm cây mới',
       'cancel': 'Hủy',
       'categoryFlower': 'Hoa',
       'plantedDate': 'Ngày trồng',
@@ -96,20 +87,9 @@ class AppLocalizations {
       'waterNeed': 'Nhu cầu nước',
       'searchGarden': 'Tìm cây trong vườn',
       'noGardenMatch': 'Không có cây nào phù hợp.',
-      'careSchedule': 'Lịch chăm sóc',
-      'thisWeek': 'Tuần này',
-      'tasks': 'nhiệm vụ',
-      'completed': 'Hoàn thành',
-      'searchTasks': 'Tìm nhiệm vụ theo cây hoặc loại',
-      'noTasksFound': 'Không tìm thấy nhiệm vụ nào.',
       'growthJournal': 'Nhật ký phát triển',
-      'searchNotes': 'Tìm ghi chú hoặc cây',
-      'noNotesFound': 'Không có ghi chú phù hợp.',
-      'newNote': 'Thêm ghi chú mới',
       'title': 'Tiêu đề',
       'descriptionGrowth': 'Mô tả phát triển',
-      'tipsTitle': 'Mẹo sống xanh',
-      'searchTips': 'Tìm mẹo chăm sóc',
       'noTipsFound': 'Không có mẹo nào phù hợp.',
       'plantSummary': 'Cây hiện có',
       'taskSummary': 'Nhiệm vụ',
@@ -125,13 +105,9 @@ class AppLocalizations {
       'noPlantsFound': 'Không tìm thấy cây nào phù hợp.',
       'myGardenTitle': 'Vườn cây của tôi',
       'addPlantTitle': 'Thêm cây mới',
-      'indoorPlantDefault': 'Trong nhà',
       'waterNeedDefault': '2-3 lần/tuần',
       'newPlantDescription': 'Cây mới được thêm vào vườn chăm sóc cá nhân.',
-      'easyCareLevel': 'Dễ',
-      'indirectSunlight': 'Ánh sáng gián tiếp',
       'careScheduleTitle': 'Lịch chăm sóc',
-      'thisWeekLabel': 'Tuần này',
       'tasksCount': 'nhiệm vụ',
       'completedLabel': 'Hoàn thành',
       'searchTasksHint': 'Tìm nhiệm vụ theo cây hoặc loại',
@@ -150,8 +126,6 @@ class AppLocalizations {
       'searchNotesHint': 'Tìm ghi chú hoặc cây',
       'noNotesMatch': 'Không có ghi chú phù hợp.',
       'newNoteTitle': 'Thêm ghi chú mới',
-      'notePlantDefault': 'Trầu bà',
-      'myPlantDefault': 'Cây của tôi',
       'category': 'Phân loại',
       'careLevel': 'Mức độ chăm sóc',
       'water': 'Nước',
@@ -166,7 +140,6 @@ class AppLocalizations {
       'togglePending': 'Đánh dấu chưa xong',
       'role': 'Vai trò',
       'assignment': 'Phân công',
-      'notFound': 'Không tìm thấy',
       'addTaskTitle': 'Thêm nhiệm vụ',
       'taskTitleLabel': 'Tên nhiệm vụ',
       'taskTitleRequired': 'Vui lòng nhập tiêu đề',
@@ -223,16 +196,7 @@ class AppLocalizations {
       'care': 'Care',
       'journal': 'Journal',
       'tips': 'Tips',
-      'about': 'About',
       'teamInfo': 'Team information',
-      'teamDescription': 'Smart plant care assistant',
-      'searchMembers': 'Search members',
-      'noMembersFound': 'No members found.',
-      'treeLibrary': 'Plant library',
-      'searchTrees': 'Search plants by name or description',
-      'noTreesFound': 'No matching plants found.',
-      'myGarden': 'My garden',
-      'addPlant': 'Add new plant',
       'cancel': 'Cancel',
       'categoryFlower': 'Flower',
       'plantedDate': 'Planting date',
@@ -283,20 +247,9 @@ class AppLocalizations {
       'waterNeed': 'Water need',
       'searchGarden': 'Search plants in the garden',
       'noGardenMatch': 'No plants match your search.',
-      'careSchedule': 'Care schedule',
-      'thisWeek': 'This week',
-      'tasks': 'tasks',
-      'completed': 'Completed',
-      'searchTasks': 'Search tasks by plant or type',
-      'noTasksFound': 'No tasks found.',
       'growthJournal': 'Growth journal',
-      'searchNotes': 'Search notes or plants',
-      'noNotesFound': 'No matching notes found.',
-      'newNote': 'Add new note',
       'title': 'Title',
       'descriptionGrowth': 'Growth description',
-      'tipsTitle': 'Green living tips',
-      'searchTips': 'Search care tips',
       'noTipsFound': 'No matching tips found.',
       'plantSummary': 'Plants',
       'taskSummary': 'Tasks',
@@ -312,13 +265,9 @@ class AppLocalizations {
       'noPlantsFound': 'No matching plants found.',
       'myGardenTitle': 'My garden',
       'addPlantTitle': 'Add new plant',
-      'indoorPlantDefault': 'Indoor',
       'waterNeedDefault': '2-3 times/week',
       'newPlantDescription': 'A new plant added to your personal care garden.',
-      'easyCareLevel': 'Easy',
-      'indirectSunlight': 'Indirect sunlight',
       'careScheduleTitle': 'Care schedule',
-      'thisWeekLabel': 'This week',
       'tasksCount': 'tasks',
       'completedLabel': 'Completed',
       'searchTasksHint': 'Search tasks by plant or type',
@@ -337,8 +286,6 @@ class AppLocalizations {
       'searchNotesHint': 'Search notes or plants',
       'noNotesMatch': 'No matching notes found.',
       'newNoteTitle': 'Add new note',
-      'notePlantDefault': 'My plant',
-      'myPlantDefault': 'My plant',
       'category': 'Category',
       'careLevel': 'Care level',
       'water': 'Water',
@@ -353,7 +300,6 @@ class AppLocalizations {
       'togglePending': 'Mark as incomplete',
       'role': 'Role',
       'assignment': 'Assignment',
-      'notFound': 'Not found',
       'addTaskTitle': 'Add task',
       'taskTitleLabel': 'Task title',
       'taskTitleRequired': 'Please enter a title',
@@ -411,16 +357,7 @@ class AppLocalizations {
   String get care => _val('care');
   String get journal => _val('journal');
   String get tips => _val('tips');
-  String get about => _val('about');
   String get teamInfo => _val('teamInfo');
-  String get teamDescription => _val('teamDescription');
-  String get searchMembers => _val('searchMembers');
-  String get noMembersFound => _val('noMembersFound');
-  String get treeLibrary => _val('treeLibrary');
-  String get searchTrees => _val('searchTrees');
-  String get noTreesFound => _val('noTreesFound');
-  String get myGarden => _val('myGarden');
-  String get addPlant => _val('addPlant');
   String get cancel => _val('cancel');
   String get categoryFlower => _val('categoryFlower');
   String get plantedDate => _val('plantedDate');
@@ -473,20 +410,9 @@ class AppLocalizations {
   String get waterNeed => _val('waterNeed');
   String get searchGarden => _val('searchGarden');
   String get noGardenMatch => _val('noGardenMatch');
-  String get careSchedule => _val('careSchedule');
-  String get thisWeek => _val('thisWeek');
-  String get tasksLabel => _val('tasks');
-  String get completed => _val('completed');
-  String get searchTasks => _val('searchTasks');
-  String get noTasksFound => _val('noTasksFound');
   String get growthJournal => _val('growthJournal');
-  String get searchNotes => _val('searchNotes');
-  String get noNotesFound => _val('noNotesFound');
-  String get newNote => _val('newNote');
   String get title => _val('title');
   String get descriptionGrowth => _val('descriptionGrowth');
-  String get tipsTitle => _val('tipsTitle');
-  String get searchTips => _val('searchTips');
   String get noTipsFound => _val('noTipsFound');
   String get plantSummary => _val('plantSummary');
   String get taskSummary => _val('taskSummary');
@@ -502,13 +428,9 @@ class AppLocalizations {
   String get noPlantsFound => _val('noPlantsFound');
   String get myGardenTitle => _val('myGardenTitle');
   String get addPlantTitle => _val('addPlantTitle');
-  String get indoorPlantDefault => _val('indoorPlantDefault');
   String get waterNeedDefault => _val('waterNeedDefault');
   String get newPlantDescription => _val('newPlantDescription');
-  String get easyCareLevel => _val('easyCareLevel');
-  String get indirectSunlight => _val('indirectSunlight');
   String get careScheduleTitle => _val('careScheduleTitle');
-  String get thisWeekLabel => _val('thisWeekLabel');
   String get tasksCount => _val('tasksCount');
   String get completedLabel => _val('completedLabel');
   String get searchTasksHint => _val('searchTasksHint');
@@ -527,8 +449,6 @@ class AppLocalizations {
   String get searchNotesHint => _val('searchNotesHint');
   String get noNotesMatch => _val('noNotesMatch');
   String get newNoteTitle => _val('newNoteTitle');
-  String get notePlantDefault => _val('notePlantDefault');
-  String get myPlantDefault => _val('myPlantDefault');
   String get category => _val('category');
   String get careLevel => _val('careLevel');
   String get water => _val('water');
